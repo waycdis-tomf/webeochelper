@@ -1,0 +1,85 @@
+.wcdWiz .step:not(.wcdHidden) {
+  border-radius: var(--bs-border-radius) !important;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.wcdWiz .step .footer {
+  border-top: 2px solid var(--bs-border-color);
+  padding: .5rem;
+}
+
+.wcdWiz .step .step-header {
+  z-index: 10;
+  position: relative;
+}
+
+.wcdWiz .step .step-header button {
+  width: 100%;
+  height: 3rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  text-align: left;
+}
+
+.wcdWiz .step:not(.current) .step-header button {
+  border-radius: var(--bs-border-radius) !important;
+  color: #FFF;
+}
+
+.wcdWiz .step.current:not(.invalid) .step-header button {
+  border-radius: var(--bs-border-radius) var(--bs-border-radius) 0 0 !important;
+  background-color: var(--bs-emphasis-color) !important;
+  color: var(--bs-body-bg) !important;
+}
+
+.wcdWiz .step.unavailable:not(.current) .step-header button {
+  background-color: var(--bs-secondary-bg-subtle) !important;
+}
+
+.wcdWiz .step.complete:not(.current) .step-header button {
+  background-color: var(--bs-success-border-subtle);
+}
+
+.wcdWiz .step.invalid .step-header button {
+  background-color: var(--bs-danger-border-subtle) !important;
+  color: #FFF;
+}
+
+.wcdWiz .step.current {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 0 5px var(--bs-tertiary-color),
+    0 0 10px var(--bs-tertiary-color), 0 0 20px var(--bs-tertiary-color),
+    0 0 30px var(--bs-tertiary-color);
+}
+
+.wcdWiz .step.invalid {
+  box-shadow: 0 0 5px var(--bs-danger-border-subtle),
+    0 0 10px var(--bs-danger-border-subtle), 0 0 20px var(--bs-danger-border-subtle),
+    0 0 30px var(--bs-danger-border-subtle);
+}
+
+.wcdWiz .step.current .step-body {
+  padding: 1rem;
+}
+
+.wcdWiz .step .step-header button::after {
+  float: right;
+}
+
+.wcdWiz .step:not(.unavailable) .step-header button::after {
+  content: "^";
+}
+
+.wcdWiz .step.unavailable .step-header button::after {
+  content: "Finish Prior Step";
+  font-style: italic;
+}
+
+
+#wcdWizHiddenCreate,
+#wcdWizHiddenAlways {
+  display: none;
+}

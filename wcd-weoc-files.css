@@ -1,0 +1,35 @@
+.wcdAttachGrp {
+	display: flex;
+	place-items: flex-start;
+  align-items: center;
+}
+
+.wcdAttachGrp a, a.wcdAttach {
+	text-decoration: none;
+}
+
+.wcdAttachGrp .wcdAttachClear {
+	color: #EE0000;
+	cursor: pointer;
+}
+
+.wcdAttachGrp .wcdAttachFileArea {
+	border: var(--bs-border-width) solid var(--bs-border-color);
+	border-radius: 0 var(--bs-border-radius) var(--bs-border-radius) 0;
+	padding: .5rem;
+}
+
+.wcdAttachGrp .wcdAttachBtn {
+	color: var(--bs-body-color);
+	background-color: rgba(var(--bs-tertiary-bg-rgb), .8);
+	border: var(--bs-border-width) solid var(--bs-border-color);
+	border-radius: var(--bs-border-radius) 0 0 var(--bs-border-radius);
+	max-width: fit-content;
+	cursor: pointer;
+	padding: .5rem;
+}
+
+.wcdAttachGrp .wcdAttachBtn:hover {
+	border: var(--bs-border-width) solid var(--bs-border-color);
+	background-color: rgba(var(--bs-tertiary-bg-rgb), 1);
+}
