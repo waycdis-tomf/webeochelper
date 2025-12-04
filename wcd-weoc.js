@@ -391,7 +391,7 @@ class wcdLibrary {
     }
 
     apiCall({ endpoint, data = false, filter = false, attachment = false, object = false, headers = false } = {}) {
-        let type = data || filter || attachment ? "POST" : "GET";
+        let type = data || filter || attachment || object ? "POST" : "GET";
         let body = false;
         let contentType = "application/json";
 
@@ -399,7 +399,7 @@ class wcdLibrary {
             if (data) {
                 body = JSON.stringify({ data: JSON.stringify(data) });
             } else if (object) {
-                body = JSON.stringify(data);
+                body = JSON.stringify(object);
             } else if (filter) {
                 if (filter.constructor === String) {
                     body = JSON.stringify({ viewFilter: filter });
