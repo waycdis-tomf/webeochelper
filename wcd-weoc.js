@@ -390,7 +390,7 @@ class wcdLibrary {
         });
     }
 
-    apiCall({ endpoint, data = false, filter = false, attachment = false, headers = false } = {}) {
+    apiCall({ endpoint, data = false, filter = false, attachment = false, object = false, headers = false } = {}) {
         let type = data || filter || attachment ? "POST" : "GET";
         let body = false;
         let contentType = "application/json";
@@ -398,6 +398,8 @@ class wcdLibrary {
         if (type == "POST") {
             if (data) {
                 body = JSON.stringify({ data: JSON.stringify(data) });
+            } else if (object) {
+                body = JSON.stringify(data);
             } else if (filter) {
                 if (filter.constructor === String) {
                     body = JSON.stringify({ viewFilter: filter });
