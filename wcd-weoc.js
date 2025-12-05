@@ -445,7 +445,12 @@ class wcdLibrary {
         }).catch(err => {
             return err;
         });*/
-        return fetch(request);
+        try {
+            return fetch(request);
+        } catch (err) {
+            return err.code;
+        }
+
     }
 
     objToFormData(obj) {
