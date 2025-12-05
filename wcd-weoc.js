@@ -376,10 +376,10 @@ class wcdLibrary {
                 if (xhr.status >= 200 && xhr.status < 300) {
                     resolve(xhr);
                 } else {
-                    reject(new Error({
+                    reject({
                         status: xhr.status,
                         text: xhr.statusText
-                    }));
+                    });
                 }
             };
 
@@ -429,6 +429,8 @@ class wcdLibrary {
             } else {
                 return response.responseText;
             }
+        }).catch(err => {
+            return err;
         });
     }
 
