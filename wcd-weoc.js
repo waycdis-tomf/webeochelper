@@ -402,31 +402,35 @@ class wcdLibrary {
         });
     }
 
-    async apiCall({ endpoint, data = false, filter = false, attachment = false, object = false, headers = false } = {}) {
-        let type = data || filter || attachment || object ? "POST" : "GET";
-        let body = false;
-        let contentType = "application/json";
+    async apiCall({ endpoint, data = false, filter = false, attachment = false, dataProp = true, headers = new Headers() } = {}) {
+        let type = data || filter || attachment ? "POST" : "GET";
+        let request = new Request(this.apiURL + endpoint, {
+            method: type,
+            headers: headers,
+        });
 
         if (type == "POST") {
-            if (data) {
-                body = JSON.stringify({ data: JSON.stringify(data) });
-            } else if (object) {
-                body = JSON.stringify(object);
-            } else if (filter) {
-                if (filter.constructor === String) {
-                    body = JSON.stringify({ viewFilter: filter });
-                } else {
-                    body = JSON.stringify({ customFilter: filter })
-                        .replace("<", "&lt;")
-                        .replace("&", "&amp;");
+            if (attachment) {
+                request.body = attachment;
+            } else {
+                headers.append("Content-Type", "application/json");
+                if (data && dataProp) {
+                    request.body = JSON.stringify({ data: JSON.stringify(data) });
+                } else if (data && !dataProp) {
+                    request.body = JSON.stringify(data);
+                } else if (filter) {
+                    if (filter.constructor === String) {
+                        request.body = JSON.stringify({ viewFilter: filter });
+                    } else {
+                        request.body = JSON.stringify({ customFilter: filter })
+                            .replace("<", "&lt;")
+                            .replace("&", "&amp;");
+                    }
                 }
-            } else if (attachment) {
-                body = attachment;
-                contentType = false;
             }
         }
 
-        return this.httpCall({
+        /*return this.httpCall({
             type: type,
             url: this.apiURL + endpoint,
             data: body,
@@ -440,7 +444,8 @@ class wcdLibrary {
             }
         }).catch(err => {
             return err;
-        });
+        });*/
+        return fetch(request);
     }
 
     objToFormData(obj) {
