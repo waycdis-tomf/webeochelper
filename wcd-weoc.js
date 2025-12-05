@@ -373,10 +373,13 @@ class wcdLibrary {
             }
 
             xhr.onload = () => {
-                if (xhr.status >= 200 && 300 > xhr.status) {
+                if (xhr.status >= 200 && xhr.status < 300) {
                     resolve(xhr);
                 } else {
-                    reject(new Error(`${xhr.status}: ${xhr.statusText}`));
+                    reject(new Error({
+                        status: xhr.status,
+                        text: xhr.statusText
+                    }));
                 }
             };
 
