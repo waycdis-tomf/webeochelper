@@ -373,17 +373,16 @@ class wcdLibrary {
                     }
                 }
 
-                xhr.onload = () => {
-                    console.log('just loaded');
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        resolve(xhr);
-                    } else {
-                        reject({
-                            status: xhr.status,
-                            text: xhr.statusText
-                        });
-                    }
-                };
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    resolve(xhr);
+                } else {
+                    reject({
+                        status: xhr.status,
+                        text: xhr.statusText
+                    });
+                }
+            };
 
                 xhr.onerror = () => reject(new Error("HTTP error"));
 
