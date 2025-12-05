@@ -348,7 +348,7 @@ class wcdLibrary {
     }
 
     //Modular JS call to emulate the idea behind jQuery's AJAX
-    httpCall({
+    async httpCall({
         type,//POST, GET, DELETE...
         url,
         data = false,
@@ -358,42 +358,51 @@ class wcdLibrary {
         headers = false
     } = {}) {
         return new Promise((resolve, reject) => {
-            let xhr = new XMLHttpRequest();
-            if (user) {
-                xhr.open(type, url, true, user, pass);
-            } else {
-                xhr.open(type, url, true);
-            }
-
-            if (contentType) xhr.setRequestHeader("Content-Type", contentType);
-            if (!!headers) {
-                for (let key in headers) {
-                    xhr.setRequestHeader(key, headers[key]);
-                }
-            }
-
-            xhr.onload = () => {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    resolve(xhr);
+            try {
+                let xhr = new XMLHttpRequest();
+                if (user) {
+                    xhr.open(type, url, true, user, pass);
                 } else {
-                    reject({
-                        status: xhr.status,
-                        text: xhr.statusText
-                    });
+                    xhr.open(type, url, true);
                 }
-            };
 
-            xhr.onerror = () => reject(new Error("HTTP error"));
+                if (contentType) xhr.setRequestHeader("Content-Type", contentType);
+                if (!!headers) {
+                    for (let key in headers) {
+                        xhr.setRequestHeader(key, headers[key]);
+                    }
+                }
 
-            if (type == "POST") {
-                xhr.send(data);
-            } else {
-                xhr.send();
+                xhr.onload = () => {
+                    console.log('just loaded');
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        resolve(xhr);
+                    } else {
+                        reject({
+                            status: xhr.status,
+                            text: xhr.statusText
+                        });
+                    }
+                };
+
+                xhr.onerror = () => reject(new Error("HTTP error"));
+
+                if (type == "POST") {
+                    xhr.send(data);
+                } else {
+                    xhr.send();
+                }
+            } catch (err) {
+                reject({
+                    status: err.code,
+                    text: err.message
+                });
             }
+
         });
     }
 
-    apiCall({ endpoint, data = false, filter = false, attachment = false, object = false, headers = false } = {}) {
+    async apiCall({ endpoint, data = false, filter = false, attachment = false, object = false, headers = false } = {}) {
         let type = data || filter || attachment || object ? "POST" : "GET";
         let body = false;
         let contentType = "application/json";
