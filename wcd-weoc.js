@@ -404,31 +404,35 @@ class wcdLibrary {
 
     async apiCall({ endpoint, data = false, filter = false, attachment = false, dataProp = true, headers = new Headers() } = {}) {
         let type = data || filter || attachment ? "POST" : "GET";
-        let request = new Request(this.apiURL + endpoint, {
-            method: type,
-            headers: headers,
-        });
+        let body = {};
 
         if (type == "POST") {
             if (attachment) {
-                request.body = attachment;
+                body = attachment;
             } else {
                 headers.append("Content-Type", "application/json");
                 if (data && dataProp) {
-                    request.body = JSON.stringify({ data: JSON.stringify(data) });
+                    body = JSON.stringify({ data: JSON.stringify(data) });
                 } else if (data && !dataProp) {
-                    request.body = JSON.stringify(data);
+                    body = JSON.stringify(data);
                 } else if (filter) {
                     if (filter.constructor === String) {
-                        request.body = JSON.stringify({ viewFilter: filter });
+                        body = JSON.stringify({ viewFilter: filter });
                     } else {
-                        request.body = JSON.stringify({ customFilter: filter })
+                        body = JSON.stringify({ customFilter: filter })
                             .replace("<", "&lt;")
                             .replace("&", "&amp;");
                     }
                 }
             }
         }
+
+        
+        let request = new Request(this.apiURL + endpoint, {
+            method: type,
+            headers: headers,
+            body: body
+        });
 
         /*return this.httpCall({
             type: type,
