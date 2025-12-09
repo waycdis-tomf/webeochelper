@@ -446,10 +446,15 @@ class wcdLibrary {
             return err;
         });*/
         try {
-            return fetch(request);
-        } catch (err) {
-            return err.code;
-        }
+            let response = await fetch(request);
+            if (!response.ok) {
+              throw new Error(response.status);
+            }
+  
+            return response.json();
+          } catch (err) {
+            return err;
+          }
 
     }
 
