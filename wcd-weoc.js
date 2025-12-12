@@ -428,11 +428,20 @@ class wcdLibrary {
         }
 
         
-        let request = new Request(this.apiURL + endpoint, {
+        let request;
+
+        if (!!body) {
+            request = new Request(this.apiURL + endpoint, {
             method: type,
             headers: headers,
             body: body
         });
+        } else {
+            request = new Request(this.apiURL + endpoint, {
+            method: type,
+            headers: headers
+        });
+        }
 
         /*return this.httpCall({
             type: type,
