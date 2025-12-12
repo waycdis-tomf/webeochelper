@@ -426,7 +426,6 @@ class wcdLibrary {
                 }
             }
         }
-
         
         let request;
 
@@ -442,33 +441,22 @@ class wcdLibrary {
             headers: headers
         });
         }
-
-        /*return this.httpCall({
-            type: type,
-            url: this.apiURL + endpoint,
-            data: body,
-            contentType: contentType,
-            headers: headers
-        }).then(response => {
-            if (!!response.responseText) {
-                return JSON.parse(response.responseText);
-            } else {
-                return response.responseText;
-            }
-        }).catch(err => {
-            return err;
-        });*/
-        try {
-            let response = await fetch(request);
+        
+        return fetch(request).then(response=>{
+            console.log(response)
             if (!response.ok) {
-              throw new Error(response.status);
+               return Promise.reject(response.status);
+            } else {
+                if (!!response.headers.get('content-type') && response.headers.get('content-type').startsWith('application/json')) {
+                    return Promise.resolve(response.json())
+                } else {
+                    return Promise.resolve(response.body)
+                }
+                
             }
-  
-            return response.json();
-          } catch (err) {
-            return err;
-          }
-
+        }).catch(e=>{
+            return Promise.reject(e);
+        });
     }
 
     objToFormData(obj) {
