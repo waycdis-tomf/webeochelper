@@ -404,7 +404,7 @@ class wcdLibrary {
 
     async apiCall({ endpoint, data = false, filter = false, attachment = false, dataProp = true, headers = new Headers() } = {}) {
         let type = data || filter || attachment ? "POST" : "GET";
-        let body = {};
+        let body = false;
 
         if (type == "POST") {
             if (attachment) {
