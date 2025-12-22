@@ -443,7 +443,6 @@ class wcdLibrary {
         }
         
         return fetch(request).then(response=>{
-            console.log(response)
             if (!response.ok) {
                return Promise.reject(response.status);
             } else {
