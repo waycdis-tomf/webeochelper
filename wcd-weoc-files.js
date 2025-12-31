@@ -98,6 +98,7 @@ class wcdFile {
         if (this.loaded) {
             this.loaded = false;
             this.input.value = '';
+            this.input.dispatchEvent(new Event('change'));
             wcd.hide(this.clearNode);
             wcd.hide(this.icnNode);
             if (this.removeInput) {
