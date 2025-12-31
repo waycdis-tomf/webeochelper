@@ -3,10 +3,16 @@ class wcdSelect {
         this.active = false;
         this.select = selectNode;
         this.wrapper = document.createElement('div');
-        this.wrapper.classList.add('wcd-select-wrapper', 'position-relative');
+        this.wrapper.classList.add('wcd-select-wrapper');
+        this.valueWrapper = document.createElement('div');
+        this.valueWrapper.classList.add('wcd-select-value-wrapper');
+        this.valueWrapper.classList.add(...this.select.classList);
         this.value = document.createElement('div');
         this.value.innerText = this.select.value;
-        this.value.classList.add('wcd-select-value', 'form-control');
+        this.value.classList.add('wcd-select-value');
+        this.valueClear = document.createElement('div');
+        this.valueClear.innerText = 'x';
+        this.valueClear.classList.add('wcd-select-value-clear');
         this.drop = document.createElement('div');
         this.drop.classList.add('wcd-drop', 'border', 'rounded', 'shadow');
         this.drop.style.display = 'none';
@@ -17,7 +23,10 @@ class wcdSelect {
 
         selectNode.before(this.wrapper);
         this.wrapper.appendChild(selectNode);
-        this.wrapper.appendChild(this.value);
+
+        this.valueWrapper.appendChild(this.value);
+        this.valueWrapper.appendChild(this.valueClear);
+        this.wrapper.appendChild(this.valueWrapper);
 
         this.addSearch();
         this.drop.appendChild(this.menu);
@@ -27,6 +36,10 @@ class wcdSelect {
 
         this.value.addEventListener('click', event => {
             this.toggle();
+        });
+
+        this.valueClear.addEventListener('click', event => {
+            this.select.value = '';
         });
 
         document.addEventListener("click", (event) => {
@@ -133,7 +146,7 @@ class wcdSelect {
                 objOption.wrapper.classList.add('option-wrapper');
                 objOption.element.innerText = option.innerText;
                 objOption.icon.style.display = 'none';
-                objOption.icon.classList.add('text-success');
+                objOption.icon.classList.add('option-check');
                 objOption.icon.innerText = '✓';
                 objOption.element.classList.add('option', 'flex-fill');
                 objOption.text = option.innerText;
@@ -178,6 +191,11 @@ class wcdSelect {
                 arrValue.push(selectOption.value);
             });
             this.value.innerText = arrValue.join(',');
+            if (!!arrValue.join(',')) {
+                wcd.show(this.valueClear);
+            } else {
+                wcd.hide(this.valueClear);
+            }
         }
     }
 
