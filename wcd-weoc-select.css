@@ -25,6 +25,7 @@
 	overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+	min-height: 1.5rem;
 }
 
 .wcd-select-value-clear {
@@ -32,7 +33,7 @@
 	padding-left: .375rem;
 }
 
-.wcd-select-value.select-active {
+.wcd-select-value-wrapper.select-active {
 	color: var(--bs-body-color);
 	background-color: var(--bs-body-bg);
 	border-color: #86b7fe;

@@ -191,8 +191,9 @@ class wcdSelect {
             currentSelection.forEach(selectOption => {
                 arrValue.push(selectOption.value);
             });
-            this.value.innerText = arrValue.join(',');
-            if (!!arrValue.join(',')) {
+            let textValue = arrValue.join(',');
+            this.value.innerText = textValue;
+            if (!!textValue) {
                 wcd.show(this.valueClear);
             } else {
                 wcd.hide(this.valueClear);
@@ -204,7 +205,7 @@ class wcdSelect {
         if (this.active) {
             this.active = false;
             wcd.hide(this.drop, type);
-            this.value.classList.remove('select-active');
+            this.valueWrapper.classList.remove('select-active');
         } else {
             let screenHeight = document.documentElement.clientHeight;
             let selectPosition = this.value.getBoundingClientRect();
@@ -226,7 +227,7 @@ class wcdSelect {
 
             this.active = true;
             wcd.show(this.drop, type);
-            this.value.classList.add('select-active');
+            this.valueWrapper.classList.add('select-active');
         }
     }
 
