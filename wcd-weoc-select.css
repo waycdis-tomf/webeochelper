@@ -44,6 +44,7 @@
 	overflow-x: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+	flex: 1 1 auto;
 }
 
 .wcd-select-wrapper .option:hover {
@@ -72,6 +73,9 @@
 	right: 0;
 	z-index: 9999;
 	background-color: var(--bs-body-bg);
+	border: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+	border-radius: var(--bs-border-radius);
+	box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
 }
 
 .wcd-select-wrapper .wcd-drop.top {

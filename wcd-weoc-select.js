@@ -14,7 +14,7 @@ class wcdSelect {
         this.valueClear.innerText = 'x';
         this.valueClear.classList.add('wcd-select-value-clear');
         this.drop = document.createElement('div');
-        this.drop.classList.add('wcd-drop', 'border', 'rounded', 'shadow');
+        this.drop.classList.add('wcd-drop');
         this.drop.style.display = 'none';
         this.menu = document.createElement('div');
         this.menu.classList.add('wcd-menu');
@@ -25,7 +25,12 @@ class wcdSelect {
         this.wrapper.appendChild(selectNode);
 
         this.valueWrapper.appendChild(this.value);
-        this.valueWrapper.appendChild(this.valueClear);
+        if (!this.select.required) {
+            this.valueWrapper.appendChild(this.valueClear);
+            this.valueClear.addEventListener('click', event => {
+                this.select.value = '';
+            });
+        }
         this.wrapper.appendChild(this.valueWrapper);
 
         this.addSearch();
@@ -36,10 +41,6 @@ class wcdSelect {
 
         this.value.addEventListener('click', event => {
             this.toggle();
-        });
-
-        this.valueClear.addEventListener('click', event => {
-            this.select.value = '';
         });
 
         document.addEventListener("click", (event) => {
