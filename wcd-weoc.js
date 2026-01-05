@@ -1043,7 +1043,15 @@ wcd.addMod({
     entities: [],
     version: "0.1",
 
-    addSearches(element = document) {
+    addSearch({search = false, container = 'body', targets = false, subTarget = false, addAttributes = []}) {
+        if (!!search && !!targets) {
+            this.entities.push(new wcdSearch(
+                { searchElement: search, containerSelector: container, targetSelector: targets, subTargetSelector: subTarget, addAttributes: addAttributes }
+            ));
+        }
+    },
+
+    initSearches(element = document) {
         element.querySelectorAll('.wcd-search').forEach(search => {
             let container = 'body';
             let targets = false;
@@ -1054,14 +1062,14 @@ wcd.addMod({
             if (!!search.dataset.wcdTargets) targets = search.dataset.wcdTargets;
             if (!!search.dataset.wcdSubTarget) subTarget = search.dataset.wcdSubTarget;
             if (!!search.dataset.wcdAddAttributes) addAttributes = search.dataset.wcdAddAttributes.split(' ');
-            wcd.modules['search'].entities.push(new wcdSearch({ searchElement: search, containerSelector: container, targetSelector: targets, subTargetSelector: subTarget, addAttributes: addAttributes }));
+            this.addSearch({search, container, targets, subTarget, addAttributes});
         });
     }
 });
 
 document.addEventListener("DOMContentLoaded", () => {
     wcd.modules['loading'].initLoaders();
-    wcd.modules['search'].addSearches();
+    wcd.modules['search'].initSearches();
     document.querySelectorAll('.wcdHidden').forEach(element => {
         wcd.hide(element);
     });
