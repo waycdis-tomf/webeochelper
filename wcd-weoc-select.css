@@ -1,90 +1,99 @@
-.wcd-select {
-	display: none;
+.wcd-select-wrapper .wcd-select {
+    display: none;
 }
 
-.wcd-select-value-wrapper {
-	display: flex;
-	width: 100%;
-	padding: .375rem .75rem;
-	font-size: 1rem;
-	font-weight: 400;
-	line-height: 1.5;
-	color: var(--bs-body-color);
-	background-color: var(--bs-body-bg);
-	background-clip: padding-box;
-	border: var(--bs-border-width) solid var(--bs-border-color);
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	appearance: none;
-	border-radius: var(--bs-border-radius);
-	transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+.wcd-select-wrapper .wcd-select-value-wrapper {
+    display: flex;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    background-clip: padding-box;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    appearance: none;
+    border-radius: var(--bs-border-radius);
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.wcd-select-value {
-	flex: 1 1 auto;
-	overflow-x: hidden;
+.wcd-select-wrapper .wcd-select-value {
+    flex: 1 1 auto;
+    overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-	min-height: 1.5rem;
+    min-height: 1.5rem;
 }
 
-.wcd-select-value-clear {
-	cursor: pointer;
-	padding-left: .375rem;
-}
-
-.wcd-select-value-wrapper.select-active {
-	color: var(--bs-body-color);
-	background-color: var(--bs-body-bg);
-	border-color: #86b7fe;
-	outline: 0;
-	box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
+.wcd-select-wrapper .wcd-select-value-clear {
+    cursor: pointer;
+    padding-left: 0.375rem;
 }
 
 .wcd-select-wrapper .option {
-	overflow-x: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	flex: 1 1 auto;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    flex: 1 1 auto;
 }
 
 .wcd-select-wrapper .option:hover {
-	white-space: normal;
+    white-space: normal;
 }
 
 .wcd-select-wrapper .option-wrapper {
-	padding: .375rem .75rem;
-	display: flex;
-	align-items: center;
+    padding: 0.375rem 0.75rem;
+    display: flex;
+    align-items: center;
 }
 
 .wcd-select-wrapper .option-wrapper:hover {
-	background-color: var(--bs-primary);
-	color: var(--bs-white);
+    background-color: var(--bs-primary);
+    color: var(--bs-white);
 }
 
 .wcd-select-wrapper {
-	position: relative;
+    position: relative;
 }
 
 .wcd-select-wrapper .wcd-drop {
-	overflow-y: auto;
-	position: absolute;
-	left: 0;
-	right: 0;
-	z-index: 9999;
-	background-color: var(--bs-body-bg);
-	border: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
-	border-radius: var(--bs-border-radius);
-	box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    overflow-y: auto;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    z-index: 9999;
+    background-color: var(--bs-body-bg);
+    border: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 0.5rem 1rem;
 }
 
 .wcd-select-wrapper .wcd-drop.top {
-	bottom: 100%;
+    bottom: 100%;
 }
 
-.option-check {
+.wcd-select-wrapper .option-check {
     --bs-text-opacity: 1;
-    color: rgba(var(--bs-success-rgb),var(--bs-text-opacity))!important;
-	padding-left: .375rem;
+    padding-left: 0.375rem;
+    color: rgba(var(--bs-success-rgb), var(--bs-text-opacity)) !important;
+}
+
+.wcd-select-wrapper.select-active .wcd-select-value-wrapper {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border-color: rgb(134, 183, 254);
+    outline: 0px;
+    box-shadow: rgba(13, 110, 253, 0.25) 0px 0px 0px 0.25rem;
+}
+
+.wcd-select-wrapper .wcd-drop {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border-color: rgb(134, 183, 254);
+    outline: 0px;
+    box-shadow: 
+        rgba(13, 110, 253, 0.25) -0.125rem 0 0 0.125rem,
+        rgba(13, 110, 253, 0.25) 0.125rem 0 0 0.125rem,
+        rgba(13, 110, 253, 0.25) 0 0.125rem 0 0.125rem;
 }

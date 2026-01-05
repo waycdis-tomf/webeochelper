@@ -1,7 +1,7 @@
 class wcdSelect {
-    constructor(selectNode) {
+    constructor({select = false, search = false}) {
         this.active = false;
-        this.select = selectNode;
+        this.select = select;
         this.wrapper = document.createElement('div');
         this.wrapper.classList.add('wcd-select-wrapper');
         this.valueWrapper = document.createElement('div');
@@ -21,8 +21,8 @@ class wcdSelect {
         this.options = [];
         this.multiple = this.select.multiple;
 
-        selectNode.before(this.wrapper);
-        this.wrapper.appendChild(selectNode);
+        select.before(this.wrapper);
+        this.wrapper.appendChild(select);
 
         this.valueWrapper.appendChild(this.value);
         if (!this.select.required) {
@@ -32,8 +32,7 @@ class wcdSelect {
             });
         }
         this.wrapper.appendChild(this.valueWrapper);
-
-        this.addSearch();
+        if (search) this.addSearch();
         this.drop.appendChild(this.menu);
         this.wrapper.appendChild(this.drop);
 
@@ -70,13 +69,7 @@ class wcdSelect {
         const eleSelect = this.select;
 
         // Get the original descriptor from the prototype
-        const proto = HTMLSelectElement.prototype;
-        const valueDescriptor = Object.getOwnPropertyDescriptor(proto, 'value');
-
-        if (!valueDescriptor || typeof valueDescriptor.get !== 'function' || typeof valueDescriptor.set !== 'function') {
-            console.error("Unable to override 'value' property.");
-            return;
-        }
+        const valueDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
 
         // Define a new property only for this instance
         Object.defineProperty(eleSelect, 'value', {
@@ -119,7 +112,7 @@ class wcdSelect {
         this.search = document.createElement('input');
         this.search.type = 'text';
         this.search.placeholder = 'Search...';
-        this.search.classList.add('wcd-search', 'form-control');
+        this.search.classList.add('form-control');
 
         this.search.addEventListener('keyup', event => {
             this.options.forEach(option => {
@@ -205,29 +198,26 @@ class wcdSelect {
         if (this.active) {
             this.active = false;
             wcd.hide(this.drop, type);
-            this.valueWrapper.classList.remove('select-active');
+            this.wrapper.classList.remove('select-active');
         } else {
             let screenHeight = document.documentElement.clientHeight;
             let selectPosition = this.value.getBoundingClientRect();
             let topHeight = selectPosition.top;
             let bottomHeight = screenHeight - selectPosition.bottom;
 
-            console.log('screen', screenHeight, 'select top', this.value.getBoundingClientRect().top);
-            console.log(topHeight, bottomHeight);
-
             if (topHeight > bottomHeight) {
                 this.drop.style.maxHeight = topHeight + 'px';
-                this.drop.classList.add('top');
+                this.wrapper.classList.add('top');
             } else {
                 this.drop.style.maxHeight = bottomHeight + 'px';
-                this.drop.classList.remove('top');
+                this.wrapper.classList.remove('top');
             }
 
             this.drop.dataset.wcdMaxHeight = this.drop.style.maxHeight;
 
             this.active = true;
             wcd.show(this.drop, type);
-            this.valueWrapper.classList.add('select-active');
+            this.wrapper.classList.add('select-active');
         }
     }
 
@@ -269,7 +259,9 @@ wcd.addMod({
 
     addSelects(element = document) {
         element.querySelectorAll('select.wcd-select').forEach(select => {
-            wcd.select.entities.push(new wcdSelect(select));
+            let search  = false;
+            if (!!select.dataset.wcdSearchable) search = true;
+            wcd.select.entities.push(new wcdSelect({select: select, search: search}));
         });
     }
 });
