@@ -31,6 +31,71 @@ class wcdLoader {
     }
 }
 
+//Object class for searcher element
+class wcdSearch {
+    constructor({ searchElement = false, containerSelector = 'body', targetSelector = false, subTargetSelector = false, addAttributes = [] }) {
+        if (!!searchElement && targetSelector) {
+            this.search = searchElement;
+            this.container = document.querySelector(containerSelector);
+            this.targets = [];
+            this.container.querySelectorAll(`${targetSelector}`).forEach(target => {
+                let objTarget = {
+                    element: target,
+                    display: target.style.display,
+                    values: []
+                };
+                if (!!target.innerText) objTarget.values.push(target.innerText.toLowerCase());
+                if (!!target.value) objTarget.values.push(target.value.toLowerCase());
+                addAttributes.forEach(attName => {
+                    if (!!target.getAttribute(attName)) objTarget.values.push(target.getAttribute(attName).toLowerCase());
+                });
+                if (!!subTargetSelector) {
+                    let subTarget = target.querySelector(`${subTargetSelector}`);
+                    if (!!subTarget) {
+                        if (!!subTarget.value) objTarget.values.push(subTarget.value.toLowerCase());
+                        addAttributes.forEach(attName => {
+                            if (!!subTarget.getAttribute(attName)) objTarget.values.push(subTarget.getAttribute(attName).toLowerCase());
+                        });
+                    }
+                }
+                this.targets.push(objTarget);
+            });
+
+            this.addSearcher();
+        }
+    }
+
+    addSearcher() {
+        this.searcher = document.createElement('input');
+        this.searcher.type = 'text';
+        this.searcher.placeholder = 'Search...';
+        this.searcher.classList.add('form-control');
+        this.searcher.classList.add(...this.search.classList);
+
+        this.searcher.addEventListener('keyup', event => {
+            this.apply();
+        });
+        this.search.appendChild(this.searcher);
+    }
+
+    apply() {
+        this.targets.forEach(target => {
+            let matched = false;
+            target.values.some(value => {
+                if (value.includes(this.searcher.value.toLowerCase())) {
+                    matched = true;
+                    return true;
+                }
+            });
+            if (matched) {
+                target.element.style.display = target.display;
+            } else {
+                target.element.style.display = 'none';
+            }
+        });
+    }
+}
+
 //Object class for date-time workings
 class wcdDates {
     constructor() {
@@ -104,23 +169,6 @@ class wcdLibrary {
     //Adds a WCD module into this library
     addMod(module) {
         this.modules[module.id] = module;
-    }
-
-    initLoaders() {
-        this.loading = {
-            large: new wcdLoader('large'),
-            small: new wcdLoader('small'),
-
-            hide() {
-                if (!!wcd.loading.small.element) {
-                    wcd.loading.small.element.remove();
-                }
-                if (!!wcd.loading.large.element) {
-                    wcd.loading.large.element.remove();
-                }
-                document.body.classList.remove('wcdIsLoading');
-            }
-        };
     }
 
     //Refreshes originalData with everything on the screen
@@ -426,34 +474,34 @@ class wcdLibrary {
                 }
             }
         }
-        
+
         let request;
 
         if (!!body) {
             request = new Request(this.apiURL + endpoint, {
-            method: type,
-            headers: headers,
-            body: body
-        });
+                method: type,
+                headers: headers,
+                body: body
+            });
         } else {
             request = new Request(this.apiURL + endpoint, {
-            method: type,
-            headers: headers
-        });
+                method: type,
+                headers: headers
+            });
         }
-        
-        return fetch(request).then(response=>{
+
+        return fetch(request).then(response => {
             if (!response.ok) {
-               return Promise.reject(response.status);
+                return Promise.reject(response.status);
             } else {
                 if (!!response.headers.get('content-type') && response.headers.get('content-type').startsWith('application/json')) {
                     return Promise.resolve(response.json())
                 } else {
                     return Promise.resolve(response.body)
                 }
-                
+
             }
-        }).catch(e=>{
+        }).catch(e => {
             return Promise.reject(e);
         });
     }
@@ -969,11 +1017,51 @@ wcd.addMod({
     name: "WAYCDIS Load Screen",
     version: "0.1",
     small: {},
-    fullscreen: {}
+    fullscreen: {},
+    
+    initLoaders() {
+        this.loading = {
+            large: new wcdLoader('large'),
+            small: new wcdLoader('small'),
+
+            hide() {
+                if (!!wcd.loading.small.element) {
+                    wcd.loading.small.element.remove();
+                }
+                if (!!wcd.loading.large.element) {
+                    wcd.loading.large.element.remove();
+                }
+                document.body.classList.remove('wcdIsLoading');
+            }
+        };
+    }
+});
+
+wcd.addMod({
+    id: "search",
+    name: "WAYCDIS Search",
+    entities: [],
+    version: "0.1",
+
+    addSearches(element = document) {
+        element.querySelectorAll('.wcd-search').forEach(search => {
+            let container = 'body';
+            let targets = false;
+            let subTarget = false;
+            let addAttributes = [];
+
+            if (!!search.dataset.wcdContainer) container = search.dataset.wcdContainer;
+            if (!!search.dataset.wcdTargets) targets = search.dataset.wcdTargets;
+            if (!!search.dataset.wcdSubTarget) subTarget = search.dataset.wcdSubTarget;
+            if (!!search.dataset.wcdAddAttributes) addAttributes = search.dataset.wcdAddAttributes.split(' ');
+            wcd.modules['search'].entities.push(new wcdSearch({ searchElement: search, containerSelector: container, targetSelector: targets, subTargetSelector: subTarget, addAttributes: addAttributes }));
+        });
+    }
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    wcd.initLoaders();
+    wcd.modules['loading'].initLoaders();
+    wcd.modules['search'].addSearches();
     document.querySelectorAll('.wcdHidden').forEach(element => {
         wcd.hide(element);
     });
