@@ -90,7 +90,7 @@ class wcdSearch {
             if (matched) {
                 target.element.style.display = target.display;
             } else {
-                target.element.style.display = 'none';
+                target.element.style.setProperty('display', 'none', 'important');
             }
         });
     }
@@ -220,7 +220,7 @@ class wcdLibrary {
                     nextSibling = formElement.parentNode.nextSibling;
                 }
                 if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
-                    nextSibling.style.display = "none";
+                    nextSibling.style.setProperty('display', 'none', 'important');
                 }
             } else {
                 let nextSibling = formElement.nextSibling;
@@ -238,7 +238,7 @@ class wcdLibrary {
 
         if (passed) {
             element.querySelectorAll(".invalid-alert").forEach((ele) => {
-                ele.style.display = "none";
+                ele.style.setProperty('display', 'none', 'important');
             });
             this.invalidFields = false;
             element.classList.remove("invalid", "was-validated");
@@ -255,7 +255,7 @@ class wcdLibrary {
     //Clear's the class that applies bootstrap's form validation
     clearFormValidation(element = document.querySelector('body')) {
         element.querySelectorAll(".invalid-alert").forEach((ele) => {
-            ele.style.display = "none";
+            ele.style.setProperty('display', 'none', 'important');
         });
         this.invalidFields = false;
         element.classList.remove("was-validated");
@@ -937,7 +937,7 @@ class wcdLibrary {
                         element.style.maxHeight = '0px';
                         break;
                     default:
-                        element.style.display = 'none';
+                        element.style.setProperty('display', 'none', 'important');
                         break;
                 }
             }
