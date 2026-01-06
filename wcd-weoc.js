@@ -96,7 +96,7 @@ class wcdSearch {
     }
 }
 
-//Object class for date-time workings
+//TO BE COMPLETED - idea of an easier time usage, understanding how WebEOC's date times get handed back.
 class wcdDates {
     constructor() {
         this.timezone = '';
