@@ -38,7 +38,7 @@ class wcdSelect {
 
         this.refreshOptions();
 
-        this.value.addEventListener('click', event => {
+        this.wrapper.addEventListener('click', event => {
             this.toggle();
         });
 
