@@ -1020,7 +1020,7 @@ wcd.addMod({
     fullscreen: {},
     
     initLoaders() {
-        this.loading = {
+        wcd.loading = {
             large: new wcdLoader('large'),
             small: new wcdLoader('small'),
 
