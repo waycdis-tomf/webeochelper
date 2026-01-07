@@ -97,7 +97,6 @@ class wcdSelect {
                         });
                     });
                 }
-                console.log(oldValue, newValue);
                 if (oldValue !== newValue) {
                     this.dispatchEvent(new Event('change'));
                 }
@@ -178,7 +177,6 @@ class wcdSelect {
             });
             let textValue = arrValue.join(',');
             let value = textValue;
-            console.log(this);
             if (!textValue && !!this.placeholder) {
                 textValue = this.placeholder;
                 this.value.opacity = this.value.style.opacity;
