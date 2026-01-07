@@ -230,7 +230,6 @@ class wcdSelect {
             }
         } else {
             if (!this.multiple) {
-                console.log('its not multiple');
                 let currentSelection = this.options.filter(option => option.selected);
                 if (currentSelection) {
                     if (!Array.isArray(currentSelection)) currentSelection = [currentSelection];
