@@ -20,6 +20,7 @@ class wcdSelect {
         this.menu.classList.add('wcd-menu');
         this.options = [];
         this.multiple = this.select.multiple;
+        this.placeholder = this.select.dataset.wcdPlaceholder;
 
         select.before(this.wrapper);
         this.wrapper.appendChild(select);
@@ -38,7 +39,7 @@ class wcdSelect {
 
         this.refreshOptions();
 
-        this.value.addEventListener('click', event => {
+        this.valueWrapper.addEventListener('click', event => {
             this.toggle();
         });
 
@@ -46,11 +47,6 @@ class wcdSelect {
             if ((!this.wrapper.contains(event.target)) && this.active) {
                 this.toggle();
             }
-        });
-
-        this.select.addEventListener('change', event => {
-            this.refreshOptions();
-            this.setValue();
         });
 
         const refreshObserver = new MutationObserver((mutations, observer) => {
@@ -86,9 +82,10 @@ class wcdSelect {
                 }
             },
             set: function (newValue) {
-                let oldVal = this.value;
+                if (!newValue) newValue = '';
+                let oldValue = this.value;
                 valueDescriptor.set.call(this, newValue);
-                if (newValue.indexOf(',') > -1 && this.multiple) {
+                if (!!newValue && newValue.indexOf(',') > -1 && this.multiple) {
                     let arrValues = newValue.split(',');
                     this.querySelectorAll('option').forEach(option => {
                         option.selected = false;
@@ -100,7 +97,10 @@ class wcdSelect {
                         });
                     });
                 }
-                this.dispatchEvent(new Event('change'));
+                console.log(oldValue, newValue);
+                if (oldValue !== newValue) {
+                    this.dispatchEvent(new Event('change'));
+                }
             },
             configurable: true,
             enumerable: valueDescriptor.enumerable
@@ -173,23 +173,25 @@ class wcdSelect {
         let currentSelection = this.options.filter(option => option.selected);
         if (currentSelection) {
             if (!Array.isArray(currentSelection)) currentSelection = [currentSelection];
-            let eleOptions = this.select.querySelectorAll('option');
-            eleOptions.forEach((eleOption, eleIndex) => {
-                if (currentSelection.find(option => option.index == eleIndex)) {
-                    if (!eleOption.selected) eleOption.selected = true;
-                } else {
-                    if (eleOption.selected) eleOption.selected = false;
-                }
-            });
             currentSelection.forEach(selectOption => {
                 arrValue.push(selectOption.value);
             });
             let textValue = arrValue.join(',');
-            this.value.innerText = textValue;
-            if (!!textValue) {
-                wcd.show(this.valueClear);
+            let value = textValue;
+            console.log(this);
+            if (!textValue && !!this.placeholder) {
+                textValue = this.placeholder;
+                this.value.opacity = this.value.style.opacity;
+                this.value.style.opacity = '.5';
             } else {
-                wcd.hide(this.valueClear);
+                this.value.style.opacity = '';
+            }
+            this.value.innerText = textValue;
+            this.select.value = value;
+            if (!!textValue) {
+                this.valueClear.style.display = '';
+            } else {
+                this.valueClear.style.setProperty('display', 'none', 'important');
             }
         }
     }
@@ -197,7 +199,7 @@ class wcdSelect {
     toggle(type = 'fade') {
         if (this.active) {
             this.active = false;
-            wcd.hide(this.drop, type);
+            this.drop.style.setProperty('display', 'none', 'important');
             this.wrapper.classList.remove('select-active');
         } else {
             let screenHeight = document.documentElement.clientHeight;
@@ -206,17 +208,15 @@ class wcdSelect {
             let bottomHeight = screenHeight - selectPosition.bottom;
 
             if (topHeight > bottomHeight) {
-                this.drop.style.maxHeight = topHeight + 'px';
+                this.drop.style.maxHeight = (topHeight-5) + 'px';
                 this.wrapper.classList.add('top');
             } else {
-                this.drop.style.maxHeight = bottomHeight + 'px';
+                this.drop.style.maxHeight = (bottomHeight-5) + 'px';
                 this.wrapper.classList.remove('top');
             }
 
-            this.drop.dataset.wcdMaxHeight = this.drop.style.maxHeight;
-
             this.active = true;
-            wcd.show(this.drop, type);
+            this.drop.style.display = '';
             this.wrapper.classList.add('select-active');
         }
     }
@@ -232,6 +232,7 @@ class wcdSelect {
             }
         } else {
             if (!this.multiple) {
+                console.log('its not multiple');
                 let currentSelection = this.options.filter(option => option.selected);
                 if (currentSelection) {
                     if (!Array.isArray(currentSelection)) currentSelection = [currentSelection];

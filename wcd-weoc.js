@@ -1053,13 +1053,13 @@ wcd.addMod({
 
     initSearches(element = document) {
         element.querySelectorAll('.wcd-search').forEach(search => {
-            let container = 'body';
+            let container = document.querySelector('body');
             let targets = false;
             let subTarget = false;
             let addAttributes = [];
 
-            if (!!search.dataset.wcdContainer) container = search.dataset.wcdContainer;
-            if (!!search.dataset.wcdTargets) targets = search.dataset.wcdTargets;
+            if (!!search.dataset.wcdContainer) container = document.querySelector(search.dataset.wcdContainer);
+            if (!!search.dataset.wcdTargets) targets = document.querySelectorAll(search.dataset.wcdTargets);
             if (!!search.dataset.wcdSubTarget) subTarget = search.dataset.wcdSubTarget;
             if (!!search.dataset.wcdAddAttributes) addAttributes = search.dataset.wcdAddAttributes.split(' ');
             this.addSearch({search, container, targets, subTarget, addAttributes});
