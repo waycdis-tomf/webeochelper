@@ -50,7 +50,8 @@ class wcdSelect {
         });
 
         this.select.addEventListener('change', event => {
-            let arrValue = this.select.value;
+            let arrValue = this.select.value.split(',');
+            console.log('value is ', arrValue);
             this.options.forEach((option) => {
                 if (!option.disabled) {
                     if (!(option.selected) && arrValue.includes(option.value)) {
@@ -106,10 +107,13 @@ class wcdSelect {
                     let arrValues = newValue.split(',');
                     this.querySelectorAll('option').forEach(option => {
                         option.selected = false;
-                        arrValues.forEach((value, ind) => {
+                        console.log('Unselecting ', value);
+                        arrValues.some((value, ind) => {
                             if (value == ((!!option.value) ? option.value : option.text)) {
-                                option.selected = 'yes';
+                                option.selected = true;
+                                console.log('Selecting ', value);
                                 arrValues.splice(ind, 1);
+                                return true;
                             }
                         });
                     });
@@ -152,7 +156,7 @@ class wcdSelect {
                 selected: false,
                 disabled: option.disabled
             };
-            objOption.value = (!!option.value) ? option.value : objOption.text;
+            objOption.value = (!!option.value) ? option.value : option.text;
             if (!option.disabled) {
                 objOption.element = document.createElement('div');
                 objOption.wrapper = document.createElement('div');
@@ -173,8 +177,6 @@ class wcdSelect {
                 objOption.wrapper.appendChild(objOption.icon);
                 this.menu.appendChild(objOption.wrapper);
 
-                objOption.element.wcdselect = objOption;
-
                 objOption.wrapper.addEventListener('click', event => {
                     this.selectOption(objOption);
                 });
@@ -183,7 +185,7 @@ class wcdSelect {
         });
     }
 
-    setValue() {
+    setValue(fromChange = false) {
         let arrValue = [];
 
         let currentSelection = this.options.filter(option => option.selected);
@@ -202,7 +204,7 @@ class wcdSelect {
                 this.value.style.opacity = '';
             }
             this.value.innerText = textValue;
-            this.select.value = value;
+            if (!fromChange) this.select.value = value;
             if (!!textValue) {
                 this.valueClear.style.display = '';
             } else {
@@ -243,7 +245,13 @@ class wcdSelect {
                 option.wrapper.classList.remove('bg-success-subtle');
                 option.selected = false;
             } else {
-                if (toggle) this.toggle('instant');
+                if (!toggle) {
+                    option.icon.style.display = 'none';
+                    option.wrapper.classList.remove('bg-success-subtle');
+                    option.selected = false;
+                } else {
+                    this.toggle('instant');
+                }
             }
         } else {
             if (!this.multiple) {
@@ -262,7 +270,8 @@ class wcdSelect {
             option.wrapper.classList.add('bg-success-subtle');
             option.selected = true;
         }
-        this.setValue();
+        let fromChange = toggle ? false : true;
+        this.setValue(fromChange);
     }
 }
 
