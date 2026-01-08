@@ -53,10 +53,12 @@ class wcdSelect {
             let arrValue = this.select.value.split(',');
             console.log('value is ', arrValue);
             this.options.forEach((option) => {
+                console.log(option.value, option.selected);
                 if (!option.disabled) {
                     if (!(option.selected) && arrValue.includes(option.value)) {
+                        console.log('found ', option.value);
                         this.selectOption(option, false);
-                    } else if (option.selected) {
+                    } else if (option.selected && !(arrValue.includes(option.value))) {
                         this.selectOption(option, false);
                     }
                 }
@@ -103,6 +105,7 @@ class wcdSelect {
                 if (!newValue) newValue = '';
                 let oldValue = this.value;
                 valueDescriptor.set.call(this, newValue);
+                console.log('new value', newValue);
                 if (!!newValue && newValue.indexOf(',') > -1 && this.multiple) {
                     let arrValues = newValue.split(',');
                     this.querySelectorAll('option').forEach(option => {
@@ -223,7 +226,6 @@ class wcdSelect {
             let selectPosition = this.value.getBoundingClientRect();
             let topHeight = selectPosition.top;
             let bottomHeight = screenHeight - selectPosition.bottom;
-            console.log(topHeight, bottomHeight);
             if (topHeight > bottomHeight) {
                 this.drop.style.maxHeight = (topHeight-10) + 'px';
                 this.wrapper.classList.add('top');
