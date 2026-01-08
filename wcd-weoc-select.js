@@ -49,6 +49,19 @@ class wcdSelect {
             }
         });
 
+        this.select.addEventListener('change', event => {
+            let arrValue = this.select.value;
+            this.options.forEach((option) => {
+                if (!option.disabled) {
+                    if (!(option.selected) && arrValue.includes(option.value)) {
+                        this.selectOption(option, false);
+                    } else if (option.selected) {
+                        this.selectOption(option, false);
+                    }
+                }
+            });
+        });
+
         const refreshObserver = new MutationObserver((mutations, observer) => {
             this.refreshOptions();
             this.setValue();
@@ -73,12 +86,16 @@ class wcdSelect {
                 if (this.multiple) {
                     let arrValue = [];
                     this.querySelectorAll('option:checked').forEach(option => {
-                        arrValue.push((!!option.value) ? option.value : objOption.text);
+                        arrValue.push((!!option.value) ? option.value : option.text);
                     });
                     return arrValue.join(',');
                 } else {
                     let option = this.querySelector('option:checked');
-                    return (!!option.value) ? option.value : objOption.text;
+                    if (!option) {
+                        return '';
+                    } else {
+                        return (!!option.value) ? option.value : option.text;
+                    }
                 }
             },
             set: function (newValue) {
@@ -90,7 +107,7 @@ class wcdSelect {
                     this.querySelectorAll('option').forEach(option => {
                         option.selected = false;
                         arrValues.forEach((value, ind) => {
-                            if (value == ((!!option.value) ? option.value : objOption.text)) {
+                            if (value == ((!!option.value) ? option.value : option.text)) {
                                 option.selected = 'yes';
                                 arrValues.splice(ind, 1);
                             }
@@ -130,22 +147,22 @@ class wcdSelect {
         this.menu.innerHTML = '';
         this.options = [];
         this.select.querySelectorAll('option').forEach((option, ind) => {
+            let objOption = {
+                text: option.innerText,
+                selected: false,
+                disabled: option.disabled
+            };
+            objOption.value = (!!option.value) ? option.value : objOption.text;
             if (!option.disabled) {
-                let objOption = {
-                    element: document.createElement('div'),
-                    wrapper: document.createElement('div'),
-                    icon: document.createElement('div')
-                };
+                objOption.element = document.createElement('div');
+                objOption.wrapper = document.createElement('div');
+                objOption.icon = document.createElement('div');
                 objOption.wrapper.classList.add('option-wrapper');
                 objOption.element.innerText = option.innerText;
                 objOption.icon.style.display = 'none';
                 objOption.icon.classList.add('option-check');
                 objOption.icon.innerText = '✓';
                 objOption.element.classList.add('option', 'flex-fill');
-                objOption.text = option.innerText;
-                objOption.index = ind;
-                objOption.value = (!!option.value) ? option.value : objOption.text;
-                objOption.selected = false;
                 if (option.selected) {
                     objOption.icon.style.display = '';
                     objOption.wrapper.classList.add('bg-success-subtle');
@@ -157,12 +174,12 @@ class wcdSelect {
                 this.menu.appendChild(objOption.wrapper);
 
                 objOption.element.wcdselect = objOption;
-                this.options.push(objOption);
 
                 objOption.wrapper.addEventListener('click', event => {
                     this.selectOption(objOption);
                 });
             }
+            this.options.push(objOption);
         });
     }
 
@@ -194,7 +211,7 @@ class wcdSelect {
         }
     }
 
-    toggle(type = 'fade') {
+    toggle() {
         if (this.active) {
             this.active = false;
             this.drop.style.setProperty('display', 'none', 'important');
@@ -204,12 +221,12 @@ class wcdSelect {
             let selectPosition = this.value.getBoundingClientRect();
             let topHeight = selectPosition.top;
             let bottomHeight = screenHeight - selectPosition.bottom;
-
+            console.log(topHeight, bottomHeight);
             if (topHeight > bottomHeight) {
-                this.drop.style.maxHeight = (topHeight-5) + 'px';
+                this.drop.style.maxHeight = (topHeight-10) + 'px';
                 this.wrapper.classList.add('top');
             } else {
-                this.drop.style.maxHeight = (bottomHeight-5) + 'px';
+                this.drop.style.maxHeight = (bottomHeight-10) + 'px';
                 this.wrapper.classList.remove('top');
             }
 
@@ -219,14 +236,14 @@ class wcdSelect {
         }
     }
 
-    selectOption(option) {
+    selectOption(option, toggle = true) {
         if (option.selected) {
             if (this.multiple) {
                 option.icon.style.display = 'none';
                 option.wrapper.classList.remove('bg-success-subtle');
                 option.selected = false;
             } else {
-                this.toggle('instant');
+                if (toggle) this.toggle('instant');
             }
         } else {
             if (!this.multiple) {
@@ -239,7 +256,7 @@ class wcdSelect {
                         selectOption.selected = false;
                     });
                 }
-                this.toggle('instant');
+                if (toggle) this.toggle('instant');
             }
             option.icon.style.display = '';
             option.wrapper.classList.add('bg-success-subtle');
