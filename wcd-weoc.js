@@ -33,10 +33,10 @@ class wcdLoader {
 
 //Object class for searcher element
 class wcdSearch {
-    constructor({ searchElement = false, containerSelector = 'body', targetSelector = false, subTargetSelector = false, addAttributes = [] }) {
+    constructor({ searchElement = false, container = document.querySelector('body'), targetSelector = false, subTargetSelector = false, addAttributes = [] }) {
         if (!!searchElement && targetSelector) {
             this.search = searchElement;
-            this.container = document.querySelector(containerSelector);
+            this.container = container;
             this.targets = [];
             this.container.querySelectorAll(`${targetSelector}`).forEach(target => {
                 let objTarget = {
@@ -1043,7 +1043,7 @@ wcd.addMod({
     entities: [],
     version: "0.1",
 
-    addSearch({search = false, container = 'body', targets = false, subTarget = false, addAttributes = []}) {
+    addSearch({search = false, container = document.querySelector('body'), targets = false, subTarget = false, addAttributes = []}) {
         if (!!search && !!targets) {
             this.entities.push(new wcdSearch(
                 { searchElement: search, containerSelector: container, targetSelector: targets, subTargetSelector: subTarget, addAttributes: addAttributes }
@@ -1059,7 +1059,7 @@ wcd.addMod({
             let addAttributes = [];
 
             if (!!search.dataset.wcdContainer) container = document.querySelector(search.dataset.wcdContainer);
-            if (!!search.dataset.wcdTargets) targets = document.querySelectorAll(search.dataset.wcdTargets);
+            if (!!search.dataset.wcdTargets) targets = search.dataset.wcdTargets;
             if (!!search.dataset.wcdSubTarget) subTarget = search.dataset.wcdSubTarget;
             if (!!search.dataset.wcdAddAttributes) addAttributes = search.dataset.wcdAddAttributes.split(' ');
             this.addSearch({search, container, targets, subTarget, addAttributes});
