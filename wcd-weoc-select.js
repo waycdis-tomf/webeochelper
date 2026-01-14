@@ -190,14 +190,16 @@ class wcdSelect {
 
     setValue(fromChange = false) {
         let arrValue = [];
+        let arrText = [];
 
         let currentSelection = this.options.filter(option => option.selected);
         if (currentSelection) {
             if (!Array.isArray(currentSelection)) currentSelection = [currentSelection];
             currentSelection.forEach(selectOption => {
                 arrValue.push(selectOption.value);
+                arrText.push(selectOption.text);
             });
-            let textValue = arrValue.join(',');
+            let textValue = arrText.join(',');
             let value = textValue;
             if (!textValue && !!this.placeholder) {
                 textValue = this.placeholder;
