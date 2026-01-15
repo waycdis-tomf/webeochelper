@@ -131,20 +131,9 @@ class wcdSelect {
     }
 
     addSearch() {
-        this.search = document.createElement('input');
-        this.search.type = 'text';
-        this.search.placeholder = 'Search...';
-        this.search.classList.add('form-control');
+        this.search = document.createElement('div');
 
-        this.search.addEventListener('keyup', event => {
-            this.options.forEach(option => {
-                if (option.value.includes(event.target.value.toLowerCase()) || option.text.includes(event.target.value.toLowerCase())) {
-                    wcd.show(option.wrapper);
-                } else {
-                    wcd.hide(option.wrapper);
-                }
-            });
-        });
+        wcd.modules.search.addSearch({search: this.search, container: this.menu, targets: '.option-wrapper', subTarget: '.option', dataAttributes: ['value']})
 
         this.drop.appendChild(this.search);
     }
@@ -165,6 +154,7 @@ class wcdSelect {
                 objOption.icon = document.createElement('div');
                 objOption.wrapper.classList.add('option-wrapper');
                 objOption.element.innerText = option.innerText;
+                objOption.element.dataset.value = (!!option.value) ? option.value : option.innerText;
                 objOption.icon.style.display = 'none';
                 objOption.icon.classList.add('option-check');
                 objOption.icon.innerText = '✓';

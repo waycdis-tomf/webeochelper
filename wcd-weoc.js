@@ -33,7 +33,7 @@ class wcdLoader {
 
 //Object class for searcher element
 class wcdSearch {
-    constructor({ searchElement = false, container = document.querySelector('body'), targetSelector = false, subTargetSelector = false, addAttributes = [] }) {
+    constructor({ searchElement = false, container = document.querySelector('body'), targetSelector = false, subTargetSelector = false, dataAttributes = [] }) {
         if (!!searchElement && targetSelector) {
             this.search = searchElement;
             this.container = container;
@@ -46,15 +46,15 @@ class wcdSearch {
                 };
                 if (!!target.innerText) objTarget.values.push(target.innerText.toLowerCase());
                 if (!!target.value) objTarget.values.push(target.value.toLowerCase());
-                addAttributes.forEach(attName => {
-                    if (!!target.getAttribute(attName)) objTarget.values.push(target.getAttribute(attName).toLowerCase());
+                dataAttributes.forEach(attName => {
+                    if (!!target.dataset[attName]) objTarget.values.push(target.dataset[attName].toLowerCase());
                 });
                 if (!!subTargetSelector) {
                     let subTarget = target.querySelector(`${subTargetSelector}`);
                     if (!!subTarget) {
                         if (!!subTarget.value) objTarget.values.push(subTarget.value.toLowerCase());
-                        addAttributes.forEach(attName => {
-                            if (!!subTarget.getAttribute(attName)) objTarget.values.push(subTarget.getAttribute(attName).toLowerCase());
+                        dataAttributes.forEach(attName => {
+                            if (!!subTarget.dataset[attName]) objTarget.values.push(subTarget.dataset[attName].toLowerCase());
                         });
                     }
                 }
@@ -1043,10 +1043,10 @@ wcd.addMod({
     entities: [],
     version: "0.1",
 
-    addSearch({search = false, container = document.querySelector('body'), targets = false, subTarget = false, addAttributes = []}) {
+    addSearch({search = false, container = document.querySelector('body'), targets = false, subTarget = false, dataAttributes = []}) {
         if (!!search && !!targets) {
             this.entities.push(new wcdSearch(
-                { searchElement: search, containerSelector: container, targetSelector: targets, subTargetSelector: subTarget, addAttributes: addAttributes }
+                { searchElement: search, containerSelector: container, targetSelector: targets, subTargetSelector: subTarget, dataAttributes: dataAttributes }
             ));
         }
     },
@@ -1056,13 +1056,13 @@ wcd.addMod({
             let container = document.querySelector('body');
             let targets = false;
             let subTarget = false;
-            let addAttributes = [];
+            let dataAttributes = [];
 
             if (!!search.dataset.wcdContainer) container = document.querySelector(search.dataset.wcdContainer);
             if (!!search.dataset.wcdTargets) targets = search.dataset.wcdTargets;
             if (!!search.dataset.wcdSubTarget) subTarget = search.dataset.wcdSubTarget;
-            if (!!search.dataset.wcdAddAttributes) addAttributes = search.dataset.wcdAddAttributes.split(' ');
-            this.addSearch({search, container, targets, subTarget, addAttributes});
+            if (!!search.dataset.wcdDataAttributes) dataAttributes = search.dataset.wcdDataAttributes.split(' ');
+            this.addSearch({search, container, targets, subTarget, dataAttributes});
         });
     }
 });
