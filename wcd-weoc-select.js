@@ -51,12 +51,9 @@ class wcdSelect {
 
         this.select.addEventListener('change', event => {
             let arrValue = this.select.value.split(',');
-            console.log('value is ', arrValue);
             this.options.forEach((option) => {
-                console.log(option.value, option.selected);
                 if (!option.disabled) {
                     if (!(option.selected) && arrValue.includes(option.value)) {
-                        console.log('found ', option.value);
                         this.selectOption(option, false);
                     } else if (option.selected && !(arrValue.includes(option.value))) {
                         this.selectOption(option, false);
@@ -105,16 +102,13 @@ class wcdSelect {
                 if (!newValue) newValue = '';
                 let oldValue = this.value;
                 valueDescriptor.set.call(this, newValue);
-                console.log('new value', newValue);
                 if (!!newValue && newValue.indexOf(',') > -1 && this.multiple) {
                     let arrValues = newValue.split(',');
                     this.querySelectorAll('option').forEach(option => {
                         option.selected = false;
-                        console.log('Unselecting ', value);
                         arrValues.some((value, ind) => {
                             if (value == ((!!option.value) ? option.value : option.text)) {
                                 option.selected = true;
-                                console.log('Selecting ', value);
                                 arrValues.splice(ind, 1);
                                 return true;
                             }
