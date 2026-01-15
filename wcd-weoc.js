@@ -1046,7 +1046,7 @@ wcd.addMod({
     addSearch({search = false, container = document.querySelector('body'), targets = false, subTarget = false, dataAttributes = []}) {
         if (!!search && !!targets) {
             this.entities.push(new wcdSearch(
-                { searchElement: search, containerSelector: container, targetSelector: targets, subTargetSelector: subTarget, dataAttributes: dataAttributes }
+                { searchElement: search, container: container, targetSelector: targets, subTargetSelector: subTarget, dataAttributes: dataAttributes }
             ));
         }
     },

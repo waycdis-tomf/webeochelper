@@ -1,6 +1,7 @@
 class wcdSelect {
     constructor({select = false, search = false}) {
         this.active = false;
+        this.search = search;
         this.select = select;
         this.wrapper = document.createElement('div');
         this.wrapper.classList.add('wcd-select-wrapper');
@@ -38,7 +39,10 @@ class wcdSelect {
             });
         }
         this.wrapper.appendChild(this.valueWrapper);
-        if (search) this.addSearch();
+        if (search) {
+            this.search = document.createElement('div');
+            this.drop.appendChild(this.search);
+        }
         this.drop.appendChild(this.menu);
         this.wrapper.appendChild(this.drop);
 
@@ -130,12 +134,9 @@ class wcdSelect {
 
     }
 
-    addSearch() {
-        this.search = document.createElement('div');
-
+    refreshSearch() {
+        this.search.innerHTML = '';
         wcd.modules.search.addSearch({search: this.search, container: this.menu, targets: '.option-wrapper', subTarget: '.option', dataAttributes: ['value']})
-
-        this.drop.appendChild(this.search);
     }
 
     refreshOptions() {
@@ -175,6 +176,7 @@ class wcdSelect {
             }
             this.options.push(objOption);
         });
+        if (this.search) this.refreshSearch();
     }
 
     setValue(fromChange = false) {
