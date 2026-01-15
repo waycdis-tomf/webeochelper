@@ -8,7 +8,12 @@ class wcdSelect {
         this.valueWrapper.classList.add('wcd-select-value-wrapper');
         this.valueWrapper.classList.add(...this.select.classList);
         this.value = document.createElement('div');
-        this.value.innerText = this.select.value;
+        let selectedOptions = this.select.querySelectorAll('option:checked');
+        let arrTextValue = [];
+        selectedOptions.forEach(option=> {
+            arrTextValue.push(option.innerText);
+        })
+        this.value.innerText = arrTextValue.join(',');
         this.value.classList.add('wcd-select-value');
         this.valueClear = document.createElement('div');
         this.valueClear.innerText = 'x';
@@ -184,15 +189,17 @@ class wcdSelect {
 
     setValue(fromChange = false) {
         let arrValue = [];
+        let arrText = [];
 
         let currentSelection = this.options.filter(option => option.selected);
         if (currentSelection) {
             if (!Array.isArray(currentSelection)) currentSelection = [currentSelection];
             currentSelection.forEach(selectOption => {
                 arrValue.push(selectOption.value);
+                arrText.push(selectOption.text);
             });
-            let textValue = arrValue.join(',');
-            let value = textValue;
+            let textValue = arrText.join(',');
+            let value = arrValue.join(',');
             if (!textValue && !!this.placeholder) {
                 textValue = this.placeholder;
                 this.value.opacity = this.value.style.opacity;
