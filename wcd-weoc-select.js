@@ -11,16 +11,26 @@ class wcdSelect {
         this.valueWrapper.classList.add(...this.select.classList);
         this.value = document.createElement('div');
         let selectedOptions = this.select.querySelectorAll('option[selected]');
+        let hasEmpty = false;
+        this.select.querySelectorAll('option[value=""]').forEach(option=> {
+            if (!option.innerText) hasEmpty = true;
+        });
         let arrTextValue = [];
-        console.log(selectedOptions);
+        if (!hasEmpty) {
+            let mockOption = document.createElement('option', {value: ''});
+            this.select.prepend(mockOption);
+        }
         if (selectedOptions.length > 0) {
             selectedOptions.forEach(option=> {
                 arrTextValue.push(option.innerText);
             });
-        } else if (!!this.placeholder) {
-            arrTextValue.push(this.placeholder);
-            this.value.opacity = this.value.style.opacity;
-            this.value.style.opacity = '.5';
+        } else {
+            this.select.value = '';
+            if (!!this.placeholder) {
+                arrTextValue.push(this.placeholder);
+                this.value.opacity = this.value.style.opacity;
+                this.value.style.opacity = '.5';
+            }
         }
         this.value.innerText = arrTextValue.join(',');
         this.value.classList.add('wcd-select-value');
@@ -153,38 +163,41 @@ class wcdSelect {
         this.menu.innerHTML = '';
         this.options = [];
         this.select.querySelectorAll('option').forEach((option, ind) => {
-            let objOption = {
-                text: option.innerText,
-                selected: false,
-                disabled: option.disabled
-            };
-            objOption.value = (!!option.value) ? option.value : option.text;
-            if (!option.disabled) {
-                objOption.element = document.createElement('div');
-                objOption.wrapper = document.createElement('div');
-                objOption.icon = document.createElement('div');
-                objOption.wrapper.classList.add('option-wrapper');
-                objOption.element.innerText = option.innerText;
-                objOption.element.dataset.value = (!!option.value) ? option.value : option.innerText;
-                objOption.icon.style.display = 'none';
-                objOption.icon.classList.add('option-check');
-                objOption.icon.innerText = '✓';
-                objOption.element.classList.add('option', 'flex-fill');
-                if ((initial && option.hasAttribute('selected')) || (!initial && option.selected)) {
-                    objOption.icon.style.display = '';
-                    objOption.wrapper.classList.add('bg-success-subtle');
-                    objOption.selected = true;
+            let opVal = (!!option.value) ? option.value : option.innerText
+            if (!!opVal) {
+                let objOption = {
+                    text: option.innerText,
+                    selected: false,
+                    disabled: option.disabled
+                };
+                objOption.value = opVal;
+                if (!option.disabled) {
+                    objOption.element = document.createElement('div');
+                    objOption.wrapper = document.createElement('div');
+                    objOption.icon = document.createElement('div');
+                    objOption.wrapper.classList.add('option-wrapper');
+                    objOption.element.innerText = option.innerText;
+                    objOption.element.dataset.value = opVal;
+                    objOption.icon.style.display = 'none';
+                    objOption.icon.classList.add('option-check');
+                    objOption.icon.innerText = '✓';
+                    objOption.element.classList.add('option', 'flex-fill');
+                    if ((initial && option.hasAttribute('selected')) || (!initial && option.selected)) {
+                        objOption.icon.style.display = '';
+                        objOption.wrapper.classList.add('bg-success-subtle');
+                        objOption.selected = true;
+                    }
+
+                    objOption.wrapper.appendChild(objOption.element);
+                    objOption.wrapper.appendChild(objOption.icon);
+                    this.menu.appendChild(objOption.wrapper);
+
+                    objOption.wrapper.addEventListener('click', event => {
+                        this.selectOption(objOption);
+                    });
                 }
-
-                objOption.wrapper.appendChild(objOption.element);
-                objOption.wrapper.appendChild(objOption.icon);
-                this.menu.appendChild(objOption.wrapper);
-
-                objOption.wrapper.addEventListener('click', event => {
-                    this.selectOption(objOption);
-                });
+                this.options.push(objOption);
             }
-            this.options.push(objOption);
         });
         if (this.search) this.refreshSearch();
     }
