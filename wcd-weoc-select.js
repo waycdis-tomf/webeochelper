@@ -69,7 +69,7 @@ class wcdSelect {
         this.refreshOptions(true);
 
         this.valueWrapper.addEventListener('click', event => {
-            this.toggle();
+            if (!this.valueClear.contains(event.target)) this.toggle();
         });
 
         document.addEventListener("click", (event) => {
