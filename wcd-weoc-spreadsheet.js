@@ -411,10 +411,6 @@ class WcdSpread {
         this.univerDataObject.cellDataId = '';
         this.univerDataObject.cellColumn = '';
         this.univerDataObject.cellRow = '';
-
-
-
-
     }
 
     /**
