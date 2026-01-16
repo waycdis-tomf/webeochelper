@@ -3,17 +3,25 @@ class wcdSelect {
         this.active = false;
         this.search = search;
         this.select = select;
+        this.placeholder = this.select.dataset.wcdPlaceholder;
         this.wrapper = document.createElement('div');
         this.wrapper.classList.add('wcd-select-wrapper');
         this.valueWrapper = document.createElement('div');
         this.valueWrapper.classList.add('wcd-select-value-wrapper');
         this.valueWrapper.classList.add(...this.select.classList);
         this.value = document.createElement('div');
-        let selectedOptions = this.select.querySelectorAll('option:checked');
+        let selectedOptions = this.select.querySelectorAll('option[selected]');
         let arrTextValue = [];
-        selectedOptions.forEach(option=> {
-            arrTextValue.push(option.innerText);
-        })
+        console.log(selectedOptions);
+        if (selectedOptions.length > 0) {
+            selectedOptions.forEach(option=> {
+                arrTextValue.push(option.innerText);
+            });
+        } else if (!!this.placeholder) {
+            arrTextValue.push(this.placeholder);
+            this.value.opacity = this.value.style.opacity;
+            this.value.style.opacity = '.5';
+        }
         this.value.innerText = arrTextValue.join(',');
         this.value.classList.add('wcd-select-value');
         this.valueClear = document.createElement('div');
@@ -26,13 +34,15 @@ class wcdSelect {
         this.menu.classList.add('wcd-menu');
         this.options = [];
         this.multiple = this.select.multiple;
-        this.placeholder = this.select.dataset.wcdPlaceholder;
 
         select.before(this.wrapper);
         this.wrapper.appendChild(select);
 
         this.valueWrapper.appendChild(this.value);
         if (!this.select.required) {
+            if (selectedOptions.length < 1) {
+                this.valueClear.style.setProperty('display', 'none', 'important');
+            }
             this.valueWrapper.appendChild(this.valueClear);
             this.valueClear.addEventListener('click', event => {
                 this.select.value = '';
@@ -46,7 +56,7 @@ class wcdSelect {
         this.drop.appendChild(this.menu);
         this.wrapper.appendChild(this.drop);
 
-        this.refreshOptions();
+        this.refreshOptions(true);
 
         this.valueWrapper.addEventListener('click', event => {
             this.toggle();
@@ -139,7 +149,7 @@ class wcdSelect {
         wcd.modules.search.addSearch({search: this.search, container: this.menu, targets: '.option-wrapper', subTarget: '.option', dataAttributes: ['value']})
     }
 
-    refreshOptions() {
+    refreshOptions(initial = false) {
         this.menu.innerHTML = '';
         this.options = [];
         this.select.querySelectorAll('option').forEach((option, ind) => {
@@ -160,7 +170,7 @@ class wcdSelect {
                 objOption.icon.classList.add('option-check');
                 objOption.icon.innerText = '✓';
                 objOption.element.classList.add('option', 'flex-fill');
-                if (option.selected) {
+                if ((initial && option.hasAttribute('selected')) || (!initial && option.selected)) {
                     objOption.icon.style.display = '';
                     objOption.wrapper.classList.add('bg-success-subtle');
                     objOption.selected = true;
@@ -201,7 +211,7 @@ class wcdSelect {
             }
             this.value.innerText = textValue;
             if (!fromChange) this.select.value = value;
-            if (!!textValue) {
+            if (!!value) {
                 this.valueClear.style.display = '';
             } else {
                 this.valueClear.style.setProperty('display', 'none', 'important');
