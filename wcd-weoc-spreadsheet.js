@@ -370,13 +370,14 @@ class WcdSpread {
                                 displayCellValue = this.moneyFormatter.format(newCellValue);
                             }
                         } else if (obj.type === 'calendar') {
-                            if (cellValue === null || cellValue === '' || cellValue === undefined || isNaN(cellValue) === true) {
+                            if (cellValue === null || cellValue === '' || cellValue === undefined || cellValue === 'NaN') {
                                 newCellValue = '';
                                 displayCellValue = '';
                             } else {
                                 newCellValue = new Date(cellValue);
                                 displayCellValue = this.dateFormatter.format(newCellValue);
                             }
+
                         }
                         dataObject[field] = newCellValue;
                         displayDataArray.push(displayCellValue);
