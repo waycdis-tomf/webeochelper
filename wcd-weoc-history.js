@@ -1,28 +1,28 @@
 class WcdHistory {
-    constructor(
-        add_after_element,
-        parent_view,
-        pdf,
-        children,
-        element_header_id
-    ) {
-        this.add_after_element = add_after_element;
-        this.parent_view = parent_view;
+    constructor({
+        element = false,
+        view = false,
+        pdf = false,
+        children = false,
+        loading_element = false
+    }) {
+        this.element = element;
+        this.view = view;
         this.parent_dataid = wcd.dataid;
         this.pdf = pdf;
         this.children = children;
-        this.element_header_id = element_header_id === 'undefined' || element_header_id === undefined ? false : element_header_id;
+        this.loading_element = loading_element;
         this.mainDataArray = [];
-        if (this.pdf === 'false') {
-            wcd.loading.small.show('Loading history...', this.element_header_id);
+        if (this.loading_element) {
+            wcd.loading.small.show('Loading history...', this.loading_element);
         }
         this.createCard();
         this.getData({
-            action_type: this.children === false ? 'Get_Data' : 'Get_All_Data',
-            api_view: this.parent_view,
+            action_type: this.children ? 'Get_All_Data' : 'Get_Data',
+            api_view: this.view,
             record: false,
             object: {
-                endpoint: `board/${wcd.board}/display/${this.parent_view}/${this.parent_dataid}`,
+                endpoint: `board/${wcd.board}/display/${this.view}/${this.parent_dataid}`
             }
         }).then(() => {
             if (this.mainDataArray.some(obj => obj.hasOwnProperty('error_msg')) === true) {
@@ -91,7 +91,6 @@ class WcdHistory {
         const cardCol1 = document.createElement('div');
         const cardCol2 = document.createElement('div');
         const cardBody = document.createElement('div');
-        const previousElement = document.getElementById(`${this.add_after_element}`);
         card.id = 'history-card';
         card.classList.add('dflex', 'card', 'mt-2');
         cardHeader.classList.add('card-header', 'ml-auto');
@@ -113,7 +112,9 @@ class WcdHistory {
         cardBody.id = 'history-body-card';
         cardBody.appendChild(this.createTable());
         card.appendChild(cardBody);
-        previousElement.parentNode.insertBefore(card, previousElement.nextSibling);
+        this.element.parentNode.insertBefore(card, this.element);
+        this.element.remove();
+        this.element = card;
     }
 
     formatDateTime(field) {
@@ -313,7 +314,7 @@ class WcdHistory {
                                 api_view: item.api_view,
                                 record: false,
                                 object: {
-                                    endpoint: `board/${wcd.board}/display/${item.api_view}/${item.dataid}`,
+                                    endpoint: `board/${wcd.board}/display/${item.api_view}/${item.dataid}`
                                 }
                             })
                         );
@@ -482,6 +483,23 @@ wcd.addMod({
     name: 'WAYCDIS History',
     entities: [],
     version: '0.1'
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    let defaultElement = document.querySelector('#wcd-history');
+    if (defaultElement && defaultElement.dataset.wcdView) {
+        let children = false;
+        if (defaultElement.dataset.wcdChildren) children = true;
+        let pdf = false;
+        if (defaultElement.dataset.wcdPDF) pdf = true;
+        wcd.history = new WcdHistory({
+            element: defaultElement,
+            view: defaultElement.dataset.wcdView,
+            pdf: pdf,
+            children: children
+        });
+    }
+    
 });
 
 // Add following code to the view.

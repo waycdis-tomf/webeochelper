@@ -4,7 +4,7 @@ class wcdLoader {
         this.size = size;
     }
 
-    show(text = 'Loading...', element_header_id) {
+    show(text = 'Loading...', element_header_id = '#hsemaHeader') {
         this.element = document.createElement("div");
         this.element.classList.add(this.size, 'wcdLoad');
 
@@ -23,10 +23,37 @@ class wcdLoader {
         this.element.appendChild(this.textElement);
 
         if (this.size == 'small') {
-            document.querySelector(element_header_id === false ? '#hsemaHeader' : element_header_id).appendChild(this.element);
+            document.querySelector(element_header_id).appendChild(this.element);
         } else {
             document.body.appendChild(this.element);
             document.body.classList.add('wcdIsLoading');
+        }
+    }
+}
+
+//Object class for tooltips
+class wcdMouseTip {
+    constructor({ hoverElement = false, content = false }) {
+        if (!!hoverElement && content) {
+            this.element = hoverElement;
+            this.content = content;
+            this.tipElement = wcd.mouseTip.element;
+
+            this.element.addEventListener('mousemove', (event) => {
+                this.tipElement.style.top = (event.pageY) + 'px';
+                this.tipElement.style.left = (event.pageX + 15) + 'px';
+            });
+
+            this.element.addEventListener('mouseenter', ()=> {
+                this.tipElement.innerHTML = this.content;
+                this.tipElement.style.display = '';
+            });
+
+            this.element.addEventListener('mouseleave', ()=> {
+                this.tipElement.style.display = 'none';
+            });
+
+            wcd.mouseTip.entities.push(this);
         }
     }
 }
@@ -450,7 +477,9 @@ class wcdLibrary {
         });
     }
 
-    async apiCall({ endpoint, data = false, filter = false, attachment = false, dataProp = true, headers = new Headers() } = {}) {
+    async apiCall({ endpoint, data = false, filter = false, attachment = false, dataProp = true, headers = {} } = {}) {
+        headers = new Headers(headers);
+
         let type = data || filter || attachment ? "POST" : "GET";
         let body = false;
 
@@ -1012,6 +1041,16 @@ var wcd = new wcdLibrary({
     version: "0.1",
 });
 
+let eleTip = document.createElement('div');
+eleTip.classList.add('wcdTip');
+eleTip.style.position = 'absolute';
+eleTip.style.display = 'none';
+
+wcd.mouseTip = {
+    element: eleTip,
+    entities: []
+}
+
 wcd.addMod({
     id: "loading",
     name: "WAYCDIS Load Screen",
@@ -1073,4 +1112,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll('.wcdHidden').forEach(element => {
         wcd.hide(element);
     });
+
+    document.body.appendChild(wcd.mouseTip.element);
 });
