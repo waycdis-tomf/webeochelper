@@ -2,7 +2,6 @@
   border-radius: var(--bs-border-radius) !important;
   margin-top: 1rem;
   margin-bottom: 1rem;
-  overflow: hidden;
 }
 
 .wcdWiz .step .footer {
