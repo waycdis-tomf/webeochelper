@@ -856,11 +856,13 @@ class wcdLibrary {
                 Object.keys(data.fields).forEach(key => {
                     console.log('data.fields[key]', data.fields[key])
                     if (data.fields[key] == 0) {
-                        if (!!wcd.files) {
+                        if (!!wcd.files) {console.log('1')
                             let fileInput = wcd.files.getFile(key);
                             if (!!fileInput) {
                                 fileInput.originalFile = false;
                             }
+                        } else {
+                            console.log('2')
                         }
                     }
                 });
