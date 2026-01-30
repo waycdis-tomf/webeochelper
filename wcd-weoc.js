@@ -861,19 +861,26 @@ class wcdLibrary {
                                 fileInput.originalFile = false;
                             }
                         }
-                    } else {
-                let formData = new FormData();
-                formData.append('', data.files[key]);
-                arrPromises.push(this.apiCall({
-                    endpoint: 'board/' + this.board + '/input/' + this.view + '/' + this.dataid + '/attachments/' + key,
-                    attachment: formData
-                }).then(result => {
-                    wcd.files.getFile(key).originalFile = true;
-                }));                        
                     }
                 });
                 return results;
-            }));
+            }).then((results) => {
+
+                Object.keys(data.files).forEach(key => {
+                    console.log('c', results)
+                    let formData = new FormData();
+                    formData.append('', data.files[key]);
+                    arrPromises.push(this.apiCall({
+                        endpoint: 'board/' + this.board + '/input/' + this.view + '/' +results+ '/attachments/' + key,
+                        attachment: formData
+                    }).then(result => {
+                        wcd.files.getFile(key).originalFile = true;
+                    }));
+                });                
+
+            })
+        
+        );
 
             /* Object.keys(data.files).forEach(key => {
                 console.log('', this.dataid)
