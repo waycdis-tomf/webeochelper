@@ -868,7 +868,24 @@ class wcdLibrary {
             };
 
             if (this.dataid == '0') {
-                await updateRecord();
+                let recordID = await updateRecord();
+                this.dataid = recordID;
+                if (!!parent.pageBoard) parent.pageBoard.BoardMgr.setRecordID(recordID);
+
+                let viewlinks = [];
+                document.querySelectorAll('a').forEach((ele) => {
+                    if (!!ele.getAttribute('onclick') && ele.getAttribute('onclick').indexOf('parent.pageBoard.BoardMgr.OpenRelatedView') > -1) {
+                        viewlinks.push(ele);
+                    }
+                });
+
+                viewlinks.forEach((ele) => {
+                    let firsthalf = ele.getAttribute('onclick').split('parent.pageBoard.BoardMgr.OpenRelatedView')[0];
+                    let secondhalfsplit = ele.getAttribute('onclick').split('parent.pageBoard.BoardMgr.OpenRelatedView')[1].split(',');
+                    secondhalfsplit[2] = "'" + recordID + "'";
+                    let secondhalf = secondhalfsplit.join(',');
+                    ele.setAttribute('onclick', firsthalf + 'parent.pageBoard.BoardMgr.OpenRelatedView' + secondhalf);
+                });
             } else {
                 arrPromises.push(updateRecord());
             }
@@ -884,32 +901,7 @@ class wcdLibrary {
                 }));
             });
 
-            return Promise.all(arrPromises).then(dataid => {
-                let recordID = dataid[0];
-                if (this.dataid == 0) {
-                    this.dataid = recordID;
-                    if (!!parent.pageBoard) parent.pageBoard.BoardMgr.setRecordID(recordID);
-
-                    let viewlinks = [];
-                    document.querySelectorAll('a').forEach((ele) => {
-                        if (!!ele.getAttribute('onclick') && ele.getAttribute('onclick').indexOf('parent.pageBoard.BoardMgr.OpenRelatedView') > -1) {
-                            viewlinks.push(ele);
-                        }
-                    });
-
-                    viewlinks.forEach((ele) => {
-                        let firsthalf = ele.getAttribute('onclick').split('parent.pageBoard.BoardMgr.OpenRelatedView')[0];
-                        let secondhalfsplit = ele.getAttribute('onclick').split('parent.pageBoard.BoardMgr.OpenRelatedView')[1].split(',');
-                        secondhalfsplit[2] = "'" + recordID + "'";
-                        let secondhalf = secondhalfsplit.join(',');
-                        ele.setAttribute('onclick', firsthalf + 'parent.pageBoard.BoardMgr.OpenRelatedView' + secondhalf);
-                    });
-
-                }
-
-
-                return this.dataid;
-            });
+            return Promise.all(arrPromises);
         });
     }
 
