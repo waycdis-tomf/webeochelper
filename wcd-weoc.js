@@ -852,6 +852,7 @@ class wcdLibrary {
                 endpoint: url,
                 data: data.fields
             }).then(results => {
+                console.log('results', results);
                 Object.keys(data.fields).forEach(key => {
                     if (data.fields[key] == 0) {
                         if (!!wcd.files) {
@@ -866,6 +867,7 @@ class wcdLibrary {
             }));
 
             Object.keys(data.files).forEach(key => {
+                console.log('dataID', this.dataid)
                 let formData = new FormData();
                 formData.append('', data.files[key]);
                 arrPromises.push(this.apiCall({
