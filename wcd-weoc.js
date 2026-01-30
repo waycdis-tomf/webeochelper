@@ -854,7 +854,7 @@ class wcdLibrary {
             }).then(results => {
                 console.log('results', results);
                 Object.keys(data.fields).forEach(key => {
-                    console.log('data.fields[key]', data.fields[key])
+                    console.log('data.fields[key]', data.fields[key], wcd.files)
                     if (data.fields[key] == 0) {
                         if (!!wcd.files) {console.log('1')
                             let fileInput = wcd.files.getFile(key);
