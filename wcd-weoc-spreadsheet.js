@@ -561,7 +561,7 @@ class WcdSpread {
         });
         // Store the Univer instance.
         this.univerCoreObject.univer = univerAPI;
-        univerAPI.toggleDarkMode(document.querySelector('body').getAttribute('data-bs-theme') === 'light' ? false : true);
+        univerAPI.toggleDarkMode(document.querySelector('html').getAttribute('data-bs-theme') === 'light' ? false : true);
         let workbookDataOptions = {
             id: 'sheet-1-id',
             name: `${wcd.board} Spreadsheet`,
