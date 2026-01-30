@@ -848,7 +848,7 @@ class wcdLibrary {
 
             let arrPromises = [];
 
-            async function updateRecord() {
+            const updateRecord = async() => {
                 return this.apiCall({
                     endpoint: url,
                     data: data.fields
@@ -865,7 +865,7 @@ class wcdLibrary {
                     });
                     return results;
                 });
-            }
+            };
 
             if (this.dataid == '0') {
                 await updateRecord();
