@@ -865,22 +865,18 @@ class wcdLibrary {
                 });
                 return results;
             }).then((results) => {
-
                 Object.keys(data.files).forEach(key => {
-                    console.log('c', results)
+                    console.log('dataid', results)
                     let formData = new FormData();
                     formData.append('', data.files[key]);
                     arrPromises.push(this.apiCall({
-                        endpoint: 'board/' + this.board + '/input/' + this.view + '/' +results+ '/attachments/' + key,
+                        endpoint: 'board/' + this.board + '/input/' + this.view + '/' + results + '/attachments/' + key,
                         attachment: formData
                     }).then(result => {
                         wcd.files.getFile(key).originalFile = true;
                     }));
-                });                
-
-            })
-        
-        );
+                });
+            }));
 
             /* Object.keys(data.files).forEach(key => {
                 console.log('', this.dataid)
@@ -893,7 +889,6 @@ class wcdLibrary {
                     wcd.files.getFile(key).originalFile = true;
                 }));
             }); */
-
 
             return Promise.all(arrPromises).then(dataid => {
                 let recordID = dataid[0];
