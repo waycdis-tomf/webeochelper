@@ -841,29 +841,37 @@ class wcdLibrary {
     }
 
     saveCurrentRecord(data, saveFunction = () => Promise.resolve(true)) {
-        return saveFunction().then((response) => {
+        return saveFunction().then(async (response) => {
             let url = this.dataid == '0'
                 ? "board/" + this.board + "/input/" + this.view
                 : "board/" + this.board + "/input/" + this.view + "/" + this.dataid;
 
             let arrPromises = [];
 
-            arrPromises.push(this.apiCall({
-                endpoint: url,
-                data: data.fields
-            }).then(results => {
-                Object.keys(data.fields).forEach(key => {
-                    if (data.fields[key] == 0) {
-                        if (!!wcd.files) {
-                            let fileInput = wcd.files.getFile(key);
-                            if (!!fileInput) {
-                                fileInput.originalFile = false;
+            async function updateRecord() {
+                return this.apiCall({
+                    endpoint: url,
+                    data: data.fields
+                }).then(results => {
+                    Object.keys(data.fields).forEach(key => {
+                        if (data.fields[key] == 0) {
+                            if (!!wcd.files) {
+                                let fileInput = wcd.files.getFile(key);
+                                if (!!fileInput) {
+                                    fileInput.originalFile = false;
+                                }
                             }
                         }
-                    }
+                    });
+                    return results;
                 });
-                return results;
-            }));
+            }
+
+            if (this.dataid == '0') {
+                await updateRecord();
+            } else {
+                arrPromises.push(updateRecord());
+            }
 
             Object.keys(data.files).forEach(key => {
                 let formData = new FormData();
