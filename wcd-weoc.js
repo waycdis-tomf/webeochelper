@@ -854,36 +854,29 @@ class wcdLibrary {
             }).then(results => {
                 console.log('results', results);
                 Object.keys(data.fields).forEach(key => {
-                    
-                    if (!!wcd.files) {
-                        console.log('dataID', results)
-                        let formData = new FormData();
-                        formData.append('', data.files[key]);
-                        arrPromises.push(this.apiCall({
-                            endpoint: 'board/' + this.board + '/input/' + this.view + '/' + results + '/attachments/' + key,
-                            attachment: formData
-                        }).then(result => {
-                            wcd.files.getFile(key).originalFile = true;
-                        }));
-                    }
-                    
-                    
-                    
-                    /* if (data.fields[key] == 0) {
+                    if (data.fields[key] == 0) {
                         if (!!wcd.files) {
                             let fileInput = wcd.files.getFile(key);
                             if (!!fileInput) {
                                 fileInput.originalFile = false;
                             }
                         }
-                    } */
-
+                    } else {
+                let formData = new FormData();
+                formData.append('', data.files[key]);
+                arrPromises.push(this.apiCall({
+                    endpoint: 'board/' + this.board + '/input/' + this.view + '/' + this.dataid + '/attachments/' + key,
+                    attachment: formData
+                }).then(result => {
+                    wcd.files.getFile(key).originalFile = true;
+                }));                        
+                    }
                 });
                 return results;
             }));
 
             /* Object.keys(data.files).forEach(key => {
-                console.log('dataID', this.dataid)
+                console.log('', this.dataid)
                 let formData = new FormData();
                 formData.append('', data.files[key]);
                 arrPromises.push(this.apiCall({
@@ -893,7 +886,8 @@ class wcdLibrary {
                     wcd.files.getFile(key).originalFile = true;
                 }));
             }); */
-            
+
+
             return Promise.all(arrPromises).then(dataid => {
                 let recordID = dataid[0];
                 if (this.dataid == 0) {
