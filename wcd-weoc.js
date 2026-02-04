@@ -521,14 +521,15 @@ class wcdLibrary {
 
         return fetch(request).then(response => {
             if (!response.ok) {
-                return Promise.reject(response.status);
+                let error = new Error(response.body)
+                error.code = response.status
+                return Promise.reject(error);
             } else {
                 if (!!response.headers.get('content-type') && response.headers.get('content-type').startsWith('application/json')) {
                     return Promise.resolve(response.json())
                 } else {
                     return Promise.resolve(response.body)
                 }
-
             }
         }).catch(e => {
             return Promise.reject(e);
