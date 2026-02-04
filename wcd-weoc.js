@@ -519,11 +519,11 @@ class wcdLibrary {
             });
         }
 
-        return fetch(request).then(response => {
+        return fetch(request).then(async response => {
             if (!response.ok) {
-                let error = new Error('HTTP Error');
+                let bodyContent = await response.text();
+                let error = new Error(bodyContent);
                 error.code = response.status;
-                error.message = response.body;
                 return Promise.reject(error);
             } else {
                 if (!!response.headers.get('content-type') && response.headers.get('content-type').startsWith('application/json')) {
