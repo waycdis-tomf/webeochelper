@@ -341,8 +341,6 @@ class WcdHistory {
     createTableRows(dataResults) {
         const tbody = document.getElementById('history-tbody');
         dataResults.forEach((item) => {
-            console.log('Object.keys(item)', Object.keys(item));
-            console.log('Object.keys(item).length', Object.keys(item).length);
             if (Object.keys(item).length > 8) {
                 let tr = document.createElement('tr');
                 let td1 = document.createElement('td');
@@ -391,7 +389,6 @@ class WcdHistory {
                 tr.appendChild(td2);
                 tr.appendChild(td3);
                 tr.appendChild(td4);
-                console.log('this.pdf', this.pdf)
                 if (this.pdf === false) {
                     tr.appendChild(td5);
                 }
@@ -502,14 +499,15 @@ document.addEventListener("DOMContentLoaded", function () {
             children: children
         });
     }
-    
+
 });
 
 // Add following code to the view.
-/* wcd.history = new WcdHistory(
-    '', // The element in which the history element will be added after.
-    '', // Parent API view.
-    '', // Header element id.
-    '', // PDF status, returns 'true' or 'false'.
-    true // Include children (False excludes any children records).
-); */
+/*
+<div id="wcd-history" data-wcd-view="History_Viewlink" data-wcd-children="yes">
+    <viewlink name="History_Viewlink" />
+</div>
+## id - Should always be 'wcd-history'.
+## data-view - The name of the viewlink that will be used to featch
+## data-wcd-children - Include children.
+*/
