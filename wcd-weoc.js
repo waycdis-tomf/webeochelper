@@ -521,8 +521,9 @@ class wcdLibrary {
 
         return fetch(request).then(response => {
             if (!response.ok) {
-                let error = new Error(response.body)
-                error.code = response.status
+                let error = new Error('HTTP Error');
+                error.code = response.status;
+                error.message = response.body;
                 return Promise.reject(error);
             } else {
                 if (!!response.headers.get('content-type') && response.headers.get('content-type').startsWith('application/json')) {
