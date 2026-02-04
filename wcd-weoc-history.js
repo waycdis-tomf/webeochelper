@@ -508,6 +508,6 @@ document.addEventListener("DOMContentLoaded", function () {
     <viewlink name="History_Viewlink" />
 </div>
 ## id - Should always be 'wcd-history'.
-## data-view - The name of the viewlink that will be used to featch
+## data-view - The name of the viewlink that will be used to fetch data.
 ## data-wcd-children - Include children.
 */
