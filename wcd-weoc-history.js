@@ -62,7 +62,7 @@ class WcdHistory {
         thd2.innerHTML = 'Date/Time';
         thd3.innerHTML = 'Source';
         thd4.appendChild(span);
-        if (this.pdf === 'false') {
+        if (this.pdf === false) {
             thd4.appendChild(infoIcon);
         }
         thd4.style.width = '35%';
@@ -71,7 +71,7 @@ class WcdHistory {
         thr.appendChild(thd2);
         thr.appendChild(thd3);
         thr.appendChild(thd4);
-        if (this.pdf === 'false') {
+        if (this.pdf === false) {
             thr.appendChild(thd5);
         }
         thead.appendChild(thr);
@@ -101,7 +101,7 @@ class WcdHistory {
         cardCol1.innerHTML = 'History Section';
         cardCol2.appendChild(cardSubSearch);
         cardRow.appendChild(cardCol1);
-        if (this.pdf === 'false') {
+        if (this.pdf === false) {
             cardRow.appendChild(cardCol2);
         }
         cardSubheader.classList.add('justify-content-between', 'align-items-center');
@@ -341,6 +341,8 @@ class WcdHistory {
     createTableRows(dataResults) {
         const tbody = document.getElementById('history-tbody');
         dataResults.forEach((item) => {
+            console.log('Object.keys(item)', Object.keys(item));
+            console.log('Object.keys(item).length', Object.keys(item).length);
             if (Object.keys(item).length > 8) {
                 let tr = document.createElement('tr');
                 let td1 = document.createElement('td');
@@ -373,7 +375,7 @@ class WcdHistory {
                     }
                 }
                 divComment.innerHTML = fieldChangesContent.replace(/<br>$/, '');
-                if (this.pdf === 'false') {
+                if (this.pdf === false) {
                     let br = divComment.querySelectorAll('br');
                     td4.appendChild(divComment);
                     if (br.length > 2) {
@@ -389,7 +391,8 @@ class WcdHistory {
                 tr.appendChild(td2);
                 tr.appendChild(td3);
                 tr.appendChild(td4);
-                if (this.pdf === 'false') {
+                console.log('this.pdf', this.pdf)
+                if (this.pdf === false) {
                     tr.appendChild(td5);
                 }
                 tbody.appendChild(tr);
@@ -459,7 +462,7 @@ class WcdHistory {
     }
 
     configureDataTables() {
-        if (this.pdf === 'false') {
+        if (this.pdf === false) {
             document.getElementById('history-table').classList.add('convertTable');
             if ($.fn.DataTable.isDataTable('#history-table') === false) {
                 const dtCallback = (() => {
