@@ -391,6 +391,7 @@ class WcdHistory {
                 tr.appendChild(td2);
                 tr.appendChild(td3);
                 tr.appendChild(td4);
+                console.log('this.pdf', this.pdf)
                 if (this.pdf === 'false') {
                     tr.appendChild(td5);
                 }
