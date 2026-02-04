@@ -341,6 +341,8 @@ class WcdHistory {
     createTableRows(dataResults) {
         const tbody = document.getElementById('history-tbody');
         dataResults.forEach((item) => {
+            console.log('Object.keys(item)', Object.keys(item));
+            console.log('Object.keys(item).length', Object.keys(item).length);
             if (Object.keys(item).length > 8) {
                 let tr = document.createElement('tr');
                 let td1 = document.createElement('td');
