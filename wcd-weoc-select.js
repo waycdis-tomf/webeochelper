@@ -378,7 +378,7 @@ if (typeof wcd != 'undefined') {
     });
 } else {
     document.addEventListener("DOMContentLoaded", () => {
-        element.querySelectorAll('select.wcd-select').forEach(select => {
+        document.querySelectorAll('select.wcd-select').forEach(select => {
             let search  = false;
             if (!!select.dataset.wcdSearchable) search = true;
             new wcdSelect({select: select, search: search});
