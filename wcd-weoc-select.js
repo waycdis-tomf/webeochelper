@@ -158,7 +158,7 @@ class wcdSelect {
 
     refreshSearch() {
         this.search.innerHTML = '';
-        if (!!wcd) {
+        if (typeof wcd != 'undefined') {
             wcd.modules.search.addSearch({search: this.search, container: this.menu, targets: '.option-wrapper', subTarget: '.option', dataAttributes: ['value']})
         } else {
             let searchElement = this.search;
@@ -354,7 +354,7 @@ class wcdSelect {
     }
 }
 
-if (!!wcd) {
+if (typeof wcd != 'undefined') {
     wcd.addMod({
         id: "select",
         name: "WAYCDIS Select",
