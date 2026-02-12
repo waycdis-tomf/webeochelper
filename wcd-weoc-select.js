@@ -3,6 +3,8 @@ class wcdSelect {
         this.active = false;
         this.search = search;
         this.select = select;
+        this.readonly = select.hasAttribute('readonly');
+        this.disabled = select.hasAttribute('disabled');
         this.placeholder = this.select.dataset.wcdPlaceholder;
         this.wrapper = document.createElement('div');
         this.wrapper.classList.add('wcd-select-wrapper');
@@ -156,7 +158,66 @@ class wcdSelect {
 
     refreshSearch() {
         this.search.innerHTML = '';
-        wcd.modules.search.addSearch({search: this.search, container: this.menu, targets: '.option-wrapper', subTarget: '.option', dataAttributes: ['value']})
+        if (!!wcd) {
+            wcd.modules.search.addSearch({search: this.search, container: this.menu, targets: '.option-wrapper', subTarget: '.option', dataAttributes: ['value']})
+        } else {
+            let searchElement = this.search;
+            let container = this.menu;
+            let targetSelector = '.option-wrapper';
+            let subTargetSelector = '.option';
+            let dataAttributes = ['value'];
+            if (!!searchElement && targetSelector) {
+                this.search = searchElement;
+                this.container = container;
+                this.targets = [];
+                this.container.querySelectorAll(`${targetSelector}`).forEach(target => {
+                    let objTarget = {
+                        element: target,
+                        display: target.style.display,
+                        values: []
+                    };
+                    if (!!target.innerText) objTarget.values.push(target.innerText.toLowerCase());
+                    if (!!target.value) objTarget.values.push(target.value.toLowerCase());
+                    dataAttributes.forEach(attName => {
+                        if (!!target.dataset[attName]) objTarget.values.push(target.dataset[attName].toLowerCase());
+                    });
+                    if (!!subTargetSelector) {
+                        let subTarget = target.querySelector(`${subTargetSelector}`);
+                        if (!!subTarget) {
+                            if (!!subTarget.value) objTarget.values.push(subTarget.value.toLowerCase());
+                            dataAttributes.forEach(attName => {
+                                if (!!subTarget.dataset[attName]) objTarget.values.push(subTarget.dataset[attName].toLowerCase());
+                            });
+                        }
+                    }
+                    this.targets.push(objTarget);
+                });
+
+                this.searcher = document.createElement('input');
+                this.searcher.type = 'text';
+                this.searcher.placeholder = 'Search...';
+                this.searcher.classList.add('form-control');
+                this.searcher.classList.add(...this.search.classList);
+
+                this.searcher.addEventListener('keyup', event => {
+                    this.targets.forEach(target => {
+                        let matched = false;
+                        target.values.some(value => {
+                            if (value.includes(this.searcher.value.toLowerCase())) {
+                                matched = true;
+                                return true;
+                            }
+                        });
+                        if (matched) {
+                            target.element.style.display = target.display;
+                        } else {
+                            target.element.style.setProperty('display', 'none', 'important');
+                        }
+                    });
+                });
+                this.search.appendChild(this.searcher);
+            }
+        }
     }
 
     refreshOptions(initial = false) {
@@ -293,24 +354,35 @@ class wcdSelect {
     }
 }
 
-wcd.addMod({
-    id: "select",
-    name: "WAYCDIS Select",
-    entities: [],
-    version: "0.1",
+if (!!wcd) {
+    wcd.addMod({
+        id: "select",
+        name: "WAYCDIS Select",
+        entities: [],
+        version: "0.1",
 
-    addSelects(element = document) {
+        addSelects(element = document) {
+            element.querySelectorAll('select.wcd-select').forEach(select => {
+                let search  = false;
+                if (!!select.dataset.wcdSearchable) search = true;
+                wcd.select.entities.push(new wcdSelect({select: select, search: search}));
+            });
+        }
+    });
+    wcd.select = wcd.modules.select;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        if (!!wcd.select) {
+            wcd.select.addSelects();
+        }
+    });
+} else {
+    document.addEventListener("DOMContentLoaded", () => {
         element.querySelectorAll('select.wcd-select').forEach(select => {
             let search  = false;
             if (!!select.dataset.wcdSearchable) search = true;
-            wcd.select.entities.push(new wcdSelect({select: select, search: search}));
+            new wcdSelect({select: select, search: search});
         });
-    }
-});
-wcd.select = wcd.modules.select;
+    });
+}
 
-document.addEventListener("DOMContentLoaded", () => {
-    if (!!wcd.select) {
-        wcd.select.addSelects();
-    }
-});
