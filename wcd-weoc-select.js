@@ -3,8 +3,6 @@ class wcdSelect {
         this.active = false;
         this.search = search;
         this.select = select;
-        this.readonly = select.getAttribute('readonly');
-        this.disabled = select.getAttribute('disabled');
         this.placeholder = this.select.dataset.wcdPlaceholder;
         this.wrapper = document.createElement('div');
         this.wrapper.classList.add('wcd-select-wrapper');
@@ -159,8 +157,8 @@ class wcdSelect {
     }
 
     refreshSelect() {
-        this.readonly = this.select.getAttribute('readonly');
-        this.disabled = this.select.getAttribute('disabled');
+        this.readonly = (this.select.hasAttribute('readonly') && this.select.getAttribute('readonly') != 'false');
+        this.disabled = (this.select.hasAttribute('disabled') && this.select.getAttribute('disabled') != 'false');
 
         if (!!this.disabled) {
             this.valueWrapper.classList.add('disabled');
@@ -260,7 +258,7 @@ class wcdSelect {
                     objOption.icon.classList.add('option-check');
                     objOption.icon.innerText = '✓';
                     objOption.element.classList.add('option', 'flex-fill');
-                    if ((initial && !!option.getAttribute('selected')) || (!initial && option.selected)) {
+                    if ((initial && option.hasAttribute('selected') && option.getAttribute('selected') != 'false') || (!initial && option.selected)) {
                         objOption.icon.style.display = '';
                         objOption.wrapper.classList.add('bg-success-subtle');
                         objOption.selected = true;
