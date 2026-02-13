@@ -314,20 +314,22 @@ class wcdSelect {
             this.drop.style.setProperty('display', 'none', 'important');
             this.wrapper.classList.remove('select-active');
         } else {
-            let screenHeight = document.documentElement.clientHeight;
-            let selectPosition = this.value.getBoundingClientRect();
-            let topHeight = selectPosition.top;
-            let bottomHeight = screenHeight - selectPosition.bottom;
-            if (topHeight > bottomHeight) {
-                this.drop.style.maxHeight = (topHeight-10) + 'px';
-                this.wrapper.classList.add('top');
-            } else {
-                this.drop.style.maxHeight = (bottomHeight-10) + 'px';
-                this.wrapper.classList.remove('top');
-            }
+            if (!this.readonly) {
+                let screenHeight = document.documentElement.clientHeight;
+                let selectPosition = this.value.getBoundingClientRect();
+                let topHeight = selectPosition.top;
+                let bottomHeight = screenHeight - selectPosition.bottom;
+                if (topHeight > bottomHeight) {
+                    this.drop.style.maxHeight = (topHeight-10) + 'px';
+                    this.wrapper.classList.add('top');
+                } else {
+                    this.drop.style.maxHeight = (bottomHeight-10) + 'px';
+                    this.wrapper.classList.remove('top');
+                }
 
+                this.drop.style.display = '';
+            }
             this.active = true;
-            this.drop.style.display = '';
             this.wrapper.classList.add('select-active');
         }
     }

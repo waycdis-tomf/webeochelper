@@ -30,10 +30,6 @@
     pointer-events: none;
 }
 
-.wcd-select-wrapper .wcd-select-value-wrapper.readonly {
-    pointer-events: none;
-}
-
 .wcd-select-wrapper .wcd-select-value-wrapper.readonly .wcd-select-value {
     cursor: text;
 }
