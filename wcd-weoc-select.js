@@ -3,8 +3,8 @@ class wcdSelect {
         this.active = false;
         this.search = search;
         this.select = select;
-        this.readonly = select.hasAttribute('readonly');
-        this.disabled = select.hasAttribute('disabled');
+        this.readonly = select.getAttribute('readonly');
+        this.disabled = select.getAttribute('disabled');
         this.placeholder = this.select.dataset.wcdPlaceholder;
         this.wrapper = document.createElement('div');
         this.wrapper.classList.add('wcd-select-wrapper');
@@ -69,6 +69,7 @@ class wcdSelect {
         this.wrapper.appendChild(this.drop);
 
         this.refreshOptions(true);
+        this.refreshSelect();
 
         this.valueWrapper.addEventListener('click', event => {
             if (!this.valueClear.contains(event.target)) this.toggle();
@@ -96,6 +97,7 @@ class wcdSelect {
         const refreshObserver = new MutationObserver((mutations, observer) => {
             this.refreshOptions();
             this.setValue();
+            this.refreshSelect();
         });
 
         refreshObserver.observe(this.select, {
@@ -154,6 +156,21 @@ class wcdSelect {
             enumerable: valueDescriptor.enumerable
         });
 
+    }
+
+    refreshSelect() {
+        this.readonly = this.select.getAttribute('readonly');
+        this.disabled = this.select.getAttribute('disabled');
+
+        if (!!this.disabled) {
+            this.valueWrapper.classList.add('disabled');
+            this.valueWrapper.classList.remove('readonly');
+        } else if (!!this.readonly) {
+            this.valueWrapper.classList.add('readonly');
+            this.valueWrapper.classList.remove('disabled');
+        } else {
+            this.valueWrapper.classList.remove('readonly','disabled');
+        }
     }
 
     refreshSearch() {
@@ -243,7 +260,7 @@ class wcdSelect {
                     objOption.icon.classList.add('option-check');
                     objOption.icon.innerText = '✓';
                     objOption.element.classList.add('option', 'flex-fill');
-                    if ((initial && option.hasAttribute('selected')) || (!initial && option.selected)) {
+                    if ((initial && !!option.getAttribute('selected')) || (!initial && option.selected)) {
                         objOption.icon.style.display = '';
                         objOption.wrapper.classList.add('bg-success-subtle');
                         objOption.selected = true;

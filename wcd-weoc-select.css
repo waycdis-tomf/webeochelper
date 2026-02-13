@@ -18,6 +18,26 @@
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
+.wcd-select-wrapper .wcd-select-value-wrapper.disabled {
+    color: var(--bs-tertiary-color);
+    background-color: var(--bs-tertiary-bg);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.wcd-select-wrapper .wcd-select-value-wrapper.disabled .wcd-select-value {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.wcd-select-wrapper .wcd-select-value-wrapper.readonly {
+    pointer-events: none;
+}
+
+.wcd-select-wrapper .wcd-select-value-wrapper.readonly .wcd-select-value {
+    cursor: text;
+}
+
 .wcd-select-wrapper .wcd-select-value {
     flex: 1 1 auto;
     overflow-x: hidden;
