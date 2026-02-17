@@ -149,6 +149,11 @@ class wcdLibrary {
         // Sets various parameters based on the current WebEOC record to be used
         this.dataid = queryParams.dataid;
         this.pdf = queryParams.pdf == 'true' ? true : false;
+        if (this.pdf) {
+            document.querySelector('.container').forEach(container=> {
+                container.classList.remove('container').add('container-fluid');
+            });
+        }
         this.relateddataid = queryParams.relateddataid;
         this.viewid = queryParams.viewid;
         this.tableid = queryParams.tableid;
