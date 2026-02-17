@@ -56,7 +56,7 @@ class WcdHistory {
         infoIcon.textContent = 'info';
         span.innerHTML = 'Comment ';
         table.classList.add('table', 'table-sm', 'table-striped');
-        table.id = 'history-table';
+        table.id = 'history_table';
         thead.classList.add('table-dark');
         thd1.innerHTML = 'Creator';
         thd2.innerHTML = 'Date/Time';
@@ -460,8 +460,8 @@ class WcdHistory {
 
     configureDataTables() {
         if (this.pdf === false) {
-            document.getElementById('history-table').classList.add('convertTable');
-            if ($.fn.DataTable.isDataTable('#history-table') === false) {
+            document.getElementById('history_table').classList.add('convertTable');
+            if ($.fn.DataTable.isDataTable('#history_table') === false) {
                 const dtCallback = (() => {
                     this.reConfigureClamplineHeight();
                 })
@@ -469,7 +469,7 @@ class WcdHistory {
                 setTimeout(() => {
                     dtCallback();
                 }, 350);
-                $('#history-table').on('draw.dt', () => {
+                $('#history_table').on('draw.dt', () => {
                     dtCallback();
                 });
             }
