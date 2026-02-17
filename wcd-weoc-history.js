@@ -2,7 +2,7 @@ class WcdHistory {
     constructor({
         element = false,
         view = false,
-        pdf = false,
+        pdf = wcd.pdf,
         children = false,
         loading_element = false
     }) {
@@ -490,12 +490,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (defaultElement && defaultElement.dataset.wcdView) {
         let children = false;
         if (defaultElement.dataset.wcdChildren) children = true;
-        let pdf = false;
-        if (defaultElement.dataset.wcdPDF) pdf = true;
         wcd.history = new WcdHistory({
             element: defaultElement,
             view: defaultElement.dataset.wcdView,
-            pdf: pdf,
             children: children
         });
     }
