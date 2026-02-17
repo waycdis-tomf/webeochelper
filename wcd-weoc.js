@@ -1111,7 +1111,7 @@ wcd.addMod({
 
 document.addEventListener("DOMContentLoaded", () => {
     if (wcd.pdf) {
-        document.querySelector('.container').forEach(container=> {
+        document.querySelectorAll('.container').forEach(container=> {
             container.classList.remove('container').add('container-fluid');
         });
     }
