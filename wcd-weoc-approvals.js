@@ -178,6 +178,7 @@ class wcdApprovalFlow {
             if (approval.skipped) {
                 eleApp.style['font-style'] = 'italic';
                 eleApp.style['font-size'] = '.75rem';
+                eleApp.style['color'] = 'var(--bs-tertiary-color)';
             }
             if (approval.denier) {
                 eleApp.style['font-weight'] = 'bold';
@@ -189,12 +190,12 @@ class wcdApprovalFlow {
             let eleApprover = document.createElement('div');
             eleApprover.classList.add('col-4', 'approver');
             if (approval.approver) eleApprover.innerHTML = '<span class="approverName">' + approval.approver + '</span>';
-            if (approval.skipped) eleApprover.innerText = 'N/A';
+            if (approval.skipped) eleApprover.innerText = `N/A - ${approval.skipped}`;
             if (approval.denier) eleApprover.innerHTML = 'DENIED - ' + approval.denier;
             let eleDate = document.createElement('div');
             eleDate.classList.add('col-4');
             if (approval.approvedOn) eleDate.innerText = wcd.formatDT(approval.approvedOn);
-            if (approval.skipped) eleDate.innerText = approval.skipped;
+            if (approval.skipped) eleDate.innerText = 'N/A';
             if (approval.deniedOn) eleDate.innerText = wcd.formatDT(approval.deniedOn);
 
             eleApp.appendChild(eleRole);
