@@ -706,7 +706,7 @@ class wcdLibrary {
             });
 
             document.querySelector('.modal-backdrop.show').addEventListener("click", async () => {
-                await this.cancelFunction();
+                await cancelFunction();
                 reject(false);
                 objModal.hide();
             });
@@ -714,7 +714,7 @@ class wcdLibrary {
             this.makeDraggable(modal);
 
             dismissButton.addEventListener("click", async () => {
-                await this.cancelFunction();
+                await cancelFunction();
                 reject(false);
                 objModal.hide();
             });
