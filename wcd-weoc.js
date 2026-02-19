@@ -700,18 +700,19 @@ class wcdLibrary {
             objModal.show();
 
             modal.addEventListener('hidden.bs.modal', () => {
-                resolve(false);
                 objModal.dispose();
                 modal.remove();
             });
 
             document.querySelector('.modal-backdrop.show').addEventListener("click", () => {
+                reject(false);
                 objModal.hide();
             });
 
             this.makeDraggable(modal);
 
             dismissButton.addEventListener("click", () => {
+                reject(false);
                 objModal.hide();
             });
         });
