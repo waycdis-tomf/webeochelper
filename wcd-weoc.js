@@ -621,7 +621,8 @@ class wcdLibrary {
         footer = [{
             text: 'Example Title',
             color: 'primary',
-            icon: false
+            icon: false,
+            preFunction: () => Promise.resolve()
         }],//object array
         validate = false //validate fields in modal body.
     }) {
@@ -674,15 +675,11 @@ class wcdLibrary {
                             iconCode = '<i class="material-symbols-outlined me-1">' + buttonProps.icon + '</i>';
                         }
                         button.innerHTML = iconCode + '<span>' + buttonProps.text + '</span>';
-                        button.addEventListener("click", () => {
-                            if (validate === true) {
-                                if (wcd.validateFormData(modalBody) === false) {
-                                    return false;
-                                } else {
-                                    resolve({ button: buttonProps.text, data: wcd.getFormData(modalBody) });
-                                    objModal.hide();
-                                }
+                        button.addEventListener("click", async () => {
+                            if (validate === true && wcd.validateFormData(modalBody) === false) {
+                                return false;
                             } else {
+                                await buttonProps.preFunction();
                                 resolve({ button: buttonProps.text, data: wcd.getFormData(modalBody) });
                                 objModal.hide();
                             }
