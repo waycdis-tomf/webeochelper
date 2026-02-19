@@ -92,6 +92,7 @@ class wcdWizardStep {
                 if (!!document.querySelector("#wcdOnCreate")) {
                     let onlyCreate = wcd.getChangedValues(wcd.getFormData(document.querySelector("#wcdOnCreate"), true));
                     formObject.fields = Object.assign(formObject.fields, onlyCreate.fields);
+                    formObject.files = Object.assign(formObject.files, onlyCreate.files);
                 }
             } else {
                 wcd.loading.small.show("Saving...");
@@ -106,10 +107,12 @@ class wcdWizardStep {
             if (Object.keys(formObject.fields).length || Object.keys(formObject.files).length || submit) {
                 if (!!document.querySelector("#wcdAlways")) {
                     formObject.fields = Object.assign(formObject.fields, wcd.getChangedValues(wcd.getFormData(document.querySelector("#wcdAlways"), true)).fields);
+                    formObject.files = Object.assign(formObject.files, wcd.getChangedValues(wcd.getFormData(document.querySelector("#wcdAlways"), true)).files);
                 }
                 if (submit) {
                     if (!!document.querySelector("#wcdOnSubmit")) {
                         formObject.fields = Object.assign(formObject.fields, wcd.getChangedValues(wcd.getFormData(document.querySelector("#wcdOnSubmit"), true)).fields);
+                        formObject.files = Object.assign(formObject.files, wcd.getChangedValues(wcd.getFormData(document.querySelector("#wcdOnSubmit"), true)).files);
                     }
                 }
                 wcd.setOriginalData();
