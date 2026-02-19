@@ -30,6 +30,12 @@
     pointer-events: none;
 }
 
+.wcd-select-wrapper .wcd-select-value-wrapper.readonly {
+    background-color: unset;
+    border: unset;
+    box-shadow: unset;
+}
+
 .wcd-select-wrapper .wcd-select-value-wrapper.readonly .wcd-select-value {
     cursor: text;
 }
