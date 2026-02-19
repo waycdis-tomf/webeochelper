@@ -49,15 +49,11 @@ class wcdSelect {
         this.wrapper.appendChild(select);
 
         this.valueWrapper.appendChild(this.value);
-        if (!this.select.required) {
-            if (selectedOptions.length < 1) {
-                this.valueClear.style.setProperty('display', 'none', 'important');
-            }
-            this.valueWrapper.appendChild(this.valueClear);
-            this.valueClear.addEventListener('click', event => {
-                this.select.value = '';
-            });
-        }
+        
+        this.valueWrapper.appendChild(this.valueClear);
+        this.valueClear.addEventListener('click', event => {
+            this.select.value = '';
+        });
         this.wrapper.appendChild(this.valueWrapper);
         if (search) {
             this.search = document.createElement('div');
@@ -159,6 +155,7 @@ class wcdSelect {
     refreshSelect() {
         this.readonly = (this.select.hasAttribute('readonly') && this.select.getAttribute('readonly') != 'false');
         this.disabled = (this.select.hasAttribute('disabled') && this.select.getAttribute('disabled') != 'false');
+        this.required = (this.select.hasAttribute('required') && this.select.getAttribute('required') != 'false');
 
         if (!!this.disabled) {
             this.valueWrapper.classList.add('disabled');
@@ -168,6 +165,13 @@ class wcdSelect {
             this.valueWrapper.classList.remove('disabled');
         } else {
             this.valueWrapper.classList.remove('readonly','disabled');
+        }
+        if (!this.select.required && !this.readonly && !this.disabled) {
+            if (this.select.value == '') {
+                this.valueClear.style.setProperty('display', 'none', 'important');
+            } else {
+                this.valueClear.style.display = '';
+            }
         }
     }
 
