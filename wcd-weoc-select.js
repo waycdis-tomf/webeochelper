@@ -88,15 +88,14 @@ class wcdSelect {
             });
         });
 
-        const refreshObserver = new MutationObserver((mutations, observer) => {
+        this.refreshObserver = new MutationObserver((mutations, observer) => {
             this.refreshOptions();
             this.setValue();
             this.refreshSelect();
         });
 
-        refreshObserver.observe(this.select, {
+        this.refreshObserver.observe(this.select, {
             attributes: true,
-            properties: true,
             childList: true,
             subtree: true,
             characterData: true
@@ -104,8 +103,34 @@ class wcdSelect {
 
         const eleSelect = this.select;
 
+        const currentWCDSelect = this;
+
         // Get the original descriptor from the prototype
         const valueDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+        const requiredDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'required');
+        const disabledDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'disabled');
+
+        const ogRequiredSetter = requiredDescriptor.set.bind(eleSelect);
+        Object.defineProperty(eleSelect, 'required', {
+            configurable: true,   // allow restoration later
+            enumerable: requiredDescriptor.enumerable,
+            get: requiredDescriptor.get ? requiredDescriptor.get.bind(eleSelect) : undefined,
+            set(newValue) {
+                ogRequiredSetter(newValue);
+                currentWCDSelect.refreshSelect();
+            }
+        });
+
+        const ogDisabledSetter = disabledDescriptor.set.bind(eleSelect);
+        Object.defineProperty(eleSelect, 'disabled', {
+            configurable: true,   // allow restoration later
+            enumerable: disabledDescriptor.enumerable,
+            get: disabledDescriptor.get ? disabledDescriptor.get.bind(eleSelect) : undefined,
+            set(newValue) {
+                ogDisabledSetter(newValue);
+                currentWCDSelect.refreshSelect();
+            }
+        });
 
         // Define a new property only for this instance
         Object.defineProperty(eleSelect, 'value', {
@@ -153,20 +178,20 @@ class wcdSelect {
     }
 
     refreshSelect() {
-        this.readonly = ((this.select.hasAttribute('readonly') && this.select.getAttribute('readonly') != 'false') || this.select.readOnly == true);
+        this.readonly = (this.select.hasAttribute('readonly') && this.select.getAttribute('readonly') != 'false');
         this.disabled = ((this.select.hasAttribute('disabled') && this.select.getAttribute('disabled') != 'false') || this.select.disabled == true);
         this.required = ((this.select.hasAttribute('required') && this.select.getAttribute('required') != 'false') || this.select.required == true);
 
-        if (!!this.disabled) {
+        if (this.disabled) {
             this.valueWrapper.classList.add('disabled');
             this.valueWrapper.classList.remove('readonly');
-        } else if (!!this.readonly) {
+        } else if (this.readonly) {
             this.valueWrapper.classList.add('readonly');
             this.valueWrapper.classList.remove('disabled');
         } else {
             this.valueWrapper.classList.remove('readonly','disabled');
         }
-        if (this.select.required || this.readonly || this.disabled) {
+        if (this.required || this.readonly || this.disabled) {
             this.valueClear.style.setProperty('display', 'none', 'important');
         } else {
             if (this.select.value == '') {
@@ -306,11 +331,7 @@ class wcdSelect {
             }
             this.value.innerText = textValue;
             if (!fromChange) this.select.value = value;
-            if (!!value) {
-                this.valueClear.style.display = '';
-            } else {
-                this.valueClear.style.setProperty('display', 'none', 'important');
-            }
+            this.refreshSelect();
         }
     }
 

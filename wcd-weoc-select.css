@@ -31,9 +31,9 @@
 }
 
 .wcd-select-wrapper .wcd-select-value-wrapper.readonly {
-    background-color: unset;
-    border: unset;
-    box-shadow: unset;
+    background-color: unset !important;
+    border: unset !important;
+    box-shadow: unset !important;
 }
 
 .wcd-select-wrapper .wcd-select-value-wrapper.readonly .wcd-select-value {
