@@ -622,7 +622,7 @@ class wcdLibrary {
             text: 'Example Title',
             color: 'primary',
             icon: false,
-            preFunction: () => Promise.resolve()
+            preFunction: async () => Promise.resolve()
         }],//object array
         validate = false //validate fields in modal body.
     }) {
