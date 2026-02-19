@@ -153,9 +153,9 @@ class wcdSelect {
     }
 
     refreshSelect() {
-        this.readonly = (this.select.hasAttribute('readonly') && this.select.getAttribute('readonly') != 'false' && this.select.readOnly != false);
-        this.disabled = (this.select.hasAttribute('disabled') && this.select.getAttribute('disabled') != 'false' && this.select.disabled != false);
-        this.required = (this.select.hasAttribute('required') && this.select.getAttribute('required') != 'false' && this.select.required != false);
+        this.readonly = ((this.select.hasAttribute('readonly') && this.select.getAttribute('readonly') != 'false') || this.select.readOnly == true);
+        this.disabled = ((this.select.hasAttribute('disabled') && this.select.getAttribute('disabled') != 'false') || this.select.disabled == true);
+        this.required = ((this.select.hasAttribute('required') && this.select.getAttribute('required') != 'false') || this.select.required == true);
 
         if (!!this.disabled) {
             this.valueWrapper.classList.add('disabled');
