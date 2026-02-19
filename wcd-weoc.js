@@ -129,6 +129,43 @@ class wcdDates {
         this.timezone = '';
     }
 }
+        //string/html 
+        footer = [{
+            text: 'Example Title',
+            color: 'primary',
+            icon: false,
+            buttonFunction: async () => Promise.resolve()
+        }],//object array
+         //validate fields in modal body.
+        cancelFunction = async () => Promise.resolve()
+//Modal
+class wcdModalButton {
+    constructor({ 
+        text = 'Example Title',
+        color = 'primary',
+        icon = false,
+        buttonFunction = async () => Promise.resolve()
+     }) {
+        this.title = '';
+    }
+}
+class wcdModal {
+    constructor({ 
+        type = 'info', 
+        title = 'Example Title', 
+        body = 'Example Body', 
+        validate = false,
+        cancelFunction = async () => Promise.resolve(),
+        footer = [{
+            text: 'Example Title',
+            color: 'primary',
+            icon: false,
+            buttonFunction: async () => Promise.resolve()
+        }]
+     }) {
+        this.title = '';
+    }
+}
 
 //This is the main WAYCDIS WebEOC library. It has the base functions for interacting with WebEOC and allows for the creation of the "wcd" object to be used.
 class wcdLibrary {
@@ -589,30 +626,6 @@ class wcdLibrary {
             }
         }
     }
-
-    /* Currently Unused, saving for possible future use
-    reloadElement2(elementID = false) {
-      let dPrm = new Promise((resolve, reject) => {
-        let callback = function(response) {
-          let mainHTML = response.responseText.split('</'+'head>')[1];
-          mainHTML.replace('</'+'html>', '');
-          let newDocument = document.createElement('div');
-          newDocument.innerHTML = mainHTML;
-          let newElement = newDocument.querySelector('#' + elementID);
-          let oldElement = document.querySelector('#' + elementID);
-          let oldParent = oldElement.parentNode;
-          oldElement.outerHTML = newElement.outerHTML;
-          if (!!wcd.files) {
-            wcd.files.addFiles(oldParent.querySelector('#' + elementID));
-          }
-          resolve();
-        }
-        parent.pageBoard.BoardMgr._GetBoard(parent.pageBoard.BoardMgr.IncidentID, parent.pageBoard.BoardMgr.getViewID(), null, null, null, null, null, callback)
-      });
-  
-      return dPrm;
-    }
-    */
 
     buildModal({
         type = 'info',//info/alert/action
