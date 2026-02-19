@@ -166,7 +166,9 @@ class wcdSelect {
         } else {
             this.valueWrapper.classList.remove('readonly','disabled');
         }
-        if (!this.select.required && !this.readonly && !this.disabled) {
+        if (this.select.required || this.readonly || this.disabled) {
+            this.valueClear.style.setProperty('display', 'none', 'important');
+        } else {
             if (this.select.value == '') {
                 this.valueClear.style.setProperty('display', 'none', 'important');
             } else {
