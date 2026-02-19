@@ -622,9 +622,10 @@ class wcdLibrary {
             text: 'Example Title',
             color: 'primary',
             icon: false,
-            preFunction: async () => Promise.resolve()
+            buttonFunction: async () => Promise.resolve()
         }],//object array
-        validate = false //validate fields in modal body.
+        validate = false, //validate fields in modal body.
+        cancelFunction = async () => Promise.resolve()
     }) {
         let dPrm = new Promise((resolve, reject) => {
             let modal = document.createElement('div');
@@ -679,7 +680,7 @@ class wcdLibrary {
                             if (validate === true && wcd.validateFormData(modalBody) === false) {
                                 return false;
                             } else {
-                                await buttonProps.preFunction();
+                                await buttonProps.buttonFunction();
                                 resolve({ button: buttonProps.text, data: wcd.getFormData(modalBody) });
                                 objModal.hide();
                             }
@@ -704,14 +705,16 @@ class wcdLibrary {
                 modal.remove();
             });
 
-            document.querySelector('.modal-backdrop.show').addEventListener("click", () => {
+            document.querySelector('.modal-backdrop.show').addEventListener("click", async () => {
+                await this.cancelFunction();
                 reject(false);
                 objModal.hide();
             });
 
             this.makeDraggable(modal);
 
-            dismissButton.addEventListener("click", () => {
+            dismissButton.addEventListener("click", async () => {
+                await this.cancelFunction();
                 reject(false);
                 objModal.hide();
             });
