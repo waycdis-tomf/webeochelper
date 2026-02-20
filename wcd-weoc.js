@@ -129,26 +129,8 @@ class wcdDates {
         this.timezone = '';
     }
 }
-        //string/html 
-        footer = [{
-            text: 'Example Title',
-            color: 'primary',
-            icon: false,
-            buttonFunction: async () => Promise.resolve()
-        }],//object array
-         //validate fields in modal body.
-        cancelFunction = async () => Promise.resolve()
+
 //Modal
-class wcdModalButton {
-    constructor({ 
-        text = 'Example Title',
-        color = 'primary',
-        icon = false,
-        buttonFunction = async () => Promise.resolve()
-     }) {
-        this.title = '';
-    }
-}
 class wcdModal {
     constructor({ 
         type = 'info', 
@@ -156,54 +138,128 @@ class wcdModal {
         body = 'Example Body', 
         validate = false,
         cancelFunction = async () => Promise.resolve(),
-        footer = [{
-            text: 'Example Title',
-            color: 'primary',
-            icon: false
-        }]
+        footer = false
      }) {
+        this.state = {};
+        this.state.promise = new Promise((presolve, preject)=> {
+            this.state.resolve = presolve;
+            this.state.reject = preject;
+        });
+        this.state = Object.assign(this.state, this.state.promise);
         this.type = type;
-        this.title = title;
+        this.title = document.createElement('span');
+        this.title.classList.add('modal-title');
+        if (!!title) this.title.innerText = title;
         this.validate = validate;
         this.cancelFunction = cancelFunction;
+        this.buttons = [];
         if (body.constructor == String) {
             this.body = document.createElement('div');
             this.body.innerHTML = body;
         } else {
             this.body = body;
         }
+        this.body.classList.add('modal-body');
         
         this.modal = document.createElement('div');
-        modal.classList.add('modal');
+        this.modal.classList.add('modal');
 
-        let modalDialog = document.createElement('div');
-        modalDialog.classList.add('modal-dialog', 'modal-dialog-centered', 'modal-lg');
+        this.dialog = document.createElement('div');
+        this.dialog.classList.add('modal-dialog', 'modal-dialog-centered', 'modal-lg');
 
-        let modalContent = document.createElement('div');
-        modalContent.classList.add('modal-content');
+        this.content = document.createElement('div');
+        this.content.classList.add('modal-content');
 
-        let modalHeader = document.createElement('div');
-        modalHeader.classList.add('modal-header');
+        this.header = document.createElement('div');
+        this.header.classList.add('modal-header');
 
-        let dismissButton = document.createElement('div');
-        dismissButton.setAttribute("role", "button");
-        dismissButton.classList.add("material-symbols-outlined");
-        dismissButton.innerText = 'close';
+        this.dismiss = document.createElement('div');
+        this.dismiss.setAttribute("role", "button");
+        this.dismiss.classList.add("material-symbols-outlined");
+        this.dismiss.innerText = 'close';
 
-        let modalTitle = document.createElement('span');
-        modalTitle.classList.add('modal-title');
-        if (!!title) {
-            modalTitle.innerText = title;
-        }
-        modalHeader.appendChild(modalTitle);
+        this.header.appendChild(this.title);
 
-        modalHeader.appendChild(dismissButton);
-        modalContent.appendChild(modalHeader);
-
-        let modalBody = document.createElement('div');
-        modalBody.classList.add('modal-body');
+        this.header.appendChild(this.dismiss);
+        this.content.appendChild(this.header);
         
-        modalContent.appendChild(modalBody);
+        this.content.appendChild(this.body);
+
+        this.footer = document.createElement('div');
+        this.footer.classList.add('modal-footer', 'd-flex', 'justify-content-end');
+        this.content.appendChild(this.footer);
+
+        if (this.type != 'action') {
+            this.footer.classList.add('d-none');
+        }
+
+        this.dialog.appendChild(this.content);
+        this.modal.appendChild(this.dialog);
+
+        if (this.type == 'action') {
+            if (!!footer) {
+                footer.forEach(buttonProps => {
+                    if (this.validate) buttonProps.validate = true;
+                    this.addButton(buttonProps);
+                });
+            } else {
+                this.addButton();
+            }
+        }
+    }
+
+    launch() {
+        document.body.appendChild(this.modal);
+        this.bsModal = new bootstrap.Modal(this.modal);
+
+        this.bsModal.show();
+
+        this.modal.addEventListener('hidden.bs.modal', () => {
+            this.bsModal.dispose();
+            this.modal.remove();
+        });
+
+        document.querySelector('.modal-backdrop.show').addEventListener("click", async () => {
+            await this.cancelFunction();
+            this.state.reject(false);
+            this.bsModal.hide();
+        });
+
+        wcd.makeDraggable(this.modal);
+
+        this.dismiss.addEventListener("click", async () => {
+            await this.cancelFunction();
+            this.state.reject(false);
+            this.bsModal.hide();
+        });
+        return this.state;
+    }
+
+    addButton({
+        text = 'Example Title',
+        color = 'primary',
+        icon = false,
+        validate = false,
+        buttonFunction = async () => Promise.resolve()
+    }) {
+        let button = document.createElement('div');
+        button.classList.add("btn", "btn-sm", "btn-outline-" + color, "d-flex", "align-items-center");
+        let iconCode = '';
+        if (!!icon) {
+            iconCode = '<i class="material-symbols-outlined me-1">' + icon + '</i>';
+        }
+        button.innerHTML = iconCode + '<span>' + text + '</span>';
+        button.addEventListener("click", async () => {
+            if (validate === true && wcd.validateFormData(this.body) === false) {
+                return false;
+            } else {
+                await buttonFunction();
+                this.state.resolve({ button: text, data: wcd.getFormData(this.body) });
+                this.bsModal.hide();
+            }
+        });
+        this.buttons.push(button);
+        this.footer.appendChild(button);
     }
 }
 
@@ -667,77 +723,9 @@ class wcdLibrary {
         }
     }
 
-    buildModal({
-        type = 'info',//info/alert/action
-        title = 'Example Title',//string
-        body = 'Example Body',//string/html 
-        footer = false,//object array
-        validate = false, //validate fields in modal body.
-        cancelFunction = async () => Promise.resolve()
-    }) {
-        let dPrm = new Promise((resolve, reject) => {
-            let modal = new wcdModal({
-                
-            })
-
-            if (type == 'action') {
-                let modalFooter = document.createElement('div');
-                modalFooter.classList.add('modal-footer', 'd-flex', 'justify-content-end');
-
-                if (!!footer) {
-                    footer.forEach(buttonProps => {
-                        let button = document.createElement('div');
-                        button.classList.add("btn", "btn-sm", "btn-outline-" + buttonProps.color, "d-flex", "align-items-center");
-                        let iconCode = '';
-                        if (!!buttonProps.icon) {
-                            iconCode = '<i class="material-symbols-outlined me-1">' + buttonProps.icon + '</i>';
-                        }
-                        button.innerHTML = iconCode + '<span>' + buttonProps.text + '</span>';
-                        button.addEventListener("click", async () => {
-                            if (validate === true && wcd.validateFormData(modalBody) === false) {
-                                return false;
-                            } else {
-                                await buttonProps.buttonFunction();
-                                resolve({ button: buttonProps.text, data: wcd.getFormData(modalBody) });
-                                objModal.hide();
-                            }
-                        });
-                        modalFooter.appendChild(button);
-                    });
-                }
-
-                modalContent.appendChild(modalFooter);
-            }
-
-            modalDialog.appendChild(modalContent);
-            modal.appendChild(modalDialog);
-
-            document.body.appendChild(modal);
-            let objModal = new bootstrap.Modal(modal);
-
-            objModal.show();
-
-            modal.addEventListener('hidden.bs.modal', () => {
-                objModal.dispose();
-                modal.remove();
-            });
-
-            document.querySelector('.modal-backdrop.show').addEventListener("click", async () => {
-                await cancelFunction();
-                reject(false);
-                objModal.hide();
-            });
-
-            this.makeDraggable(modal);
-
-            dismissButton.addEventListener("click", async () => {
-                await cancelFunction();
-                reject(false);
-                objModal.hide();
-            });
-        });
-
-        return dPrm;
+    buildModal(object = {}) {
+        let modal = new wcdModal(object);
+        return modal.launch();
     }
 
     removeRestore(element = false) {
