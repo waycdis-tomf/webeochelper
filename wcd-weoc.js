@@ -159,11 +159,51 @@ class wcdModal {
         footer = [{
             text: 'Example Title',
             color: 'primary',
-            icon: false,
-            buttonFunction: async () => Promise.resolve()
+            icon: false
         }]
      }) {
-        this.title = '';
+        this.type = type;
+        this.title = title;
+        this.validate = validate;
+        this.cancelFunction = cancelFunction;
+        if (body.constructor == String) {
+            this.body = document.createElement('div');
+            this.body.innerHTML = body;
+        } else {
+            this.body = body;
+        }
+        
+        this.modal = document.createElement('div');
+        modal.classList.add('modal');
+
+        let modalDialog = document.createElement('div');
+        modalDialog.classList.add('modal-dialog', 'modal-dialog-centered', 'modal-lg');
+
+        let modalContent = document.createElement('div');
+        modalContent.classList.add('modal-content');
+
+        let modalHeader = document.createElement('div');
+        modalHeader.classList.add('modal-header');
+
+        let dismissButton = document.createElement('div');
+        dismissButton.setAttribute("role", "button");
+        dismissButton.classList.add("material-symbols-outlined");
+        dismissButton.innerText = 'close';
+
+        let modalTitle = document.createElement('span');
+        modalTitle.classList.add('modal-title');
+        if (!!title) {
+            modalTitle.innerText = title;
+        }
+        modalHeader.appendChild(modalTitle);
+
+        modalHeader.appendChild(dismissButton);
+        modalContent.appendChild(modalHeader);
+
+        let modalBody = document.createElement('div');
+        modalBody.classList.add('modal-body');
+        
+        modalContent.appendChild(modalBody);
     }
 }
 
@@ -631,50 +671,14 @@ class wcdLibrary {
         type = 'info',//info/alert/action
         title = 'Example Title',//string
         body = 'Example Body',//string/html 
-        footer = [{
-            text: 'Example Title',
-            color: 'primary',
-            icon: false,
-            buttonFunction: async () => Promise.resolve()
-        }],//object array
+        footer = false,//object array
         validate = false, //validate fields in modal body.
         cancelFunction = async () => Promise.resolve()
     }) {
         let dPrm = new Promise((resolve, reject) => {
-            let modal = document.createElement('div');
-            modal.classList.add('modal');
-            let modalDialog = document.createElement('div');
-            modalDialog.classList.add('modal-dialog', 'modal-dialog-centered', 'modal-lg');
-            let modalContent = document.createElement('div');
-            modalContent.classList.add('modal-content');
-
-            let modalHeader = document.createElement('div');
-            modalHeader.classList.add('modal-header');
-            let dismissButton = document.createElement('div');
-            dismissButton.setAttribute("role", "button");
-            dismissButton.classList.add("material-symbols-outlined");
-            dismissButton.innerText = 'close';
-
-            let modalTitle = document.createElement('span');
-            modalTitle.classList.add('modal-title');
-            if (!!title) {
-                modalTitle.innerText = title;
-            }
-            modalHeader.appendChild(modalTitle);
-
-            modalHeader.appendChild(dismissButton);
-            modalContent.appendChild(modalHeader);
-
-            let modalBody = document.createElement('div');
-            modalBody.classList.add('modal-body');
-            if (!!body) {
-                if (body.constructor == String) {
-                    modalBody.innerHTML = body;
-                } else {
-                    modalBody.appendChild(body);
-                }
-            }
-            modalContent.appendChild(modalBody);
+            let modal = new wcdModal({
+                
+            })
 
             if (type == 'action') {
                 let modalFooter = document.createElement('div');
