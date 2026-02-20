@@ -130,6 +130,20 @@ class wcdDates {
     }
 }
 
+//WAYCDIS Deferred for use
+class wcdDeferred {
+  constructor() {
+    let resolve,reject
+    this.promise = new Promise((presolve, preject)=> {
+      resolve = presolve;
+      reject = preject;
+    });
+    this.promise.resolve = resolve;
+    this.promise.reject = reject;
+    return this.promise;
+  }
+}
+
 //Modal
 class wcdModal {
     constructor({ 
@@ -140,12 +154,7 @@ class wcdModal {
         cancelFunction = async () => Promise.resolve(),
         footer = false
      }) {
-        this.state = {};
-        this.state.promise = new Promise((presolve, preject)=> {
-            this.state.resolve = presolve;
-            this.state.reject = preject;
-        });
-        this.state = Object.assign(this.state, this.state.promise);
+        this.state = new wcdDeferred();
         this.type = type;
         this.title = document.createElement('span');
         this.title.classList.add('modal-title');
@@ -206,9 +215,12 @@ class wcdModal {
                 this.addButton();
             }
         }
+
+        if (!wcd.modals) wcd.modals = [];
+        wcd.modals.push(this);
     }
 
-    launch() {
+    async launch() {
         document.body.appendChild(this.modal);
         this.bsModal = new bootstrap.Modal(this.modal);
 
@@ -723,8 +735,9 @@ class wcdLibrary {
         }
     }
 
-    buildModal(object = {}) {
+    async buildModal(object = {}) {
         let modal = new wcdModal(object);
+        console.log(modal.state);
         return modal.launch();
     }
 
