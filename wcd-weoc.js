@@ -99,9 +99,15 @@ class wcdSearch {
         this.searcher.classList.add('form-control');
         this.searcher.classList.add(...this.search.classList);
 
-        this.searcher.addEventListener('keyup', event => {
-            this.apply();
-        });
+        const debounce = (fn, wait = 200) => {
+            let timeout;
+            return (...args) => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => fn.apply(this, args), wait);
+            };
+        };
+
+        this.searcher.addEventListener('keyup', debounce(() => this.apply(), 200));
         this.search.appendChild(this.searcher);
     }
 
@@ -375,9 +381,10 @@ class wcdLibrary {
         let arrFailedValidity = [];
 
         let arrNodeList = [];
+        let currentHiddenElements = this.getHiddenElements();
         element.querySelectorAll('input:not([type=search]),textarea,select').forEach(formElement => {
             let isHidden = false;
-            this.getHiddenElements().forEach(hiddenElement => {
+            currentHiddenElements.forEach(hiddenElement => {
                 if (hiddenElement == formElement) isHidden = true;
             });
             //if ((!formElement.dataset.wcdHiddenCt || formElement.dataset.wcdHiddenCt == 0) && !!formElement.name) {
@@ -578,109 +585,79 @@ class wcdLibrary {
         contentType = false,
         headers = false
     } = {}) {
-        return new Promise((resolve, reject) => {
-            try {
-                let xhr = new XMLHttpRequest();
-                if (user) {
-                    xhr.open(type, url, true, user, pass);
-                } else {
-                    xhr.open(type, url, true);
-                }
+        try {
+            const opts = { method: type };
 
-                if (contentType) xhr.setRequestHeader("Content-Type", contentType);
-                if (!!headers) {
-                    for (let key in headers) {
-                        xhr.setRequestHeader(key, headers[key]);
-                    }
-                }
-
-                xhr.onload = () => {
-                    console.log('http loaded');
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        resolve(xhr);
-                    } else {
-                        reject({
-                            status: xhr.status,
-                            text: xhr.statusText
-                        });
-                    }
-                };
-
-                xhr.onerror = () => reject(new Error("HTTP error"));
-
-                if (type == "POST") {
-                    xhr.send(data);
-                } else {
-                    xhr.send();
-                }
-            } catch (err) {
-                reject({
-                    status: err.code,
-                    text: err.message
-                });
+            const hdrs = new Headers();
+            if (contentType) hdrs.set('Content-Type', contentType);
+            if (headers) {
+                for (let key in headers) hdrs.set(key, headers[key]);
+            }
+            if (user) {
+                hdrs.set('Authorization', 'Basic ' + btoa(user + ':' + (pass || '')));
             }
 
-        });
+            opts.headers = hdrs;
+
+            if (type === 'POST' && data !== false) {
+                opts.body = data;
+            }
+
+            const response = await fetch(url, opts);
+            const text = await response.text();
+
+            if (response.ok) {
+                return { status: response.status, statusText: response.statusText, responseText: text, headers: response.headers };
+            } else {
+                return Promise.reject({ status: response.status, text: response.statusText, body: text });
+            }
+        } catch (err) {
+            return Promise.reject({ status: err.code || 0, text: err.message || String(err) });
+        }
     }
 
     async apiCall({ endpoint, data = false, filter = false, attachment = false, dataProp = true, headers = {} } = {}) {
-        headers = new Headers(headers);
+        const hdrs = new Headers(headers);
+        const type = data || filter || attachment ? 'POST' : 'GET';
+        let body = undefined;
 
-        let type = data || filter || attachment ? "POST" : "GET";
-        let body = false;
-
-        if (type == "POST") {
+        if (type === 'POST') {
             if (attachment) {
                 body = attachment;
             } else {
-                headers.append("Content-Type", "application/json");
+                hdrs.set('Content-Type', 'application/json');
                 if (data && dataProp) {
                     body = JSON.stringify({ data: JSON.stringify(data) });
                 } else if (data && !dataProp) {
                     body = JSON.stringify(data);
                 } else if (filter) {
-                    if (filter.constructor === String) {
+                    if (typeof filter === 'string') {
                         body = JSON.stringify({ viewFilter: filter });
                     } else {
-                        body = JSON.stringify({ customFilter: filter })
-                            .replace("<", "&lt;")
-                            .replace("&", "&amp;");
+                        body = JSON.stringify({ customFilter: filter }).replace('<', '&lt;').replace('&', '&amp;');
                     }
                 }
             }
         }
 
-        let request;
+        const options = { method: type, headers: hdrs };
+        if (body !== undefined) options.body = body;
 
-        if (!!body) {
-            request = new Request(this.apiURL + endpoint, {
-                method: type,
-                headers: headers,
-                body: body
-            });
-        } else {
-            request = new Request(this.apiURL + endpoint, {
-                method: type,
-                headers: headers
-            });
-        }
-
-        return fetch(request).then(async response => {
+        try {
+            const response = await fetch(this.apiURL + endpoint, options);
             if (!response.ok) {
-                let bodyContent = await response.text();
-                let error = new Error(bodyContent);
+                const bodyContent = await response.text();
+                const error = new Error(bodyContent);
                 error.code = response.status;
                 return Promise.reject(error);
-            } else {
-                if (!!response.headers.get('content-type') && response.headers.get('content-type').startsWith('application/json')) {
-                    return Promise.resolve(response.json())
-                } else {
-                    return Promise.resolve(response.body)
-                }
             }
-        }).catch(e => {
+
+            const ct = response.headers.get('content-type') || '';
+            if (ct.startsWith('application/json')) return response.json();
+            return response.text();
+        } catch (e) {
             return Promise.reject(e);
-        });
+        }
     }
 
     objToFormData(obj) {
