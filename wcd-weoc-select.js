@@ -51,9 +51,10 @@ class wcdSelect {
         this.valueWrapper.appendChild(this.value);
         
         this.valueWrapper.appendChild(this.valueClear);
-        this.valueClear.addEventListener('click', event => {
+        this._onValueClearClick = (event) => {
             this.select.value = '';
-        });
+        };
+        this.valueClear.addEventListener('click', this._onValueClearClick);
         this.wrapper.appendChild(this.valueWrapper);
         if (search) {
             this.search = document.createElement('div');
@@ -65,17 +66,19 @@ class wcdSelect {
         this.refreshOptions(true);
         this.refreshSelect();
 
-        this.valueWrapper.addEventListener('click', event => {
+        this._onValueWrapperClick = (event) => {
             if (!this.valueClear.contains(event.target)) this.toggle();
-        });
+        };
+        this.valueWrapper.addEventListener('click', this._onValueWrapperClick);
 
-        document.addEventListener("click", (event) => {
+        this._onDocumentClick = (event) => {
             if ((!this.wrapper.contains(event.target)) && this.active) {
                 this.toggle();
             }
-        });
+        };
+        document.addEventListener("click", this._onDocumentClick);
 
-        this.select.addEventListener('change', event => {
+        this._onSelectChange = (event) => {
             let arrValue = this.select.value.split(',');
             this.options.forEach((option) => {
                 if (!option.disabled) {
@@ -86,7 +89,8 @@ class wcdSelect {
                     }
                 }
             });
-        });
+        };
+        this.select.addEventListener('change', this._onSelectChange);
 
         this.refreshObserver = new MutationObserver((mutations, observer) => {
             this.refreshOptions();
@@ -109,6 +113,12 @@ class wcdSelect {
         const valueDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
         const requiredDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'required');
         const disabledDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'disabled');
+
+        // Keep references for cleanup in destroy()
+        this._valueDescriptor = valueDescriptor;
+        this._requiredDescriptor = requiredDescriptor;
+        this._disabledDescriptor = disabledDescriptor;
+        this._eleSelect = eleSelect;
 
         const ogRequiredSetter = requiredDescriptor.set.bind(eleSelect);
         Object.defineProperty(eleSelect, 'required', {
@@ -213,7 +223,6 @@ class wcdSelect {
             let subTargetSelector = '.option';
             let dataAttributes = ['value'];
             if (!!searchElement && targetSelector) {
-                this.search = searchElement;
                 this.container = container;
                 this.targets = [];
                 this.container.querySelectorAll(`${targetSelector}`).forEach(target => {
@@ -239,31 +248,56 @@ class wcdSelect {
                     this.targets.push(objTarget);
                 });
 
-                this.searcher = document.createElement('input');
-                this.searcher.type = 'text';
-                this.searcher.placeholder = 'Search...';
-                this.searcher.classList.add('form-control');
-                this.searcher.classList.add(...this.search.classList);
+                if (!this.searcher) {
+                    this.searcher = document.createElement('input');
+                    this.searcher.type = 'text';
+                    this.searcher.placeholder = 'Search...';
+                    this.searcher.classList.add('form-control');
+                    this.searcher.classList.add(...this.search.classList);
 
-                this.searcher.addEventListener('keyup', event => {
-                    this.targets.forEach(target => {
-                        let matched = false;
-                        target.values.some(value => {
-                            if (value.includes(this.searcher.value.toLowerCase())) {
-                                matched = true;
-                                return true;
+                    this._onSearchKeyup = (event) => {
+                        const q = (this.searcher.value || '').toLowerCase();
+                        this.targets.forEach(target => {
+                            let matched = false;
+                            target.values.some(value => {
+                                if (value.includes(q)) {
+                                    matched = true;
+                                    return true;
+                                }
+                            });
+                            if (matched) {
+                                target.element.style.display = target.display;
+                            } else {
+                                target.element.style.setProperty('display', 'none', 'important');
                             }
                         });
-                        if (matched) {
-                            target.element.style.display = target.display;
-                        } else {
-                            target.element.style.setProperty('display', 'none', 'important');
-                        }
-                    });
-                });
-                this.search.appendChild(this.searcher);
+                    };
+
+                    this._debouncedOnSearchKeyup = this.debounce(this._onSearchKeyup, 150);
+                    this.searcher.addEventListener('keyup', this._debouncedOnSearchKeyup);
+                    this.search.appendChild(this.searcher);
+                } else {
+                    // ensure searcher is attached and updated
+                    this.search.appendChild(this.searcher);
+                }
             }
         }
+    }
+
+    debounce(fn, wait) {
+        let timeout = null;
+        const debounced = (...args) => {
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                timeout = null;
+                fn.apply(this, args);
+            }, wait);
+        };
+        debounced.cancel = () => {
+            if (timeout) clearTimeout(timeout);
+            timeout = null;
+        };
+        return debounced;
     }
 
     refreshOptions(initial = false) {
@@ -395,6 +429,50 @@ class wcdSelect {
         }
         let fromChange = toggle ? false : true;
         this.setValue(fromChange);
+    }
+
+    destroy() {
+        try { if (this.refreshObserver) this.refreshObserver.disconnect(); } catch (e) {}
+        try { document.removeEventListener('click', this._onDocumentClick); } catch (e) {}
+        try { if (this.valueClear && this._onValueClearClick) this.valueClear.removeEventListener('click', this._onValueClearClick); } catch (e) {}
+        try { if (this.valueWrapper && this._onValueWrapperClick) this.valueWrapper.removeEventListener('click', this._onValueWrapperClick); } catch (e) {}
+        try { if (this.select && this._onSelectChange) this.select.removeEventListener('change', this._onSelectChange); } catch (e) {}
+        try { if (this.searcher && this._debouncedOnSearchKeyup) this.searcher.removeEventListener('keyup', this._debouncedOnSearchKeyup); } catch (e) {}
+        try { if (this._debouncedOnSearchKeyup && this._debouncedOnSearchKeyup.cancel) this._debouncedOnSearchKeyup.cancel(); } catch (e) {}
+
+        // restore native descriptors by removing the instance-created properties (they were configurable)
+        try { if (this._eleSelect) { delete this._eleSelect.value; delete this._eleSelect.required; delete this._eleSelect.disabled; } } catch (e) {}
+
+        // Replace wrapper with original select in the DOM if still present
+        try {
+            if (this.wrapper && this.select && this.wrapper.parentNode) {
+                this.wrapper.replaceWith(this.select);
+            }
+        } catch (e) {}
+
+        // Null out references to help GC
+        this.refreshObserver = null;
+        this._onDocumentClick = null;
+        this._onValueClearClick = null;
+        this._onValueWrapperClick = null;
+        this._onSelectChange = null;
+        this._onSearchKeyup = null;
+        this._debouncedOnSearchKeyup = null;
+        this._eleSelect = null;
+        this._valueDescriptor = null;
+        this._requiredDescriptor = null;
+        this._disabledDescriptor = null;
+        this.wrapper = null;
+        this.valueWrapper = null;
+        this.value = null;
+        this.valueClear = null;
+        this.drop = null;
+        this.menu = null;
+        this.options = null;
+        this.search = null;
+        this.searcher = null;
+        this.targets = null;
+        this.select = null;
     }
 }
 
