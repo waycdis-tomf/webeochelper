@@ -303,8 +303,9 @@ class wcdSelect {
     refreshOptions(initial = false) {
         this.menu.innerHTML = '';
         this.options = [];
+        const frag = document.createDocumentFragment();
         this.select.querySelectorAll('option').forEach((option, ind) => {
-            let opVal = (!!option.value) ? option.value : option.innerText
+            let opVal = (!!option.value) ? option.value : option.innerText;
             if (!!opVal) {
                 let objOption = {
                     text: option.innerText,
@@ -317,6 +318,7 @@ class wcdSelect {
                     objOption.wrapper = document.createElement('div');
                     objOption.icon = document.createElement('div');
                     objOption.wrapper.classList.add('option-wrapper');
+                    objOption.wrapper.dataset.value = opVal;
                     objOption.element.innerText = option.innerText;
                     objOption.element.dataset.value = opVal;
                     objOption.icon.style.display = 'none';
@@ -331,15 +333,25 @@ class wcdSelect {
 
                     objOption.wrapper.appendChild(objOption.element);
                     objOption.wrapper.appendChild(objOption.icon);
-                    this.menu.appendChild(objOption.wrapper);
-
-                    objOption.wrapper.addEventListener('click', event => {
-                        this.selectOption(objOption);
-                    });
+                    frag.appendChild(objOption.wrapper);
                 }
                 this.options.push(objOption);
             }
         });
+        this.menu.appendChild(frag);
+
+        // Add delegated click handler to menu to avoid per-option listeners
+        if (!this._onMenuClick) {
+            this._onMenuClick = (event) => {
+                const wrapper = event.target.closest && event.target.closest('.option-wrapper');
+                if (!wrapper || !this.menu.contains(wrapper)) return;
+                const val = wrapper.dataset.value;
+                if (!val) return;
+                const option = this.options.find(o => o.value === val);
+                if (option) this.selectOption(option);
+            };
+            this.menu.addEventListener('click', this._onMenuClick);
+        }
         if (this.search) this.refreshSearch();
     }
 
@@ -449,6 +461,8 @@ class wcdSelect {
                 this.wrapper.replaceWith(this.select);
             }
         } catch (e) {}
+
+        try { if (this.menu && this._onMenuClick) this.menu.removeEventListener('click', this._onMenuClick); } catch (e) {}
 
         // Null out references to help GC
         this.refreshObserver = null;
