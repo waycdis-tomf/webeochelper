@@ -100,9 +100,9 @@ class wcdSelect {
 
         this.refreshObserver.observe(this.select, {
             attributes: true,
+            attributeFilter: ['disabled','required','readonly','value'],
             childList: true,
-            subtree: true,
-            characterData: true
+            subtree: true
         });
 
         // NOTE: per-instance property redefinitions were removed in favor of
