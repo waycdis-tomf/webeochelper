@@ -585,35 +585,49 @@ class wcdLibrary {
         contentType = false,
         headers = false
     } = {}) {
-        try {
-            const opts = { method: type };
+        return new Promise((resolve, reject) => {
+            try {
+                let xhr = new XMLHttpRequest();
+                if (user) {
+                    xhr.open(type, url, true, user, pass);
+                } else {
+                    xhr.open(type, url, true);
+                }
 
-            const hdrs = new Headers();
-            if (contentType) hdrs.set('Content-Type', contentType);
-            if (headers) {
-                for (let key in headers) hdrs.set(key, headers[key]);
+                if (contentType) xhr.setRequestHeader("Content-Type", contentType);
+                if (!!headers) {
+                    for (let key in headers) {
+                        xhr.setRequestHeader(key, headers[key]);
+                    }
+                }
+
+                xhr.onload = () => {
+                    console.log('http loaded');
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        resolve(xhr);
+                    } else {
+                        reject({
+                            status: xhr.status,
+                            text: xhr.statusText
+                        });
+                    }
+                };
+
+                xhr.onerror = () => reject(new Error("HTTP error"));
+
+                if (type == "POST") {
+                    xhr.send(data);
+                } else {
+                    xhr.send();
+                }
+            } catch (err) {
+                reject({
+                    status: err.code,
+                    text: err.message
+                });
             }
-            if (user) {
-                hdrs.set('Authorization', 'Basic ' + btoa(user + ':' + (pass || '')));
-            }
 
-            opts.headers = hdrs;
-
-            if (type === 'POST' && data !== false) {
-                opts.body = data;
-            }
-
-            const response = await fetch(url, opts);
-            const text = await response.text();
-
-            if (response.ok) {
-                return { status: response.status, statusText: response.statusText, responseText: text, headers: response.headers };
-            } else {
-                return Promise.reject({ status: response.status, text: response.statusText, body: text });
-            }
-        } catch (err) {
-            return Promise.reject({ status: err.code || 0, text: err.message || String(err) });
-        }
+        });
     }
 
     async apiCall({ endpoint, data = false, filter = false, attachment = false, dataProp = true, headers = {} } = {}) {
