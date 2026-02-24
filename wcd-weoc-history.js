@@ -224,7 +224,7 @@ class WcdHistory {
                         const previousHistoryRecordVal = previousHistoryRecord[key] === '' || previousHistoryRecord[key] === 'undefined' || previousHistoryRecord[key] === undefined || previousHistoryRecord[key] === null ? '' : previousHistoryRecord[key];
                         if (historyRecordVal !== previousHistoryRecordVal) {
                             if (key == 'history_comment') {
-                                newHistoryObject[key] = `Comment: '${histVal}'.`;
+                                newHistoryObject[key] = historyRecordVal;
                             } else {
                                 let prevHistVal;
                                 let histVal;
@@ -367,13 +367,15 @@ class WcdHistory {
                 td3.innerHTML = item.tablename;
                 let fieldChangesContent = '';
                 for (const key in item) {
-                    if (key.indexOf('fk_table') === -1 && key !== 'dataid' && key !== 'prevdataid' && key !== 'subscribername' && key !== 'entrydate' && key !== 'tablename' && key !== 'username' && key !== 'positionname' && key !== 'origrecord' && key !== 'fullrecord' && key.indexOf('RemoveExp') === -1) {
+                    if (key.indexOf('fk_table') === -1 && key !== 'dataid' && key !== 'prevdataid' && key !== 'subscribername' && key !== 'entrydate' && key !== 'tablename' && key !== 'username' && key !== 'positionname' && key !== 'origrecord' && key !== 'history_comment' && key !== 'fullrecord' && key.indexOf('RemoveExp') === -1) {
                         if (item[key] !== '') {
                             const preFieldLabel = key.indexOf('þAttachment') > -1 ? key.replace(/þAttachment/g, '') : (key.indexOf('þMoney') > -1 ? key.replace(/þMoney/g, '') : key);
                             const fieldLabel = preFieldLabel.replace(/_/g, ' ');
                             const fieldChanges = `${fieldLabel}: ${item[key]}<br>`;
                             fieldChangesContent += fieldChanges;
                         }
+                    } else if (key === 'history_comment') {
+                        fieldChangesContent += `Comment: ${item[key]}<br>`;
                     }
                 }
                 divComment.innerHTML = fieldChangesContent.replace(/<br>$/, '');
@@ -412,7 +414,7 @@ class WcdHistory {
     viewDetails(item) {
         let bodyContents = '';
         for (const key in item) {
-            if (key.indexOf('fk_table') === -1 && key !== 'dataid' && key !== 'prevdataid' && key !== 'subscribername' && key !== 'entrydate' && key !== 'tablename' && key !== 'username' && key !== 'positionname' && key.indexOf('RemoveExp') === -1) {
+            if (key.indexOf('fk_table') === -1 && key !== 'dataid' && key !== 'prevdataid' && key !== 'subscribername' && key !== 'entrydate' && key !== 'tablename' && key !== 'username' && key !== 'positionname' && key !== 'history_comment' && key.indexOf('RemoveExp') === -1) {
                 if (item[key] !== '') {
                     let itemKey;
                     let itemVal;
@@ -434,6 +436,8 @@ class WcdHistory {
                     const fieldChanges = `${fieldLabel}: ${itemVal}<br>`;
                     bodyContents += fieldChanges;
                 }
+            } else if (key === 'history_comment') {
+                bodyContents += `Added comment: '${item[key]}'<br>`;
             }
         }
         return wcd.buildModal({
