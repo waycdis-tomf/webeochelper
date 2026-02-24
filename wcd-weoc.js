@@ -344,9 +344,15 @@ class wcdLibrary {
         this.modules[module.id] = module;
     }
 
-    //Refreshes originalData with everything on the screen
-    setOriginalData() {
-        Object.assign(this.originalData, this.getFormData(document.querySelector('body'), true));
+    //Refreshes originalData with everything on the screen or step supplied
+    setOriginalData(element = document.querySelector('body')) {
+        Object.assign(this.originalData, this.getFormData(element, true));
+    }
+
+    clearOriginalData(formData = this.getFormData(document.querySelector('body'), true)) {
+        Object.keys(formData.fields).forEach(key => {
+            this.originalData.fields[key] = '';
+        });
     }
 
     parseJSON(jsonString) {

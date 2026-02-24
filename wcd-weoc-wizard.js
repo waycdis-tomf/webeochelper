@@ -320,6 +320,7 @@ class wcdWizard {
     async nextStep(saveConfig = false) {
         try {
             await this.currentStep.save(saveConfig, this.currentStep.getNextStep());
+            clearOriginalData(this.getFormData(this.currentStep.bodyNode, true));
             return Promise.resolve();
         } catch (e) {
             return Promise.reject(e);
