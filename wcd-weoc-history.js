@@ -223,27 +223,31 @@ class WcdHistory {
                         const historyRecordVal = historyRecord[key] === '' || historyRecord[key] === 'undefined' || historyRecord[key] === undefined || historyRecord[key] === null ? '' : historyRecord[key];
                         const previousHistoryRecordVal = previousHistoryRecord[key] === '' || previousHistoryRecord[key] === 'undefined' || previousHistoryRecord[key] === undefined || previousHistoryRecord[key] === null ? '' : previousHistoryRecord[key];
                         if (historyRecordVal !== previousHistoryRecordVal) {
-                            let prevHistVal;
-                            let histVal;
-                            if (key.indexOf('date') > -1 || key.indexOf('Date') > -1) {
-                                prevHistVal = previousHistoryRecordVal === '' ? 'No Field Value' : this.formatDateTime(previousHistoryRecordVal);
-                            } else if (key.indexOf('þAttachment') > -1) {
-                                prevHistVal = parseInt(previousHistoryRecordVal) === 0 || previousHistoryRecordVal === '' || previousHistoryRecordVal === null ? 'No File Attached' : 'File Attached';
-                            } else if (key.indexOf('þMoney') > -1) {
-                                prevHistVal = wcd.formatCurrency(previousHistoryRecordVal);
+                            if (key == 'history_comment') {
+                                newHistoryObject[key] = `Comment: '${histVal}'.`;
                             } else {
-                                prevHistVal = previousHistoryRecordVal === '' ? 'No Field Value' : previousHistoryRecordVal;
+                                let prevHistVal;
+                                let histVal;
+                                if (key.indexOf('date') > -1 || key.indexOf('Date') > -1) {
+                                    prevHistVal = previousHistoryRecordVal === '' ? 'No Field Value' : this.formatDateTime(previousHistoryRecordVal);
+                                } else if (key.indexOf('þAttachment') > -1) {
+                                    prevHistVal = parseInt(previousHistoryRecordVal) === 0 || previousHistoryRecordVal === '' || previousHistoryRecordVal === null ? 'No File Attached' : 'File Attached';
+                                } else if (key.indexOf('þMoney') > -1) {
+                                    prevHistVal = wcd.formatCurrency(previousHistoryRecordVal);
+                                } else {
+                                    prevHistVal = previousHistoryRecordVal === '' ? 'No Field Value' : previousHistoryRecordVal;
+                                }
+                                if (key.indexOf('date') > -1 || key.indexOf('Date') > -1) {
+                                    histVal = historyRecordVal === '' ? 'No Field Value' : this.formatDateTime(historyRecordVal);
+                                } else if (key.indexOf('þAttachment') > -1) {
+                                    histVal = parseInt(historyRecordVal) === 0 || historyRecordVal === '' || historyRecordVal === null ? 'No File Attached' : 'File Attached';
+                                } else if (key.indexOf('þMoney') > -1) {
+                                    histVal = wcd.formatCurrency(historyRecordVal);
+                                } else {
+                                    histVal = historyRecordVal === '' ? 'No Field Value' : historyRecordVal;
+                                }
+                                newHistoryObject[key] = `Changed from '${prevHistVal}' to '${histVal}'.`;
                             }
-                            if (key.indexOf('date') > -1 || key.indexOf('Date') > -1) {
-                                histVal = historyRecordVal === '' ? 'No Field Value' : this.formatDateTime(historyRecordVal);
-                            } else if (key.indexOf('þAttachment') > -1) {
-                                histVal = parseInt(historyRecordVal) === 0 || historyRecordVal === '' || historyRecordVal === null ? 'No File Attached' : 'File Attached';
-                            } else if (key.indexOf('þMoney') > -1) {
-                                histVal = wcd.formatCurrency(historyRecordVal);
-                            } else {
-                                histVal = historyRecordVal === '' ? 'No Field Value' : historyRecordVal;
-                            }
-                            newHistoryObject[key] = `Changed from '${prevHistVal}' to '${histVal}'.`;
                         }
                     }
                 }
