@@ -92,6 +92,11 @@
     box-shadow: rgba(0, 0, 0, 0.15) 0px 0.5rem 1rem;
 }
 
+.wcd-select-wrapper .wcd-drop .search {
+    position: sticky;
+    top: 0;
+}
+
 .wcd-select-wrapper.top .wcd-drop {
     bottom: 100%;
 }

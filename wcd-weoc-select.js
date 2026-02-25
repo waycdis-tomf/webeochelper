@@ -58,6 +58,7 @@ class wcdSelect {
         this.wrapper.appendChild(this.valueWrapper);
         if (search) {
             this.search = document.createElement('div');
+            this.search.classList.add('search');
             this.drop.appendChild(this.search);
         }
         this.drop.appendChild(this.menu);
