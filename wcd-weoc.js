@@ -222,7 +222,7 @@ class wcdModal {
 
     async launch() {
         document.body.appendChild(this.modal);
-        this.bsModal = new bootstrap.Modal(this.modal);
+        this.bsModal = new bootstrap.Modal(this.modal, {backdrop: 'static'});
 
         this.bsModal.show();
 
@@ -231,7 +231,7 @@ class wcdModal {
             this.modal.remove();
         });
 
-        document.querySelector('.modal-backdrop.show').addEventListener("click", async () => {
+        document.querySelector('.modal-backdrop.show').addEventListener("click", async (e) => {
             await this.cancelFunction();
             this.state.reject(false);
             this.bsModal.hide();
