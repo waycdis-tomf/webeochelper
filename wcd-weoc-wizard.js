@@ -185,6 +185,7 @@ class wcdWizardStep {
         this.node.classList.remove("unavailable");
         this.navButtonNode.disabled = true;
         this.show();
+        if (!this.completed) wcd.clearOriginalData(wcd.getFormData(this.bodyNode));
     }
 
     getNextStep() {
@@ -320,7 +321,6 @@ class wcdWizard {
     async nextStep(saveConfig = false) {
         try {
             await this.currentStep.save(saveConfig, this.currentStep.getNextStep());
-            clearOriginalData(this.getFormData(this.currentStep.bodyNode, true));
             return Promise.resolve();
         } catch (e) {
             return Promise.reject(e);

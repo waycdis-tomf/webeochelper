@@ -282,7 +282,7 @@ class wcdLibrary {
         this.modules = {}; //Where WCD mods get stored by ID
 
         this.invalidFields = false; //A global array that shows what form fields were invalid
-        this.originalData = {}; //An object with all current form elements and their name and value into an object. Useful for determining values at load
+        this.originalData = {fields:{},files:{}}; //An object with all current form elements and their name and value into an object. Useful for determining values at load
 
         let params = new URLSearchParams(window.location.search);
         let queryParams = {};
@@ -335,7 +335,7 @@ class wcdLibrary {
 
         document.addEventListener("DOMContentLoaded", () => {
             this.setBoardData(); //Will set additional board data on load
-            this.setOriginalData(); //Sets the original data on load
+            if (wcd.dataid != '0') this.setOriginalData(); //Sets the original data on load
         });
     }
 
@@ -349,10 +349,14 @@ class wcdLibrary {
         Object.assign(this.originalData, this.getFormData(element, true));
     }
 
-    clearOriginalData(formData = this.getFormData(document.querySelector('body'), true)) {
-        Object.keys(formData.fields).forEach(key => {
-            this.originalData.fields[key] = '';
-        });
+    clearOriginalData(formData = false) {
+        if (formData) {
+            Object.keys(formData.fields).forEach(key => {
+                delete this.originalData.fields[key];
+            });
+        } else {
+            this.originalData = {fields:{},files:{}}
+        }
     }
 
     parseJSON(jsonString) {
@@ -601,7 +605,6 @@ class wcdLibrary {
                 }
 
                 xhr.onload = () => {
-                    console.log('http loaded');
                     if (xhr.status >= 200 && xhr.status < 300) {
                         resolve(xhr);
                     } else {
@@ -743,7 +746,6 @@ class wcdLibrary {
 
     async buildModal(object = {}) {
         let modal = new wcdModal(object);
-        console.log(modal.state);
         return modal.launch();
     }
 
