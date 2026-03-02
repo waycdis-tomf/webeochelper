@@ -416,6 +416,7 @@ class wcdLibrary {
                     nextSibling = formElement.parentNode.parentNode.parentNode.nextSibling;
                 }
                 if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
+                    console.log('nextSibling', nextSibling)
                     nextSibling.style.display = "block";
                 }
 
