@@ -397,42 +397,26 @@ class wcdLibrary {
         });
 
         arrNodeList.forEach(formElement => {
-            
-            
-            if (formElement.checkValidity()) { console.log('checkVal')
-                console.log('formElement', formElement.parentNode.parentNode.previousElementSibling.previousElementSibling, formElement.parentNode.parentNode.parentNode.nextSibling);
-                let nextSibling = formElement.nextSibling;
-                if (formElement.classList.contains('selectpicker')) { console.log('11')
-                    nextSibling = formElement.parentNode.nextSibling;
-                } else if (formElement.classList.contains('wcd-select')) { console.log('22')
-                    nextSibling = formElement.parentNode.parentNode.parentNode.nextSibling;
-                }
-
-                console.log('nextSibling000100', nextSibling)
-
-                if ((!!nextSibling) && (nextSibling instanceof HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
-                    nextSibling.style.setProperty('display', 'none', 'important');
-                }
-            } else { console.log('checVal2')
+            if (formElement.checkValidity()) {
                 let nextSibling = formElement.nextSibling;
                 if (formElement.classList.contains('selectpicker')) {
                     nextSibling = formElement.parentNode.nextSibling;
-                } else if (formElement.classList.contains('wcd-select')) {
-                    nextSibling = formElement.parentNode.parentNode.parentNode.nextSibling;
                 }
-                console.log('nextSibling00', nextSibling)
-                if ((!!nextSibling) /*&& (nextSibling instanceof HTMLDivElement || nextSibling instanceof HTMLDivElement === false) */ && nextSibling.classList.contains('invalid-feedback')) {
-                    console.log('nextSibling', nextSibling)
+                if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
+                    nextSibling.style.setProperty('display', 'none', 'important');
+                }
+            } else {
+                let nextSibling = formElement.nextSibling;
+                if (formElement.classList.contains('selectpicker')) {
+                    nextSibling = formElement.parentNode.nextSibling;
+                }
+                if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
                     nextSibling.style.display = "block";
                 }
-
-                console.log('nextSibling.constructor', nextSibling instanceof HTMLDivElement)
 
                 arrFailedValidity.push(formElement);
                 if (passed) passed = false;
             }
-
-
         });
 
         if (passed) {
