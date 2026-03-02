@@ -416,11 +416,11 @@ class wcdLibrary {
             } else { 
                 
                 console.log('checVal2');
-                if(formElement.parentNode.parentNode.previousElementSibling.previousElementSibling, formElement.parentNode.parentNode.parentNode.nextSibling) {
+                if(formElement.parentNode.parentNode.previousElementSibling.previousElementSibling) {
 
 
                     console.log('formElement2', formElement.parentNode.parentNode.previousElementSibling.previousElementSibling, formElement.parentNode.parentNode.parentNode.nextSibling);
-                    
+
                 }
                 
                 
