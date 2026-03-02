@@ -415,6 +415,7 @@ class wcdLibrary {
                 } else if (formElement.classList.contains('wcd-select')) {
                     nextSibling = formElement.parentNode.parentNode.parentNode.nextSibling;
                 }
+                console.log('nextSibling00', nextSibling)
                 if ((!!nextSibling) /*&& (nextSibling instanceof HTMLDivElement || nextSibling instanceof HTMLDivElement === false) */ && nextSibling.classList.contains('invalid-feedback')) {
                     console.log('nextSibling', nextSibling)
                     nextSibling.style.display = "block";
