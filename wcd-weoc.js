@@ -414,8 +414,16 @@ class wcdLibrary {
                     nextSibling.style.setProperty('display', 'none', 'important');
                 }
             } else { 
-                console.log('formElement2', formElement.parentNode.parentNode.previousElementSibling.previousElementSibling, formElement.parentNode.parentNode.parentNode.nextSibling);
-                console.log('checVal2')
+                
+                console.log('checVal2');
+                if(formElement.parentNode.parentNode.previousElementSibling.previousElementSibling, formElement.parentNode.parentNode.parentNode.nextSibling) {
+
+
+                    console.log('formElement2', formElement.parentNode.parentNode.previousElementSibling.previousElementSibling, formElement.parentNode.parentNode.parentNode.nextSibling);
+                    
+                }
+                
+                
                 let nextSibling = formElement.nextSibling;
                 if (formElement.classList.contains('selectpicker')) {
                     nextSibling = formElement.parentNode.nextSibling;
