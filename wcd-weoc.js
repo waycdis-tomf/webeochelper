@@ -400,7 +400,7 @@ class wcdLibrary {
             
             
             if (formElement.checkValidity()) { console.log('checkVal')
-                console.log('formElement', formElement, formElement.parentNode.parentNode.parentNode.nextSibling);
+                console.log('formElement', formElement.parentNode.parentNode.previousElementSibling.previousElementSibling, formElement.parentNode.parentNode.parentNode.nextSibling);
                 let nextSibling = formElement.nextSibling;
                 if (formElement.classList.contains('selectpicker')) { console.log('11')
                     nextSibling = formElement.parentNode.nextSibling;
