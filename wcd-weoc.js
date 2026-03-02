@@ -405,7 +405,7 @@ class wcdLibrary {
                 } else if (formElement.classList.contains('wcd-select')) {
                     nextSibling = formElement.parentNode.parentNode.parentNode.nextSibling;
                 }
-                if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
+                if ((!!nextSibling) && (nextSibling instanceof HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
                     nextSibling.style.setProperty('display', 'none', 'important');
                 }
             } else {
@@ -415,7 +415,7 @@ class wcdLibrary {
                 } else if (formElement.classList.contains('wcd-select')) {
                     nextSibling = formElement.parentNode.parentNode.parentNode.nextSibling;
                 }
-                if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
+                if ((!!nextSibling) && (nextSibling instanceof HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
                     console.log('nextSibling', nextSibling)
                     nextSibling.style.display = "block";
                 }
