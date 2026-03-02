@@ -397,12 +397,14 @@ class wcdLibrary {
         });
 
         arrNodeList.forEach(formElement => {
+            
+            
             if (formElement.checkValidity()) { console.log('checkVal')
                 console.log('formElement', formElement.parentNode.parentNode.parentNode.nextSibling);
                 let nextSibling = formElement.nextSibling;
-                if (formElement.classList.contains('selectpicker')) {
+                if (formElement.classList.contains('selectpicker')) { console.log('11')
                     nextSibling = formElement.parentNode.nextSibling;
-                } else if (formElement.classList.contains('wcd-select')) {
+                } else if (formElement.classList.contains('wcd-select')) { console.log('22')
                     nextSibling = formElement.parentNode.parentNode.parentNode.nextSibling;
                 }
 
@@ -429,6 +431,8 @@ class wcdLibrary {
                 arrFailedValidity.push(formElement);
                 if (passed) passed = false;
             }
+
+
         });
 
         if (passed) {
