@@ -399,7 +399,6 @@ class wcdLibrary {
         arrNodeList.forEach(formElement => {
             if (formElement.checkValidity()) {
                 console.log('formElement', formElement.parentNode.parentNode.parentNode.nextSibling);
-                console.log('nextSibling.constructor', nextSibling.constructor)
                 let nextSibling = formElement.nextSibling;
                 if (formElement.classList.contains('selectpicker')) {
                     nextSibling = formElement.parentNode.nextSibling;
@@ -420,6 +419,8 @@ class wcdLibrary {
                     console.log('nextSibling', nextSibling)
                     nextSibling.style.display = "block";
                 }
+
+                console.log('nextSibling.constructor', nextSibling.constructor)
 
                 arrFailedValidity.push(formElement);
                 if (passed) passed = false;
