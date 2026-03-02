@@ -420,7 +420,7 @@ class wcdLibrary {
                     nextSibling.style.display = "block";
                 }
 
-                console.log('nextSibling.constructor', nextSibling.constructor)
+                console.log('nextSibling.constructor', nextSibling instanceof HTMLDivElement)
 
                 arrFailedValidity.push(formElement);
                 if (passed) passed = false;
