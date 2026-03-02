@@ -397,7 +397,7 @@ class wcdLibrary {
         });
 
         arrNodeList.forEach(formElement => {
-            if (formElement.checkValidity()) {
+            if (formElement.checkValidity()) { console.log('checkVal')
                 console.log('formElement', formElement.parentNode.parentNode.parentNode.nextSibling);
                 let nextSibling = formElement.nextSibling;
                 if (formElement.classList.contains('selectpicker')) {
@@ -411,7 +411,7 @@ class wcdLibrary {
                 if ((!!nextSibling) && (nextSibling instanceof HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
                     nextSibling.style.setProperty('display', 'none', 'important');
                 }
-            } else {
+            } else { console.log('checVal2')
                 let nextSibling = formElement.nextSibling;
                 if (formElement.classList.contains('selectpicker')) {
                     nextSibling = formElement.parentNode.nextSibling;
