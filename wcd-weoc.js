@@ -404,7 +404,7 @@ class wcdLibrary {
                     nextSibling = formElement.parentNode.nextSibling;
                 } else if (formElement.classList.contains('wcd-select')) {
                     nextSibling = formElement.parentNode.parentNode.parentNode.nextSibling;
-                }                
+                }
                 if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
                     nextSibling.style.setProperty('display', 'none', 'important');
                 }
@@ -412,6 +412,8 @@ class wcdLibrary {
                 let nextSibling = formElement.nextSibling;
                 if (formElement.classList.contains('selectpicker')) {
                     nextSibling = formElement.parentNode.nextSibling;
+                } else if (formElement.classList.contains('wcd-select')) {
+                    nextSibling = formElement.parentNode.parentNode.parentNode.nextSibling;
                 }
                 if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
                     nextSibling.style.display = "block";
