@@ -398,11 +398,13 @@ class wcdLibrary {
 
         arrNodeList.forEach(formElement => {
             if (formElement.checkValidity()) {
-                console.log('formElement', formElement.parentNode.parentNode.parentNode)
+                console.log('formElement', formElement.parentNode.parentNode.parentNode.nextSibling)
                 let nextSibling = formElement.nextSibling;
                 if (formElement.classList.contains('selectpicker')) {
                     nextSibling = formElement.parentNode.nextSibling;
-                }
+                } else if (formElement.classList.contains('wcd-select')) {
+                    nextSibling = formElement.parentNode.parentNode.parentNode.nextSibling;
+                }                
                 if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
                     nextSibling.style.setProperty('display', 'none', 'important');
                 }
