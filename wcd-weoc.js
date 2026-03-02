@@ -398,6 +398,7 @@ class wcdLibrary {
 
         arrNodeList.forEach(formElement => {
             if (formElement.checkValidity()) {
+                console.log('formElement', formElement)
                 let nextSibling = formElement.nextSibling;
                 if (formElement.classList.contains('selectpicker')) {
                     nextSibling = formElement.parentNode.nextSibling;
