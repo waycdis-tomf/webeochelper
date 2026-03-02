@@ -404,7 +404,7 @@ class wcdLibrary {
                 let nextSibling = formElement.nextSibling;
                 if (formElement.classList.contains('selectpicker')) { console.log('11')
                     nextSibling = formElement.parentNode.nextSibling;
-                } else if (formElement.formElement.parentNode.parentNode.previousElementSibling.previousElementSibling.classList.contains('wcd-select')) { console.log('22')
+                } else if (formElement.parentNode.parentNode.previousElementSibling.previousElementSibling.classList.contains('wcd-select')) { console.log('22')
                     nextSibling = formElement.parentNode.parentNode.parentNode.nextSibling;
                 }
 
@@ -417,7 +417,7 @@ class wcdLibrary {
                 let nextSibling = formElement.nextSibling;
                 if (formElement.classList.contains('selectpicker')) {
                     nextSibling = formElement.parentNode.nextSibling;
-                } else if (formElement.formElement.parentNode.parentNode.previousElementSibling.previousElementSibling.classList.contains('wcd-select')) {
+                } else if (formElement.parentNode.parentNode.previousElementSibling.previousElementSibling.classList.contains('wcd-select')) {
                     nextSibling = formElement.parentNode.parentNode.parentNode.nextSibling;
                 }
                 console.log('nextSibling00', nextSibling)
