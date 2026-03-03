@@ -400,7 +400,7 @@ class wcdLibrary {
             console.log('formElement', formElement);
             if (formElement.checkValidity()) { console.log('1')
                 let nextSibling = formElement.nextSibling;
-                if (formElement.classList.contains('selectpicker')) {
+                if (formElement.classList.contains('wcd-select')) {
                     nextSibling = formElement.parentNode.nextSibling;
                 }
                 if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
@@ -408,7 +408,7 @@ class wcdLibrary {
                 }
             } else { console.log('2')
                 let nextSibling = formElement.nextSibling;
-                if (formElement.classList.contains('selectpicker')) {
+                if (formElement.classList.contains('wcd-select')) {
                     nextSibling = formElement.parentNode.nextSibling;
                 }
                 if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
