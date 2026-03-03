@@ -404,7 +404,11 @@ class wcdLibrary {
                     nextSibling = formElement.parentNode.nextSibling;
                 }
                 if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) { console.log('1b')
-                    nextSibling.style.setProperty('display', 'none', 'important');
+                    
+                    //nextSibling.style.setProperty('display', 'none', 'important');
+                    nextSibling.style.cssText = "display: none !important;";
+
+
                 }
             } else { console.log('2')
                 let nextSibling = formElement.nextSibling;
