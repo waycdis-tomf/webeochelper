@@ -397,25 +397,20 @@ class wcdLibrary {
         });
 
         arrNodeList.forEach(formElement => {
-            console.log('formElement', formElement);
-            if (formElement.checkValidity()) { console.log('1')
+            if (formElement.checkValidity()) {
                 let nextSibling = formElement.nextSibling;
-                if (formElement.classList.contains('wcd-select')) { console.log('1a')
+                if (formElement.classList.contains('wcd-select')) {
                     nextSibling = formElement.parentNode.nextSibling;
                 }
-                if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) { console.log('1b')
-                    
-                    //nextSibling.style.setProperty('display', 'none', 'important');
-                    nextSibling.style.cssText = "display: none !important;";
-
-
+                if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
+                    nextSibling.style.setProperty('display', 'none', 'important');
                 }
-            } else { console.log('2')
+            } else {
                 let nextSibling = formElement.nextSibling;
-                if (formElement.classList.contains('wcd-select')) { console.log('2a')
+                if (formElement.classList.contains('wcd-select')) {
                     nextSibling = formElement.parentNode.nextSibling;
                 }
-                if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) { console.log('2b')
+                if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
                     nextSibling.style.display = "block";
                 }
 
