@@ -400,18 +400,18 @@ class wcdLibrary {
             console.log('formElement', formElement);
             if (formElement.checkValidity()) { console.log('1')
                 let nextSibling = formElement.nextSibling;
-                if (formElement.classList.contains('wcd-select')) {
+                if (formElement.classList.contains('wcd-select')) { console.log('1a')
                     nextSibling = formElement.parentNode.nextSibling;
                 }
-                if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
+                if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) { console.log('1b')
                     nextSibling.style.setProperty('display', 'none', 'important');
                 }
             } else { console.log('2')
                 let nextSibling = formElement.nextSibling;
-                if (formElement.classList.contains('wcd-select')) {
+                if (formElement.classList.contains('wcd-select')) { console.log('2a')
                     nextSibling = formElement.parentNode.nextSibling;
                 }
-                if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
+                if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) { console.log('2b')
                     nextSibling.style.display = "block";
                 }
 
