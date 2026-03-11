@@ -387,7 +387,7 @@ class wcdLibrary {
         let arrNodeList = [];
         element.querySelectorAll('input:not([type=search]),textarea,select').forEach(formElement => {
             let isHidden = false;
-            this.getHiddenElements().forEach(hiddenElement => {
+            this.getHiddenElements(element).forEach(hiddenElement => {
                 if (hiddenElement == formElement) isHidden = true;
             });
             //if ((!formElement.dataset.wcdHiddenCt || formElement.dataset.wcdHiddenCt == 0) && !!formElement.name) {
@@ -397,23 +397,7 @@ class wcdLibrary {
         });
 
         arrNodeList.forEach(formElement => {
-            if (formElement.checkValidity()) {
-                let nextSibling = formElement.nextSibling;
-                if (formElement.classList.contains('wcd-select')) {
-                    nextSibling = formElement.parentNode.nextSibling;
-                }
-                if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
-                    nextSibling.style.setProperty('display', 'none', 'important');
-                }
-            } else {
-                let nextSibling = formElement.nextSibling;
-                if (formElement.classList.contains('wcd-select')) {
-                    nextSibling = formElement.parentNode.nextSibling;
-                }
-                if ((!!nextSibling) && (nextSibling.constructor === HTMLDivElement) && nextSibling.classList.contains('invalid-feedback')) {
-                    nextSibling.style.display = "block";
-                }
-
+            if (!formElement.checkValidity()) {
                 arrFailedValidity.push(formElement);
                 if (passed) passed = false;
             }
@@ -444,8 +428,8 @@ class wcdLibrary {
         element.classList.remove("was-validated");
     }
 
-    getHiddenElements() {
-        return document.querySelectorAll('.wcdHidden input:not([type=search]),.wcdHidden textarea,.wcdHidden select')
+    getHiddenElements(element = document.querySelector('body')) {
+        return element.querySelectorAll('.wcdHidden input:not([type=search]),.wcdHidden textarea,.wcdHidden select')
     }
 
     //Gets any visible form elements in the element specified
@@ -999,6 +983,10 @@ class wcdLibrary {
                         element.style.setProperty('display', 'none', 'important');
                         break;
                 }
+                this.getHiddenElements(element).forEach(hiddenElement=> {
+                    if (!Object.hasOwn(hiddenElement.dataset, 'disabled')) hiddenElement.dataset.disabled = hiddenElement.disabled;
+                    if (!hiddenElement.disabled) hiddenElement.disabled = true;
+                });
             }
         });
     }
@@ -1054,6 +1042,14 @@ class wcdLibrary {
                         break;
                 }
             }
+            this.getVisibleFormFields(element).forEach(visibleElement=> {
+                if (Object.hasOwn(visibleElement.dataset, 'disabled')) {
+                    if (visibleElement.dataset.disabled == 'false') {
+                        visibleElement.disabled = false;
+                        delete visibleElement.dataset.disabled;
+                    }
+                }
+            });
         });
     }
 

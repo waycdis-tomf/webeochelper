@@ -27,7 +27,7 @@
   color: #FFF;
 }
 
-.wcdWiz .step.current:not(.invalid) .step-header button {
+.wcdWiz .step.current .step-header button {
   border-radius: var(--bs-border-radius) var(--bs-border-radius) 0 0 !important;
   background-color: var(--bs-emphasis-color) !important;
   color: var(--bs-body-bg) !important;
@@ -41,7 +41,7 @@
   background-color: var(--bs-success-border-subtle);
 }
 
-.wcdWiz .step.invalid .step-header button {
+.wcdWiz .step.current.was-validated:has(:invalid) .step-header button {
   background-color: var(--bs-danger-border-subtle) !important;
   color: #FFF;
 }
@@ -54,7 +54,7 @@
     0 0 30px var(--bs-tertiary-color);
 }
 
-.wcdWiz .step.invalid {
+.wcdWiz .step.current.was-validated:has(:invalid) {
   box-shadow: 0 0 5px var(--bs-danger-border-subtle),
     0 0 10px var(--bs-danger-border-subtle), 0 0 20px var(--bs-danger-border-subtle),
     0 0 30px var(--bs-danger-border-subtle);

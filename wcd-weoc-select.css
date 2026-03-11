@@ -143,3 +143,7 @@
     background-position: right calc(.375em + .1875rem) center;
     background-size: calc(.75em + .375rem) calc(.75em + .375rem);
 }
+
+.wcd-select-wrapper:has(> .is-invalid)~.invalid-feedback, .wcd-select-wrapper:has(> .is-invalid)~.invalid-tooltip, .was-validated .wcd-select-wrapper:has(> select:invalid)~.invalid-feedback, .was-validated .wcd-select-wrapper:has(> select:invalid)~.invalid-tooltip {
+    display: block;
+}
