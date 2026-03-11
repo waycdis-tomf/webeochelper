@@ -3,6 +3,8 @@ class wcdSelect {
         this.active = false;
         this.search = search;
         this.select = select;
+        this.filter = false;
+        if (this.select.querySelector('option[data-hash]')) this.filter = true;
         this.placeholder = this.select.dataset.wcdPlaceholder;
         this.wrapper = document.createElement('div');
         this.wrapper.classList.add('wcd-select-wrapper');
@@ -125,7 +127,7 @@ class wcdSelect {
         } else {
             this.valueWrapper.classList.remove('readonly','disabled');
         }
-        if (this.required || this.readonly || this.disabled) {
+        if (this.required || this.readonly || this.disabled || this.filter) {
             this.valueClear.style.setProperty('display', 'none', 'important');
         } else {
             if (this.select.value == '') {
