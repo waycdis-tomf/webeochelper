@@ -212,7 +212,7 @@ class wcdModal {
                     this.addButton(buttonProps);
                 });
             } else {
-                this.addButton();
+                this.addButton({});
             }
         }
 
