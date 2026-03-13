@@ -52,7 +52,6 @@ class wcdSelect {
                         });
                     });
                 }
-                console.log(oldValue, newValue)
                 if (oldValue !== newValue) {
                     this.dispatchEvent(new Event('change'));
                 }
@@ -81,11 +80,15 @@ class wcdSelect {
             if (option.hasAttribute('value') && !option.value && !!option.innerText && this.filter) {
                 this.hasDefaultText = option.innerText;
             } else if (!option.value && !option.innerText) {
-                hasEmpty = true;
+                hasEmpty = option;
             }
         });
+        if (!!this.hasDefaultText && hasEmpty) {
+            hasEmpty.remove();
+            hasEmpty = true;
+        }
         let arrTextValue = [];
-        if (!hasEmpty) {
+        if (!hasEmpty && !this.hasDefaultText && this.placeholder) {
             let mockOption = document.createElement('option', {value: ''});
             this.select.prepend(mockOption);
             this.addedEmpty = true;
@@ -522,7 +525,6 @@ if (typeof wcd != 'undefined') {
 } else {
     document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll('select.wcd-select').forEach(select => {
-            console.log(select, select.dataset.wcdPlaceholder)
             new wcdSelect({
                 select: select,
                 search: (!!select.dataset.wcdSearchable || select.classList.contains('wcd-searchable')),
