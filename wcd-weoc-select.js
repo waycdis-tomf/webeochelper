@@ -1,7 +1,23 @@
 class wcdSelect {
     constructor({select = false, search = false, placeholder = false, noClear = false}) {
         const eleSelect = select;
-        // Define a new property only for this instance
+        const valueDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value') || {};
+        const selectedIndexDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'selectedIndex') || {};
+
+        Object.defineProperty(eleSelect, 'selectedIndex', {
+            configurable: true,
+            enumerable: selectedIndexDescriptor.enumerable,
+            get: selectedIndexDescriptor.get,
+            set: function(newValue) {
+                let oldValue = this.selectedIndex;
+                // Call the original behavior first
+                selectedIndexDescriptor.set.call(this, newValue);
+                if (oldValue !== newValue) {
+                    this.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+        
         Object.defineProperty(eleSelect, 'value', {
             get: function () {
                 if (this.multiple) {
@@ -36,6 +52,7 @@ class wcdSelect {
                         });
                     });
                 }
+                console.log(oldValue, newValue)
                 if (oldValue !== newValue) {
                     this.dispatchEvent(new Event('change'));
                 }
@@ -46,11 +63,10 @@ class wcdSelect {
         
         this.active = false;
         this.search = search;
-        this.noClear = noClear;
         this.select = select;
         this.filter = false;
         this.hasDefaultText = false;
-        this.hasEmpty = false;
+        this.addedEmpty = false;
         if (this.select.querySelector('option[data-hash]')) this.filter = true;
         this.placeholder = placeholder;
         this.wrapper = document.createElement('div');
@@ -60,14 +76,20 @@ class wcdSelect {
         this.valueWrapper.classList.add(...this.select.classList);
         this.value = document.createElement('div');
         let selectedOptions = this.select.querySelectorAll('option[selected]');
-        this.select.querySelectorAll('option[value]').forEach(option=> {
-            if (!option.value && !!option.innerText) {
+        let hasEmpty = false;
+        this.select.querySelectorAll('option').forEach(option=> {
+            if (option.hasAttribute('value') && !option.value && !!option.innerText && this.filter) {
                 this.hasDefaultText = option.innerText;
             } else if (!option.value && !option.innerText) {
-                this.hasEmpty = true;
+                hasEmpty = true;
             }
         });
         let arrTextValue = [];
+        if (!hasEmpty) {
+            let mockOption = document.createElement('option', {value: ''});
+            this.select.prepend(mockOption);
+            this.addedEmpty = true;
+        }
         if (selectedOptions.length > 0) {
             selectedOptions.forEach(option=> {
                 arrTextValue.push(option.innerText);
@@ -138,6 +160,7 @@ class wcdSelect {
                     }
                 }
             });
+            this.refreshSelect();
         };
         this.select.addEventListener('change', this._onSelectChange);
 
@@ -173,7 +196,7 @@ class wcdSelect {
         } else {
             this.valueWrapper.classList.remove('readonly','disabled');
         }
-        if (this.required || this.readonly || this.disabled || (this.filter && !this.hasDefaultText && !this.hasEmpty) || this.noClear) {
+        if (this.required || this.readonly || this.disabled || (this.filter && !this.hasDefaultText)) {
             this.valueClear.style.setProperty('display', 'none', 'important');
         } else {
             if (this.select.value == '') {
@@ -310,7 +333,7 @@ class wcdSelect {
                 this.options.push(objOption);
             } else if (option.hasAttribute('value') && !option.value && !!option.innerText) {
                 this.placeholder = option.innerText;
-            } else if (!option.hasAttribute('value') && !option.innerText && !option.hasAttribute('data-hash')) {
+            } else if (!option.hasAttribute('value') && !option.innerText && !option.hasAttribute('data-hash') && !this.addedEmpty) {
                 option.remove();
             }
         });
@@ -480,7 +503,12 @@ if (typeof wcd != 'undefined') {
             element.querySelectorAll('select.wcd-select').forEach(select => {
                 let search  = false;
                 if (!!select.dataset.wcdSearchable) search = true;
-                wcd.select.entities.push(new wcdSelect({select: select, search: search}));
+                wcd.select.entities.push(new wcdSelect({
+                    select: select,
+                    search: (!!select.dataset.wcdSearchable || select.classList.contains('wcd-searchable')),
+                    placeholder: (!!select.dataset.wcdPlaceholder) ? select.dataset.wcdPlaceholder : (!!select.title) ? select.title : false,
+                    noClear: (!!select.dataset.wcdNoclear || !!select.classList.contains('wcd-noclear'))
+                }));
             });
         }
     });
@@ -494,9 +522,11 @@ if (typeof wcd != 'undefined') {
 } else {
     document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll('select.wcd-select').forEach(select => {
-            new wcdSelect({select: select, 
+            console.log(select, select.dataset.wcdPlaceholder)
+            new wcdSelect({
+                select: select,
                 search: (!!select.dataset.wcdSearchable || select.classList.contains('wcd-searchable')),
-                placeholder: (!!select.dataset.wcdPlaceholder || !!select.title),
+                placeholder: (!!select.dataset.wcdPlaceholder) ? select.dataset.wcdPlaceholder : (!!select.title) ? select.title : false,
                 noClear: (!!select.dataset.wcdNoclear || !!select.classList.contains('wcd-noclear'))
             });
         });
