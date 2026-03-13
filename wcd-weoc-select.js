@@ -1,8 +1,7 @@
 class wcdSelect {
-    constructor({select = false, search = false, placeholder = false}) {
+    constructor({select = false, search = false, placeholder = false, noClear = false}) {
         const eleSelect = select;
-
-    // Define a new property only for this instance
+        // Define a new property only for this instance
         Object.defineProperty(eleSelect, 'value', {
             get: function () {
                 if (this.multiple) {
@@ -47,9 +46,11 @@ class wcdSelect {
         
         this.active = false;
         this.search = search;
+        this.noClear = noClear;
         this.select = select;
         this.filter = false;
         this.hasDefaultText = false;
+        this.hasEmpty = false;
         if (this.select.querySelector('option[data-hash]')) this.filter = true;
         this.placeholder = placeholder;
         this.wrapper = document.createElement('div');
@@ -59,19 +60,14 @@ class wcdSelect {
         this.valueWrapper.classList.add(...this.select.classList);
         this.value = document.createElement('div');
         let selectedOptions = this.select.querySelectorAll('option[selected]');
-        let hasEmpty = false;
         this.select.querySelectorAll('option[value]').forEach(option=> {
             if (!option.value && !!option.innerText) {
                 this.hasDefaultText = option.innerText;
             } else if (!option.value && !option.innerText) {
-                hasEmpty = true;
+                this.hasEmpty = true;
             }
         });
         let arrTextValue = [];
-        if (!hasEmpty) {
-            let mockOption = document.createElement('option', {value: ''});
-            this.select.prepend(mockOption);
-        }
         if (selectedOptions.length > 0) {
             selectedOptions.forEach(option=> {
                 arrTextValue.push(option.innerText);
@@ -177,7 +173,7 @@ class wcdSelect {
         } else {
             this.valueWrapper.classList.remove('readonly','disabled');
         }
-        if (this.required || this.readonly || this.disabled || (this.filter && !this.hasDefaultText)) {
+        if (this.required || this.readonly || this.disabled || (this.filter && !this.hasDefaultText && !this.hasEmpty) || this.noClear) {
             this.valueClear.style.setProperty('display', 'none', 'important');
         } else {
             if (this.select.value == '') {
@@ -500,7 +496,8 @@ if (typeof wcd != 'undefined') {
         document.querySelectorAll('select.wcd-select').forEach(select => {
             new wcdSelect({select: select, 
                 search: (!!select.dataset.wcdSearchable || select.classList.contains('wcd-searchable')),
-                placeholder: (!!select.dataset.wcdPlaceholder || !!select.title)
+                placeholder: (!!select.dataset.wcdPlaceholder || !!select.title),
+                noClear: (!!select.dataset.wcdNoclear || !!select.classList.contains('wcd-noclear'))
             });
         });
     });
