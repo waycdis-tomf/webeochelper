@@ -1,9 +1,56 @@
 class wcdSelect {
     constructor({select = false, search = false}) {
+        const eleSelect = select;
+
+    // Define a new property only for this instance
+        Object.defineProperty(eleSelect, 'value', {
+            get: function () {
+                if (this.multiple) {
+                    let arrValue = [];
+                    this.querySelectorAll('option:checked').forEach(option => {
+                        arrValue.push((!!option.value) ? option.value : option.text);
+                    });
+                    return arrValue.join(',');
+                } else {
+                    let option = this.querySelector('option:checked');
+                    if (!option) {
+                        return '';
+                    } else {
+                        return (!!option.value || (option.hasAttribute('value') && !option.value)) ? option.value : option.text;
+                    }
+                }
+            },
+            set: function (newValue) {
+                if (!newValue) newValue = '';
+                let oldValue = this.value;
+                valueDescriptor.set.call(this, newValue);
+                if (!!newValue && newValue.indexOf(',') > -1 && this.multiple) {
+                    let arrValues = newValue.split(',');
+                    this.querySelectorAll('option').forEach(option => {
+                        option.selected = false;
+                        arrValues.some((value, ind) => {
+                            if (value == ((!!option.value) ? option.value : option.text)) {
+                                option.selected = true;
+                                arrValues.splice(ind, 1);
+                                return true;
+                            }
+                        });
+                    });
+                }
+                console.log('old'+oldValue, 'new'+newValue);
+                if (oldValue !== newValue) {
+                    this.dispatchEvent(new Event('change'));
+                }
+            },
+            configurable: true,
+            enumerable: valueDescriptor.enumerable
+        });
+        
         this.active = false;
         this.search = search;
         this.select = select;
         this.filter = false;
+        this.hasDefaultText = false;
         if (this.select.querySelector('option[data-hash]')) this.filter = true;
         this.placeholder = this.select.dataset.wcdPlaceholder;
         this.wrapper = document.createElement('div');
@@ -14,8 +61,12 @@ class wcdSelect {
         this.value = document.createElement('div');
         let selectedOptions = this.select.querySelectorAll('option[selected]');
         let hasEmpty = false;
-        this.select.querySelectorAll('option[value=""]').forEach(option=> {
-            if (!option.innerText) hasEmpty = true;
+        this.select.querySelectorAll('option[value]').forEach(option=> {
+            if (!option.value && !!option.innerText) {
+                this.hasDefaultText = option.innerText;
+            } else if (!option.value && !option.innerText) {
+                hasEmpty = true;
+            }
         });
         let arrTextValue = [];
         if (!hasEmpty) {
@@ -127,9 +178,11 @@ class wcdSelect {
         } else {
             this.valueWrapper.classList.remove('readonly','disabled');
         }
-        if (this.required || this.readonly || this.disabled || this.filter) {
+        console.log(this.required, this.readonly, this.disabled, this.filter);
+        if (this.required || this.readonly || this.disabled || (this.filter && !this.hasDefaultText)) {
             this.valueClear.style.setProperty('display', 'none', 'important');
         } else {
+            console.log('should show',this.select.value);
             if (this.select.value == '') {
                 this.valueClear.style.setProperty('display', 'none', 'important');
             } else {
@@ -231,7 +284,7 @@ class wcdSelect {
         this.options = [];
         const frag = document.createDocumentFragment();
         this.select.querySelectorAll('option').forEach((option, ind) => {
-            let opVal = (!!option.value) ? option.value : option.innerText;
+            let opVal = (option.hasAttribute('value')) ? option.value : option.innerText;
             if (!!opVal) {
                 let objOption = {
                     text: option.innerText,
@@ -262,6 +315,10 @@ class wcdSelect {
                     frag.appendChild(objOption.wrapper);
                 }
                 this.options.push(objOption);
+            } else if (option.hasAttribute('value') && !option.value && !!option.innerText) {
+                this.placeholder = option.innerText;
+            } else if (!option.hasAttribute('value') && !option.innerText && !option.hasAttribute('data-hash')) {
+                option.remove();
             }
         });
         this.menu.appendChild(frag);
@@ -416,65 +473,8 @@ class wcdSelect {
     }
 }
 
-// Apply a single prototype augmentation for `value` to preserve custom
-// multiple-select comma-joined behaviour without redefining per-instance
-// properties (applied once globally).
-(function(){
-    if (typeof window === 'undefined') return;
-    if (window.__wcd_select_proto_augmented) return;
-    const valueDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value') || {};
-    const origGet = valueDescriptor.get;
-    const origSet = valueDescriptor.set;
-
-    Object.defineProperty(HTMLSelectElement.prototype, 'value', {
-        get: function() {
-            if (this.multiple) {
-                const arr = [];
-                this.querySelectorAll('option:checked').forEach(option => {
-                    arr.push((!!option.value) ? option.value : option.text);
-                });
-                return arr.join(',');
-            } else {
-                const option = this.querySelector('option:checked');
-                if (!option) return '';
-                return (!!option.value) ? option.value : option.text;
-            }
-        },
-        set: function(newValue) {
-            if (!newValue) newValue = '';
-            const oldValue = (origGet) ? origGet.call(this) : (this.multiple ? Array.from(this.querySelectorAll('option:checked')).map(o => (!!o.value) ? o.value : o.text).join(',') : (this.querySelector('option:checked') ? ((!!this.querySelector('option:checked').value) ? this.querySelector('option:checked').value : this.querySelector('option:checked').text) : ''));
-            if (origSet) {
-                origSet.call(this, newValue);
-            } else if (valueDescriptor.set) {
-                valueDescriptor.set.call(this, newValue);
-            }
-
-            if (!!newValue && newValue.indexOf(',') > -1 && this.multiple) {
-                const arrValues = newValue.split(',');
-                this.querySelectorAll('option').forEach(option => {
-                    option.selected = false;
-                    for (let i = 0; i < arrValues.length; i++) {
-                        if (arrValues[i] == ((!!option.value) ? option.value : option.text)) {
-                            option.selected = true;
-                            arrValues.splice(i, 1);
-                            break;
-                        }
-                    }
-                });
-            }
-
-            const newValFinal = this.multiple ? Array.from(this.querySelectorAll('option:checked')).map(o => (!!o.value) ? o.value : o.text).join(',') : (this.querySelector('option:checked') ? ((!!this.querySelector('option:checked').value) ? this.querySelector('option:checked').value : this.querySelector('option:checked').text) : '');
-            if (oldValue !== newValFinal) {
-                this.dispatchEvent(new Event('change'));
-            }
-        },
-        configurable: true,
-        enumerable: (typeof valueDescriptor.enumerable === 'boolean') ? valueDescriptor.enumerable : true
-    });
-
-    window.__wcd_select_proto_augmented = true;
-    window.__wcd_select_original_value_descriptor = valueDescriptor;
-})();
+    const valueDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+    
 
 if (typeof wcd != 'undefined') {
     wcd.addMod({
