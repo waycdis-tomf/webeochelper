@@ -37,7 +37,6 @@ class wcdSelect {
                         });
                     });
                 }
-                console.log('old'+oldValue, 'new'+newValue);
                 if (oldValue !== newValue) {
                     this.dispatchEvent(new Event('change'));
                 }
@@ -178,11 +177,9 @@ class wcdSelect {
         } else {
             this.valueWrapper.classList.remove('readonly','disabled');
         }
-        console.log(this.required, this.readonly, this.disabled, this.filter);
         if (this.required || this.readonly || this.disabled || (this.filter && !this.hasDefaultText)) {
             this.valueClear.style.setProperty('display', 'none', 'important');
         } else {
-            console.log('should show',this.select.value);
             if (this.select.value == '') {
                 this.valueClear.style.setProperty('display', 'none', 'important');
             } else {
