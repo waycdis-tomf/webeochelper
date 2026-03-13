@@ -1,5 +1,5 @@
 class wcdSelect {
-    constructor({select = false, search = false}) {
+    constructor({select = false, search = false, placeholder = false}) {
         const eleSelect = select;
 
     // Define a new property only for this instance
@@ -52,7 +52,7 @@ class wcdSelect {
         this.filter = false;
         this.hasDefaultText = false;
         if (this.select.querySelector('option[data-hash]')) this.filter = true;
-        this.placeholder = this.select.dataset.wcdPlaceholder;
+        this.placeholder = placeholder;
         this.wrapper = document.createElement('div');
         this.wrapper.classList.add('wcd-select-wrapper');
         this.valueWrapper = document.createElement('div');
@@ -501,9 +501,10 @@ if (typeof wcd != 'undefined') {
 } else {
     document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll('select.wcd-select').forEach(select => {
-            let search  = false;
-            if (!!select.dataset.wcdSearchable) search = true;
-            new wcdSelect({select: select, search: search});
+            new wcdSelect({select: select, 
+                search: (!!select.dataset.wcdSearchable || select.classList.contains('wcd-searchable')),
+                placeholder: (!!select.dataset.wcdPlaceholder || !!select.title)
+            });
         });
     });
 }
