@@ -78,18 +78,18 @@ wcd is the main object in our library. It holds valuable properties of your curr
 - **webeocURL**: Holds the main URL of the current WebEOC instance. *(String)*
 
 ### Functions (Prepend with wcd.)
-- **addMod({object})**: Used to add a WCD module with information to the library.
+- **addMod({...})**: Used to add a WCD module with information to the library.
 ```javascript
-object {
+...{
     id: `select`,
     name: `WAYCDIS Select`,
     entities: [],
     version: `0.1`
 }
 ```
-- **apiCall({object})**: Used to easily make a WebEOC API call. Only supply one or none of: data, filter, or attachment.
+- **apiCall({...})**: Used to easily make a WebEOC API call. Only supply one or none of: data, filter, or attachment.
 ```javascript
-object { 
+...{ 
     endpoint: `board/Request for Assistance/input/Input Request/43`,// Always required
     data: false || {// Only required if adding/editing data
         requestorName: 'not.john.smith@agency.gov'
@@ -109,15 +109,37 @@ object {
     headers: {}// Any additional headers to pass
 }
 ```
-- **buildModal()**
-- **clearFormValidation()**
-- **clearOriginalData()**
-- **formatCurrency()**
-- **formatDT()**
-- **getAllFormFields()**
-- **getBoardData()**
-- **getChangedValues()**
-- **getFormData()**
+- **buildModal({...})**: Used to quickly generate a modal without any premade element in the page. This will return what button was clicked as well as any formdata inside.
+```javascript
+...{
+    type: `action` || `info`,// Action has buttons, info is simply an alert
+    title: 'Delete Confirmation', 
+    body: documentFragment || element || 'Do you want to delete this record?',// Can be an actual HTML element or just a string. You can put form inputs in this to retreive data.
+    validate: false || true,// Validate any form elements for any button click.
+    cancelFunction: async () => Promise.resolve(),// Can have any code or function run on cancel of the modal.
+    footer: false || [// Array of button objects for footer
+        {
+            text: 'Confirm',// Text on and name of a button
+            color: 'error',// Bootstrap color option
+            icon: false,// A material design icon name
+            validate: false,// Whether to validate form data before considering action.
+            buttonFunction: async () => Promise.resolve()// Any code or function to run on click of button.
+        }
+    ]
+}
+```
+- **clearFormValidation(document.querySelector('body') || element)**: Used to clear bootstrap validation classes off of the specified element.
+- **clearOriginalData()**: Empties the originalData property of wcd. Useful if trying to do something custom with original values.
+- **formatCurrency(numberToFormat)**: Takes any decimal number and rounds it to nearest hundredth, and prepends with a $.
+- **formatDT()**: UNUSED
+- **getAllFormFields(document.querySelector('body') || element)**: Gets any form data field, such as input, textarea, and select inside the specified element.
+- **getBoardData()**: Returns an object with the board, view, and table names.
+- **getChangedValues(wcd.getFormData(document.querySelector('body')) || formData)**: Grabs the input, select, and textarea data, and parses to only show the changed values since load of the form.
+- **getFormData(...)**: Gets a formatted object with fields and files, with respective names and values.
+```javascript
+...document.querySelector('body') || element,// 1st param is any specified element to grab data from inside.
+    false || true// 2nd param is whether to get wcd.hidden fields as well.
+```
 - **getHiddenElements()**
 - **getVisibleFormFields()**
 - **hide()**
