@@ -103,6 +103,10 @@ class wcdSelect {
                 arrTextValue.push(this.placeholder);
                 this.value.opacity = this.value.style.opacity;
                 this.value.style.opacity = '.5';
+            } else if (!!this.hasDefaultText) {
+                arrTextValue.push(this.hasDefaultText);
+                this.value.opacity = this.value.style.opacity;
+                this.value.style.opacity = '.5';
             }
         }
         this.value.innerText = arrTextValue.join(',');

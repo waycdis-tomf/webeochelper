@@ -248,6 +248,7 @@ class wcdWizard {
         this.currentStep = false;
         this.submitFunction = (!!mainNode.dataset.wcdwizsubmit) ? () => Promise.resolve().then(window[mainNode.dataset.wcdwizsubmit], () => { }) : () => Promise.resolve();
         this.submitNotification = (!!mainNode.dataset.wcdwiznotification) ? () => Promise.resolve().then(window[mainNode.dataset.wcdwiznotification], () => { }) : () => Promise.resolve();
+        this.style = (!!mainNode.dataset.wcdwizstyle) ? () => mainNode.dataset.wcdwizstyle : 'accordion';
         this.hasSavedConfig = false;
 
         let allStepNodes = mainNode.querySelectorAll(

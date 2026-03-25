@@ -131,7 +131,7 @@ wcd is the main object in our library. It holds valuable properties of your curr
 - **clearFormValidation(document.querySelector('body') || element)**: Used to clear bootstrap validation classes off of the specified element.
 - **clearOriginalData()**: Empties the originalData property of wcd. Useful if trying to do something custom with original values.
 - **formatCurrency(numberToFormat)**: Takes any decimal number and rounds it to nearest hundredth, and prepends with a $.
-- **formatDT()**: UNUSED
+- **formatDT()**: [deprecated] UNUSED
 - **getAllFormFields(document.querySelector('body') || element)**: Gets any form data field, such as input, textarea, and select inside the specified element.
 - **getBoardData()**: Returns an object with the board, view, and table names.
 - **getChangedValues(wcd.getFormData(document.querySelector('body')) || formData)**: Grabs the input, select, and textarea data, and parses to only show the changed values since load of the form.
@@ -140,12 +140,17 @@ wcd is the main object in our library. It holds valuable properties of your curr
 ...document.querySelector('body') || element,// 1st param is any specified element to grab data from inside.
     false || true// 2nd param is whether to get wcd.hidden fields as well.
 ```
-- **getHiddenElements()**
-- **getVisibleFormFields()**
-- **hide()**
-- **httpCall()**
-- **makeDraggable()**
-- **objToFormData()**
+- **getHiddenElements(document.querySelector('body') || element)**: Gets all hidden input, select, or textarea elements inside the specified element.
+- **getVisibleFormFields(document.querySelector('body') || element)**: Gets all visible input, select, or textarea elements inside the specified element.
+- **hide(...)**: Hides an element. Applies a class so that it is excluded from form data acquisition.
+```javascript
+...element,// 1st param| Any specified
+    `instant` || `fade` || `collapse`,// 2nd param| The animation used to hide the element
+    false || true// If true, it does not add the wcdHidden class
+```
+- **httpCall()**: [deprecated] Originally an ES5 method to simulate jQuery's ajax call.
+- **makeDraggable()**: Morphs an element to allow it to be dragged around.
+- **objToFormData()**: 
 - **objToQueryString()**
 - **parseJSON()**
 - **reloadElement()**
