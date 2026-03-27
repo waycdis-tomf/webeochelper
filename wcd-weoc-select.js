@@ -64,6 +64,7 @@ class wcdSelect {
         this.search = search;
         this.select = select;
         this.filter = false;
+        this.noClear = noClear;
         this.hasDefaultText = false;
         this.addedEmpty = false;
         if (this.select.querySelector('option[data-hash]')) this.filter = true;
@@ -203,7 +204,7 @@ class wcdSelect {
         } else {
             this.valueWrapper.classList.remove('readonly','disabled');
         }
-        if (this.required || this.readonly || this.disabled || (this.filter && !this.hasDefaultText)) {
+        if (this.required || this.readonly || this.disabled || (this.filter && !this.hasDefaultText) || this.noClear) {
             this.valueClear.style.setProperty('display', 'none', 'important');
         } else {
             if (this.select.value == '') {
