@@ -4,7 +4,7 @@ class wcdLoader {
         this.size = size;
     }
 
-    show(text = 'Loading...', element_header_id = '#hsemaHeader') {
+    show(text = 'Loading...', element_header_id = document.querySelector('body')) {
         this.element = document.createElement("div");
         this.element.classList.add(this.size, 'wcdLoad');
 
@@ -23,7 +23,7 @@ class wcdLoader {
         this.element.appendChild(this.textElement);
 
         if (this.size == 'small') {
-            document.querySelector(element_header_id).appendChild(this.element);
+            element_header_id.appendChild(this.element);
         } else {
             document.body.appendChild(this.element);
             document.body.classList.add('wcdIsLoading');
