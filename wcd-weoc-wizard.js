@@ -90,9 +90,11 @@ class wcdWizardStep {
             if (wcd.dataid == '0') {
                 wcd.loading.large.show("Saving...");
                 if (!!document.querySelector("#wcdOnCreate")) {
-                    let onlyCreate = wcd.getChangedValues(wcd.getFormData(document.querySelector("#wcdOnCreate"), true));
-                    formObject.fields = Object.assign(formObject.fields, onlyCreate.fields);
-                    formObject.files = Object.assign(formObject.files, onlyCreate.files);
+                    document.querySelectorAll("#wcdOnCreate").forEach(submit => {
+                        let changedValues = wcd.getChangedValues(wcd.getFormData(submit, true));
+                        formObject.fields = Object.assign(formObject.fields, changedValues.fields);
+                        formObject.files = Object.assign(formObject.files, changedValues.files);
+                    });
                 }
             } else {
                 wcd.loading.small.show("Saving...");
@@ -106,13 +108,19 @@ class wcdWizardStep {
             }
             if (Object.keys(formObject.fields).length || Object.keys(formObject.files).length || submit) {
                 if (!!document.querySelector("#wcdAlways")) {
-                    formObject.fields = Object.assign(formObject.fields, wcd.getChangedValues(wcd.getFormData(document.querySelector("#wcdAlways"), true)).fields);
-                    formObject.files = Object.assign(formObject.files, wcd.getChangedValues(wcd.getFormData(document.querySelector("#wcdAlways"), true)).files);
+                    document.querySelectorAll("#wcdAlways").forEach(always => {
+                        let changedValues = wcd.getChangedValues(wcd.getFormData(always, true));
+                        formObject.fields = Object.assign(formObject.fields, changedValues.fields);
+                        formObject.files = Object.assign(formObject.files, changedValues.files);
+                    });
                 }
                 if (submit) {
                     if (!!document.querySelector("#wcdOnSubmit")) {
-                        formObject.fields = Object.assign(formObject.fields, wcd.getChangedValues(wcd.getFormData(document.querySelector("#wcdOnSubmit"), true)).fields);
-                        formObject.files = Object.assign(formObject.files, wcd.getChangedValues(wcd.getFormData(document.querySelector("#wcdOnSubmit"), true)).files);
+                        document.querySelectorAll("#wcdOnSubmit").forEach(submit => {
+                            let changedValues = wcd.getChangedValues(wcd.getFormData(submit, true));
+                            formObject.fields = Object.assign(formObject.fields, changedValues.fields);
+                            formObject.files = Object.assign(formObject.files, changedValues.files);
+                        });
                     }
                 }
                 wcd.setOriginalData();
