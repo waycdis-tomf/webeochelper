@@ -158,12 +158,16 @@ class wcdSelect {
         document.addEventListener("click", this._onDocumentClick);
 
         this._onSelectChange = (event) => {
-            let arrValue = this.select.value.split(',');
+            let arrValue = [];
+            let value = this.select.value;
+            if (!!value && value.indexOf(',') > -1 && this.multiple) {
+                arrValue = value.split(',');
+            }
             this.options.forEach((option) => {
                 if (!option.disabled) {
-                    if (!(option.selected) && arrValue.includes(option.value)) {
+                    if (!(option.selected) && ((this.multiple && arrValue.includes(option.value)) || (value == option.value))) {
                         this.selectOption(option, false);
-                    } else if (option.selected && !(arrValue.includes(option.value))) {
+                    } else if (option.selected && ((this.multiple && !(arrValue.includes(option.value))) || (value != option.value))) {
                         this.selectOption(option, false);
                     }
                 }
