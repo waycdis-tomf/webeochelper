@@ -340,7 +340,7 @@ class wcdSelect {
                     objOption.wrapper.classList.add('option-wrapper');
                     objOption.wrapper.dataset.value = opVal;
                     objOption.element.innerText = option.innerText;
-                    if (option.alias) objOption.element.innerText += ` (${option.alias})`;
+                    if (objOption.alias) objOption.element.innerText += ` (${objOption.alias})`;
                     objOption.element.dataset.value = opVal;
                     objOption.icon.style.display = 'none';
                     objOption.icon.classList.add('option-check');
