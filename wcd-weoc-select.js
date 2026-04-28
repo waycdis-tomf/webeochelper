@@ -160,15 +160,27 @@ class wcdSelect {
         this._onSelectChange = (event) => {
             let arrValue = [];
             let value = this.select.value;
-            if (!!value && value.indexOf(',') > -1 && this.multiple) {
-                arrValue = value.split(',');
-            }
+            if (!!value > -1 && this.multiple) arrValue = value.split(',');
             this.options.forEach((option) => {
                 if (!option.disabled) {
-                    if (!(option.selected) && ((this.multiple && arrValue.includes(option.value)) || (value == option.value))) {
-                        this.selectOption(option, false);
-                    } else if (option.selected && ((this.multiple && !(arrValue.includes(option.value))) || (value != option.value))) {
-                        this.selectOption(option, false);
+                    let shouldToggle = false;
+                    if (this.multiple) {
+                        if (option.selected && !arrValue.includes(option.value)) {
+                            shouldToggle = true;
+                        } else if (!option.selected && arrValue.includes(option.value)) {
+                            shouldToggle = true;
+                        }
+                    } else {
+                        if (option.selected && !(value == option.value)) {
+                            shouldToggle = true;
+                        } else if (!option.selected && (value == option.value)) {
+                            shouldToggle = true;
+                        }
+                    }
+
+                    if (shouldToggle) {
+                        console.log('should toggle', option);
+                            this.selectOption(option, false);
                     }
                 }
             });
