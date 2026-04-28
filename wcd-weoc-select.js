@@ -329,7 +329,8 @@ class wcdSelect {
                 let objOption = {
                     text: option.innerText,
                     selected: false,
-                    disabled: option.disabled
+                    disabled: option.disabled,
+                    alias: !!(option.dataset.wcdAlias) ? option.dataset.wcdAlias : false
                 };
                 objOption.value = opVal;
                 if (!option.disabled) {
@@ -339,6 +340,7 @@ class wcdSelect {
                     objOption.wrapper.classList.add('option-wrapper');
                     objOption.wrapper.dataset.value = opVal;
                     objOption.element.innerText = option.innerText;
+                    if (option.alias) objOption.element.innerText += ` (${option.alias})`;
                     objOption.element.dataset.value = opVal;
                     objOption.icon.style.display = 'none';
                     objOption.icon.classList.add('option-check');
