@@ -19,14 +19,13 @@ class wcdLoader {
         this.iconElement = document.createElement("div");
         this.iconElement.classList.add('loader');
 
-        this.element.classList.add('d-flex', 'flex-column', 'align-items-center', 'justify-content-center');
-
         this.element.appendChild(this.iconElement);
         this.element.appendChild(this.textElement);
 
         if (this.size == 'small') {
             element_header_id.appendChild(this.element);
         } else {
+            this.element.classList.add('d-flex', 'flex-column', 'align-items-center', 'justify-content-center');
             document.body.appendChild(this.element);
             document.body.classList.add('wcdIsLoading');
         }
