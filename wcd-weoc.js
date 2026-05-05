@@ -19,6 +19,8 @@ class wcdLoader {
         this.iconElement = document.createElement("div");
         this.iconElement.classList.add('loader');
 
+        this.element.classList.add('d-flex', 'flex-column', 'align-items-center', 'justify-content-center');
+
         this.element.appendChild(this.iconElement);
         this.element.appendChild(this.textElement);
 
