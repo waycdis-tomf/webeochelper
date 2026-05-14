@@ -62,6 +62,7 @@ class wcdSelect {
         
         this.active = false;
         this.search = search;
+        this.ddid = ddid;
         this.select = select;
         this.filter = false;
         this.noClear = noClear;
@@ -364,7 +365,7 @@ class wcdSelect {
             }
         });
 
-        if (!!ddid) {
+        if (!!this.ddid) {
             let ddidElement = document.createElement('div');
             let ddidWrapper = document.createElement('div');
             ddidWrapper.classList.add('option-wrapper');
