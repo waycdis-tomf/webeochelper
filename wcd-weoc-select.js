@@ -1,5 +1,5 @@
 class wcdSelect {
-    constructor({select = false, search = false, placeholder = false, noClear = false}) {
+    constructor({select = false, search = false, placeholder = false, noClear = false, ddid = false}) {
         const eleSelect = select;
         const valueDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value') || {};
         const selectedIndexDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'selectedIndex') || {};
@@ -363,17 +363,42 @@ class wcdSelect {
                 option.remove();
             }
         });
+
+        if (!!ddid) {
+            let ddidElement = document.createElement('div');
+            let ddidWrapper = document.createElement('div');
+            ddidWrapper.classList.add('option-wrapper');
+            ddidWrapper.classList.add('manage-dropdown');
+            ddidWrapper.dataset.value = this.ddid;
+            ddidElement.innerText = 'Manage Options...';
+            ddidElement.classList.add('option', 'flex-fill');
+
+            ddidWrapper.appendChild(ddidElement);
+            frag.appendChild(ddidWrapper);
+        }
+
         this.menu.appendChild(frag);
 
         // Add delegated click handler to menu to avoid per-option listeners
         if (!this._onMenuClick) {
             this._onMenuClick = (event) => {
                 const wrapper = event.target.closest && event.target.closest('.option-wrapper');
-                if (!wrapper || !this.menu.contains(wrapper)) return;
-                const val = wrapper.dataset.value;
-                if (!val) return;
-                const option = this.options.find(o => o.value === val);
-                if (option) this.selectOption(option);
+                if (event.target.closest.classList.contains('manage-dropdown')) {
+                    var targetOptions = {
+                        dialogWidth: 50,
+                        dialogHeight: 50//,
+                        //onDialogClose: onclose,
+                        //refreshId: elementid
+                    };
+                    //parent.pageBoard.BoardMgr._OpenView(wcd.board, 'DROP_Input', this.ddid, 'dialog', targetOptions, viewparameters, filter);
+                    parent.pageBoard.BoardMgr._OpenView(wcd.board, 'DROP_Input', this.ddid, 'dialog', targetOptions, '', '');
+                } else {
+                    if (!wrapper || !this.menu.contains(wrapper)) return;
+                    const val = wrapper.dataset.value;
+                    if (!val) return;
+                    const option = this.options.find(o => o.value === val);
+                    if (option) this.selectOption(option);
+                }
             };
             this.menu.addEventListener('click', this._onMenuClick);
         }
@@ -552,7 +577,8 @@ if (typeof wcd != 'undefined') {
                 select: select,
                 search: (!!select.dataset.wcdSearchable || select.classList.contains('wcd-searchable')),
                 placeholder: (!!select.dataset.wcdPlaceholder) ? select.dataset.wcdPlaceholder : (!!select.title) ? select.title : false,
-                noClear: (!!select.dataset.wcdNoclear || !!select.classList.contains('wcd-noclear'))
+                noClear: (!!select.dataset.wcdNoclear || !!select.classList.contains('wcd-noclear')),
+                ddid: (!!select.dataset.wcdDdid)
             });
         });
     });
