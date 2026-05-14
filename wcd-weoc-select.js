@@ -384,7 +384,8 @@ class wcdSelect {
         if (!this._onMenuClick) {
             this._onMenuClick = (event) => {
                 const wrapper = event.target.closest && event.target.closest('.option-wrapper');
-                if (event.target.closest.classList.contains('manage-dropdown')) {
+                if (!wrapper || !this.menu.contains(wrapper)) return;
+                if (wrapper.classList.contains('manage-dropdown')) {
                     var targetOptions = {
                         dialogWidth: 50,
                         dialogHeight: 50//,
@@ -394,7 +395,6 @@ class wcdSelect {
                     //parent.pageBoard.BoardMgr._OpenView(wcd.board, 'DROP_Input', this.ddid, 'dialog', targetOptions, viewparameters, filter);
                     parent.pageBoard.BoardMgr._OpenView(wcd.board, 'DROP_Input', this.ddid, 'dialog', targetOptions, '', '');
                 } else {
-                    if (!wrapper || !this.menu.contains(wrapper)) return;
                     const val = wrapper.dataset.value;
                     if (!val) return;
                     const option = this.options.find(o => o.value === val);
