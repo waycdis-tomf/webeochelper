@@ -392,8 +392,8 @@ class wcdSelect {
                         //onDialogClose: onclose,
                         //refreshId: elementid
                     };
-                    //parent.pageBoard.BoardMgr._OpenView(wcd.board, 'DD_Input', this.ddid, 'dialog', targetOptions, viewparameters, filter);
-                    parent.pageBoard.BoardMgr._OpenView(wcd.board, 'DD_Input', this.ddid, 'dialog', targetOptions, '', '');
+                    //parent.pageBoard.BoardMgr._OpenView('', 'DD_Input', this.ddid, 'dialog', targetOptions, viewparameters, filter);
+                    parent.pageBoard.BoardMgr._OpenView('', 'DD_Input', this.ddid, 'dialog', targetOptions, '', '');
                 } else {
                     const val = wrapper.dataset.value;
                     if (!val) return;
@@ -584,4 +584,3 @@ if (typeof wcd != 'undefined') {
         });
     });
 }
-
