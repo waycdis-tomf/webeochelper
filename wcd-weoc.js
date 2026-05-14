@@ -25,6 +25,7 @@ class wcdLoader {
         if (this.size == 'small') {
             element_header_id.appendChild(this.element);
         } else {
+            this.element.classList.add('d-flex', 'flex-column', 'align-items-center', 'justify-content-center');
             document.body.appendChild(this.element);
             document.body.classList.add('wcdIsLoading');
         }
