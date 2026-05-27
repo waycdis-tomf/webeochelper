@@ -118,14 +118,23 @@ class WcdHistory {
     }
 
     formatDateTime(field) {
-        const dateTime = new Date(field);
-        const hours = dateTime.getHours().toString().padStart(2, '0');
-        const minutes = dateTime.getMinutes().toString().padStart(2, '0');
-        const seconds = dateTime.getSeconds().toString().padStart(2, '0');
-        const year = dateTime.getFullYear();
-        const month = (dateTime.getMonth() + 1).toString().padStart(2, '0');
-        const day = dateTime.getDate().toString().padStart(2, '0');
-        return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
+        let date;
+        if (field.indexOf('T') > -1) {
+            const isoString = new Date(field + 'Z').toISOString();
+            date = new Date(isoString);
+        } else {
+            date = new Date(field);
+        }
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        });
+        return formatter.format(date).replace(',', '');
     }
 
     async errorHandler(dataResults) {
@@ -183,7 +192,11 @@ class WcdHistory {
             if (i === historyArray.length - 1) {
                 let newOriginalHistoryObject = {};
                 let origHistoryRecord = historyArray[i];
+                origHistoryRecord.entrydate = !!origHistoryRecord.custom_dt_entry ? this.formatDateTime(origHistoryRecord.custom_dt_entry) : this.formatDateTime(origHistoryRecord.entrydate);
                 let sysFullOriginalRecord = origHistoryRecord;
+                if (!!origHistoryRecord.custom_dt_entry) {
+                    delete origHistoryRecord.custom_dt_entry;
+                }
                 for (const key of Object.keys(origHistoryRecord)) {
                     let newHistOrgObjVal;
                     const historyOriginalRecordVal = origHistoryRecord[key] === '' || origHistoryRecord[key] === 'undefined' || origHistoryRecord[key] === undefined || origHistoryRecord[key] === null ? '' : origHistoryRecord[key];
@@ -212,13 +225,16 @@ class WcdHistory {
                 let sysFullRecord = historyRecord;
                 for (const key of Object.keys(historyRecord)) {
                     if (key === 'entrydate') {
-                        newHistoryObject['entrydate'] = this.formatDateTime(historyRecord.entrydate);
+                        newHistoryObject['entrydate'] = !!historyRecord.custom_dt_entry ? this.formatDateTime(historyRecord.custom_dt_entry) : this.formatDateTime(historyRecord.entrydate);
                         newHistoryObject['tablename'] = sysTableName;
                         newHistoryObject['username'] = sysUsername;
                         newHistoryObject['positionname'] = sysPositionName;
                         newHistoryObject['prevdataid'] = sysPrevdataId;
                         newHistoryObject['origrecord'] = 'No';
                         newHistoryObject['fullrecord'] = sysFullRecord;
+                        if (!!historyRecord.custom_dt_entry) {
+                            delete historyRecord.custom_dt_entry;
+                        }
                     } else {
                         const historyRecordVal = historyRecord[key] === '' || historyRecord[key] === 'undefined' || historyRecord[key] === undefined || historyRecord[key] === null ? '' : historyRecord[key];
                         const previousHistoryRecordVal = previousHistoryRecord[key] === '' || previousHistoryRecord[key] === 'undefined' || previousHistoryRecord[key] === undefined || previousHistoryRecord[key] === null ? '' : previousHistoryRecord[key];
@@ -509,10 +525,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Add following code to the view.
 /*
-<div id="wcd-history" data-wcd-view="History_Viewlink" data-wcd-children="yes">
-    <viewlink name="History_Viewlink" />
-</div>
-## id - Should always be 'wcd-history'.
-## data-view - The name of the viewlink that will be used to fetch data.
-## data-wcd-children - Include children.
+    <div id="wcd-history" data-wcd-view="History_Viewlink" data-wcd-children="yes">
+        <viewlink name="History_Viewlink" />
+    </div>
+    ## To use a custom date/time field instead of using WebEOC's 'entrydate' add the following expression (named 'custom_dt_entry') in the 'History_Viewlink' view: <expression name="custom_dt_entry">sample_custom_date_time_field</expression>
+    ## id - Should always be 'wcd-history'.
+    ## data-view - The name of the viewlink that will be used to fetch data.
+    ## data-wcd-children - Include children.
 */
