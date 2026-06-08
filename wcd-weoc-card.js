@@ -88,7 +88,7 @@ class WcdListCard {
                     divDataRowCol.classList.add('col', 'py-1');
                     const spanDataRowLabel = document.createElement('span');
                     const spanDataRowData = document.createElement('span');
-                    spanDataRowLabel.classList.add('fw-bold', 'me-2', 'd-md-none');
+                    spanDataRowLabel.classList.add('fw-bold', 'me-2');
                     spanDataRowLabel.textContent = td.getAttribute('data-wcdspread_label');
                     while (td.firstChild) {
                         spanDataRowData.appendChild(td.firstChild);
