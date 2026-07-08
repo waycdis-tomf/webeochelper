@@ -1,5 +1,5 @@
 class wcdSelect {
-    constructor({select = false, search = false, placeholder = false, noClear = false, ddid = false, vtargetoptions = false}) {
+    constructor({select = false, search = false, placeholder = false, noClear = false, ddid = false, ddInputAttr = false}) {
         const eleSelect = select;
         const valueDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value') || {};
         const selectedIndexDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'selectedIndex') || {};
@@ -63,7 +63,7 @@ class wcdSelect {
         this.active = false;
         this.search = search;
         this.ddid = ddid;
-        this.vtargetoptions = vtargetoptions;
+        this.ddInputAttr = ddInputAttr;
         this.select = select;
         this.filter = false;
         this.noClear = noClear;
@@ -387,14 +387,20 @@ class wcdSelect {
                 const wrapper = event.target.closest && event.target.closest('.option-wrapper');
                 if (!wrapper || !this.menu.contains(wrapper)) return;
                 if (wrapper.classList.contains('manage-dropdown')) {
-                    /* var targetOptions = {
-                        dialogWidth: 50,
-                        dialogHeight: 50//,
-                        //onDialogClose: onclose,
-                        //refreshId: elementid
-                    };
-                    parent.pageBoard.BoardMgr._OpenView('', 'DD_Input', this.ddid, 'dialog', targetOptions, viewparameters, filter); */
-                    parent.pageBoard.BoardMgr._OpenView('', 'DD_Input', this.ddid, 'dialog', !!this.vtargetoptions ? this.vtargetoptions : '', '', '');
+                    if(this.ddInputAttr === false) {
+                        var targetOptions = {
+                            dialogWidth: 50,
+                            dialogHeight: 50//,
+                            // onDialogClose: onclose,
+                            // refreshId: elementid
+                        };
+                        // parent.pageBoard.BoardMgr._OpenView('', 'DD_Input', this.ddid, 'dialog', targetOptions, viewparameters, filter);
+                        parent.pageBoard.BoardMgr._OpenView('', 'DD_Input', this.ddid, 'dialog', targetOptions, '', '');
+                    } else {
+                        document.getElementById('input-dd-link').setAttribute('onclick', this.ddInputAttr);
+                        tdem.sidePanelViewlinkInput('input-dd-link');
+                        document.getElementById('input-dd-link').click();
+                    }
                 } else {
                     const val = wrapper.dataset.value;
                     if (!val) return;
