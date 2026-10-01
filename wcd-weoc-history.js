@@ -6,6 +6,7 @@ class WcdHistory {
         children = false,
         loading_element = false
     }) {
+        console.log('testing')
         this.element = element;
         this.view = view;
         this.parent_dataid = wcd.dataid;
@@ -16,73 +17,35 @@ class WcdHistory {
         if (this.loading_element) {
             wcd.loading.small.show('Loading history...', this.loading_element);
         }
-        this.createCard();
-        this.getData({
-            action_type: this.children ? 'Get_All_Data' : 'Get_Data',
-            api_view: this.view,
-            record: false,
-            object: {
-                endpoint: `board/${wcd.board}/display/${this.view}/${this.parent_dataid}`
-            }
-        }).then(() => {
-            if (this.mainDataArray.some(obj => obj.hasOwnProperty('error_msg')) === true) {
-                this.errorHandler(this.mainDataArray.filter(obj => obj.hasOwnProperty('error_msg')));
-                this.configureDataTables();
-            } else {
-                this.createRecordHistoryTableRows();
-            }
-        });
+        if (parseInt(this.parent_dataid) > 0) {
+            this.createMainHistoryElement();
+            console.log('a', mobileBreakpoint.matches);
+            this.getData({
+                action_type: this.children ? 'Get_All_Data' : 'Get_Data',
+                api_view: this.view,
+                record: false,
+                object: {
+                    endpoint: `board/${wcd.board}/display/${this.view}/${this.parent_dataid}`
+                }
+            }).then(() => {
+
+                console.log('xyz', this.mainDataArray);
+
+                if (this.mainDataArray.some(obj => obj.hasOwnProperty('error_msg')) === true) {
+                    // TODO: REDO THE FOLLOWING LOGIC.  MAKE SURE TO INCLUDE FOR DESKTOP AND MOBILE.
+                    // taco this.errorHandler(this.mainDataArray.filter(obj => obj.hasOwnProperty('error_msg')));
+                    // taco this.configureDataTables();
+                } else {
+                    !!mobileBreakpoint.matches ? this.createHistoryCard() : this.createHistoryTable();
+                    mobileBreakpoint.addEventListener('change', (event) => {
+                        !!event.matches ? this.createHistoryCard() : this.createHistoryTable();
+                    });
+                }
+            });
+        }
     }
 
-    createTable() {
-        const div = document.createElement('div');
-        const table = document.createElement('table');
-        const thead = document.createElement('thead');
-        const thr = document.createElement('tr');
-        const thd1 = document.createElement('th');
-        const thd2 = document.createElement('th');
-        const thd3 = document.createElement('th');
-        const thd4 = document.createElement('th');
-        const thd5 = document.createElement('th');
-        const tbody = document.createElement('tbody');
-        const span = document.createElement('span')
-        const infoIcon = document.createElement('i');
-        div.classList.add('table-responsive-sm');
-        infoIcon.classList.add('bs-tooltip');
-        infoIcon.setAttribute('data-bs-toggle', 'tooltip');
-        infoIcon.setAttribute('data-bs-placement', 'top');
-        infoIcon.setAttribute('title', 'Click on the details icon to view record details');
-        infoIcon.classList.add('material-symbols-outlined');
-        infoIcon.textContent = 'info';
-        span.innerHTML = 'Comment ';
-        table.classList.add('table', 'table-sm', 'table-striped');
-        table.id = 'history_table';
-        thead.classList.add('table-dark');
-        thd1.innerHTML = 'Creator';
-        thd2.innerHTML = 'Date/Time';
-        thd3.innerHTML = 'Source';
-        thd4.appendChild(span);
-        if (this.pdf === false) {
-            thd4.appendChild(infoIcon);
-        }
-        thd4.style.width = '35%';
-        thd5.style.width = '5%';
-        thr.appendChild(thd1);
-        thr.appendChild(thd2);
-        thr.appendChild(thd3);
-        thr.appendChild(thd4);
-        if (this.pdf === false) {
-            thr.appendChild(thd5);
-        }
-        thead.appendChild(thr);
-        table.appendChild(thead);
-        tbody.id = 'history-tbody';
-        table.appendChild(tbody);
-        div.appendChild(table);
-        return div;
-    }
-
-    createCard() {
+    createMainHistoryElement() {
         const card = document.createElement('div');
         const cardHeader = document.createElement('div');
         const cardSubheader = document.createElement('div');
@@ -110,60 +73,116 @@ class WcdHistory {
         card.appendChild(cardHeader);
         cardBody.classList.add('card-body');
         cardBody.id = 'history-body-card';
-        cardBody.appendChild(this.createTable());
+        // TODO: MOVE THIS LINE, cardBody.appendChild(this.createTable()); AT THE END OF GENERATING this.mainDataArray.
         card.appendChild(cardBody);
         this.element.parentNode.insertBefore(card, this.element);
         this.element.remove();
         this.element = card;
     }
 
-    formatDateTime(field) {
-        let date;
-        if (field.indexOf('T') > -1) {
-            const isoString = new Date(field + 'Z').toISOString();
-            date = new Date(isoString);
-        } else {
-            date = new Date(field);
-        }
-        const formatter = new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false
-        });
-        return formatter.format(date).replace(',', '');
+    createHistoryTable() {
+        console.log('test j;lkj;lkj 1223')
+        const parentEle = document.getElementById('history-body-card');
+        parentEle.innerHTML = '';
+        parentEle.appendChild(this.createTable());
+        this.createRecordHistoryTableRows();
     }
 
-    async errorHandler(dataResults) {
-        let apiViews = '';
-        let apiViewsArray = [];
-        let errorMsgArray = [];
-        dataResults.forEach((item) => {
-            apiViewsArray.push(item.api_view);
-            errorMsgArray.push(item.error_msg);
+    createHistoryCard() {
+        const parentEle = document.getElementById('history-body-card');
+        parentEle.innerHTML = '';
+        this.mainDataArray.forEach((item) => {
+            const divWrapper = document.createElement('div');
+            const divRow = document.createElement('div');
+            const divCol1 = document.createElement('div');
+            const divCol2 = document.createElement('div');
+            const divCol3 = document.createElement('div');
+            const span1Col1 = document.createElement('span');
+            const span2Col1 = document.createElement('span');
+            const span1Col2 = document.createElement('span');
+            const span2Col2 = document.createElement('span');
+            const span1Col3 = document.createElement('span');
+            const span2Col3 = document.createElement('span');
+            divWrapper.classList.add('mb-3', 'mt-3', 'ms-3', 'me-3');
+            divRow.classList.add('row', 'data-row', 'border');
+            divCol1.classList.add('col-12', 'py-1');
+            divCol2.classList.add('col-12', 'py-1');
+            divCol3.classList.add('col-12', 'py-1');
+            span1Col1.classList.add('fw-bold', 'me-2');
+            span1Col1.innerHTML = 'Creator';
+            span2Col1.innerHTML = `${item.username} / ${item.positionname}</i>`;
+            span1Col2.classList.add('fw-bold', 'me-2');
+            span1Col2.innerHTML = 'Date/Time';
+            span2Col2.innerHTML = item.entrydate;
+            span1Col3.classList.add('fw-bold', 'me-2');
+            span1Col3.innerHTML = 'Source';
+            span2Col3.innerHTML = item.tablename;
+            divCol1.appendChild(span1Col1);
+            divCol1.appendChild(span2Col1);
+            divCol2.appendChild(span1Col2);
+            divCol2.appendChild(span2Col2);
+            divCol3.appendChild(span1Col3);
+            divCol3.appendChild(span2Col3);
+            divRow.appendChild(divCol1);
+            divRow.appendChild(divCol2);
+            divRow.appendChild(divCol3);
+            divWrapper.appendChild(divRow);
+            parentEle.appendChild(divWrapper);
         });
-        const viewsArray = [...new Set(apiViewsArray)];
-        const errorMsg = [...new Set(errorMsgArray)].toString();
-        viewsArray.forEach((itemView) => {
-            apiViews += `• ${itemView}<br>`;
-        });
-        const modalResults = await wcd.buildModal({
-            type: 'action',
-            title: errorMsg,
-            body: errorMsg === 'Error: 400:' ? `You do not have sufficient permissions to perform the requested operation.<br><br>The following views are required:<br>${apiViews}` : (errorMsg === 'Error: 500:' ? `An unrecoverable error has occurred. See the WebEOC error log for an error description<br><br>The following views may have issues:<br>${apiViews}` : errorMsg),
-            footer: [{
-                text: 'Close',
-                color: 'danger',
-                icon: 'warning'
-            }],
-            validate: false
-        });
-        if (modalResults === false || modalResults !== false) {
-            return errorMsg;
+    }
+
+    createTable() {
+        const div = document.createElement('div');
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const thr = document.createElement('tr');
+        const thd1 = document.createElement('th');
+        const thd2 = document.createElement('th');
+        const thd3 = document.createElement('th');
+        const thd4 = document.createElement('th');
+        const thd5 = document.createElement('th');
+        const tbody = document.createElement('tbody');
+        const span = document.createElement('span')
+        const infoIcon = document.createElement('i');
+        div.classList.add('table-responsive-sm');
+        infoIcon.classList.add('bs-tooltip');
+        infoIcon.setAttribute('data-bs-toggle', 'tooltip');
+        infoIcon.setAttribute('data-bs-placement', 'top');
+        infoIcon.setAttribute('title', 'Click on the details icon to view record details');
+        infoIcon.classList.add('material-symbols-outlined');
+        infoIcon.textContent = 'info';
+        span.innerHTML = 'Comment ';
+        // TODO: REDO BELOW LOGIC, this.pdf === false.
+        if (this.pdf === false) {
+            table.classList.add('table', 'table-sm', 'table-striped');
+            // taco table.classList.add('table', 'table-sm', 'table-striped', 'wcdConvertCard');
+        } else {
+            table.classList.add('table', 'table-sm', 'table-striped');
         }
+        table.id = 'history_table';
+        thead.classList.add('table-dark');
+        thd1.innerHTML = 'Creator';
+        thd2.innerHTML = 'Date/Time';
+        thd3.innerHTML = 'Source';
+        thd4.appendChild(span);
+        if (this.pdf === false) {
+            thd4.appendChild(infoIcon);
+        }
+        thd4.style.width = '35%';
+        thd5.style.width = '5%';
+        thr.appendChild(thd1);
+        thr.appendChild(thd2);
+        thr.appendChild(thd3);
+        thr.appendChild(thd4);
+        if (this.pdf === false) {
+            thr.appendChild(thd5);
+        }
+        thead.appendChild(thr);
+        table.appendChild(thead);
+        tbody.id = 'history-tbody';
+        table.appendChild(tbody);
+        div.appendChild(table);
+        return div;
     }
 
     getDataHistory({
@@ -375,6 +394,8 @@ class WcdHistory {
                 detailsLink.setAttribute('data-bs-toggle', 'tooltip');
                 detailsLink.setAttribute('data-bs-placement', 'top');
                 detailsLink.setAttribute('title', 'View');
+                detailsLink.setAttribute('data-json-record', JSON.stringify(item.fullrecord));
+                detailsLink.setAttribute('onclick', 'viewRecordDetails(this)');
                 detailsIcon.classList.add('material-symbols-outlined');
                 detailsIcon.textContent = 'visibility';
                 detailsLink.appendChild(detailsIcon);
@@ -396,17 +417,20 @@ class WcdHistory {
                 }
                 divComment.innerHTML = fieldChangesContent.replace(/<br>$/, '');
                 if (this.pdf === false) {
-                    let br = divComment.querySelectorAll('br');
                     td4.appendChild(divComment);
-                    if (br.length > 2) {
+                    if (divComment.innerHTML.length > 250) {
                         requestAnimationFrame(() => {
-                            gf_applyClampline({ element: td4, force: true, show: false });
+                            this.applyClampline({ element: td4, force: true, show: false });
                         });
                     }
                 } else {
                     td4.innerHTML = fieldChangesContent.replace(/<br>$/, '');
                 }
                 td5.appendChild(detailsLink);
+                td1.setAttribute('data-wcdspread_label', 'Creator');
+                td2.setAttribute('data-wcdspread_label', 'Date/Time');
+                td3.setAttribute('data-wcdspread_label', 'Source');
+                td4.setAttribute('data-wcdspread_label', 'Comment');
                 tr.appendChild(td1);
                 tr.appendChild(td2);
                 tr.appendChild(td3);
@@ -415,9 +439,6 @@ class WcdHistory {
                     tr.appendChild(td5);
                 }
                 tbody.appendChild(tr);
-                detailsLink.addEventListener('click', () => {
-                    this.viewDetails(item.fullrecord);
-                });
                 const tltElements = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
                 tltElements.map((element) => {
                     return new bootstrap.Tooltip(element);
@@ -425,48 +446,6 @@ class WcdHistory {
             }
         });
         return this.configureDataTables();
-    }
-
-    viewDetails(item) {
-        let bodyContents = '';
-        for (const key in item) {
-            if (key.indexOf('fk_table') === -1 && key !== 'dataid' && key !== 'prevdataid' && key !== 'subscribername' && key !== 'entrydate' && key !== 'tablename' && key !== 'username' && key !== 'positionname' && key !== 'history_comment' && key.indexOf('RemoveExp') === -1) {
-                if (item[key] !== '') {
-                    let itemKey;
-                    let itemVal;
-                    const origItemVal = item[key] === '' || item[key] === 'undefined' || item[key] === undefined || item[key] === null ? '' : item[key];
-                    if (key.indexOf('date') > -1 || key.indexOf('Date') > -1) {
-                        itemKey = key;
-                        itemVal = origItemVal === '' ? '' : this.formatDateTime(origItemVal);
-                    } else if (key.indexOf('þAttachment') > -1) {
-                        itemKey = key.replace(/þAttachment/g, '');
-                        itemVal = parseInt(origItemVal) === 0 || origItemVal === '' || origItemVal === null ? 'No File Attached' : 'File Attached';
-                    } else if (key.indexOf('þMoney') > -1) {
-                        itemKey = key.replace(/þMoney/g, '');
-                        itemVal = wcd.formatCurrency(origItemVal);
-                    } else {
-                        itemKey = key;
-                        itemVal = origItemVal === '' ? 'No Field Value' : origItemVal;
-                    }
-                    const fieldLabel = itemKey.replace(/_/g, ' ');
-                    const fieldChanges = `${fieldLabel}: ${itemVal}<br>`;
-                    bodyContents += fieldChanges;
-                }
-            } else if (key === 'history_comment') {
-                bodyContents += `Added comment: '${item[key]}'<br>`;
-            }
-        }
-        return wcd.buildModal({
-            type: 'action',
-            title: 'Record Details',
-            body: bodyContents.replace(/<br>$/, ''),
-            footer: [{
-                text: 'Close',
-                color: 'success',
-                icon: 'close'
-            }],
-            validate: false
-        });
     }
 
     reConfigureClamplineHeight() {
@@ -488,8 +467,8 @@ class WcdHistory {
             if ($.fn.DataTable.isDataTable('#history_table') === false) {
                 const dtCallback = (() => {
                     this.reConfigureClamplineHeight();
-                })
-                configureDT('Details');
+                });
+                this.configureDT('Details');
                 setTimeout(() => {
                     dtCallback();
                 }, 350);
@@ -500,6 +479,142 @@ class WcdHistory {
             wcd.loading.hide();
         }
     }
+
+    configureDT() {
+        if ($('.convertTable').length == 1) {
+            let headers = $('.convertTable th');
+            let colDefs = [];
+            headers.each(function (ind, header) {
+                colDefs.push({
+                    targets: ind,
+                    name: header.innerText
+                });
+            });
+            $('.convertTable').DataTable({
+                lengthChange: false,
+                autoWidth: false,
+                pageLength: 10,
+                order: [],
+                columnDefs: [].concat(colDefs)
+            });
+        }
+        document.querySelectorAll('.dataTable').forEach((element) => {
+            element.classList.remove('convertTable');
+        });
+    }
+
+    applyClampline({
+        element = false,
+        force = false,
+        show = false
+    }) {
+        if (element) {
+            if (element.clientHeight > 32 || force) {
+                element.querySelectorAll('td').forEach(td => {
+                    td.childNodes.forEach(child => {
+                        if (child.constructor == Text) {
+                            let wrapper = document.createElement('div');
+                            let text = child;
+                            td.insertBefore(wrapper, text);
+                            wrapper.appendChild(text);
+                        }
+                    });
+                });
+                let collapseButton = document.createElement('div');
+                collapseButton.classList.add('clamplineBtn', 'material-symbols-outlined');
+                if (!element.classList.contains('show') && show == false) {
+                    element.classList.add('clCollapsed');
+                    collapseButton.innerText = 'expand';
+                    collapseButton.classList.add('clExpand');
+                    collapseButton.setAttribute('data-bs-original-title', 'Show More');
+                    new bootstrap.Tooltip(collapseButton, { trigger: "hover" });
+                } else {
+                    collapseButton.classList.add('clCollapse');
+                    collapseButton.innerText = 'compress';
+                    collapseButton.setAttribute('data-bs-original-title', 'Show Less');
+                    new bootstrap.Tooltip(collapseButton, { trigger: "hover" });
+                }
+                collapseButton.addEventListener("click", function () {
+                    let button = this;
+                    const tooltipInstance = bootstrap.Tooltip.getInstance(button);
+                    button.parentElement.classList.toggle('clCollapsed');
+                    if (button.parentElement.classList.contains('clCollapsed')) {
+                        button.classList.add('clExpand');
+                        button.innerText = 'expand';
+                        button.classList.remove('clCollapse');
+                        button.setAttribute('data-bs-original-title', 'Show More');
+                        tooltipInstance.hide();
+                        setTimeout(() => {
+                            tooltipInstance.show();
+                        }, 300);
+                    } else {
+                        button.classList.remove('clExpand');
+                        button.classList.add('clCollapse');
+                        button.innerText = 'compress';
+                        button.setAttribute('data-bs-original-title', 'Show Less');
+                        tooltipInstance.hide();
+                        setTimeout(() => {
+                            tooltipInstance.show();
+                        }, 300);
+                    }
+                });
+                element.appendChild(collapseButton);
+                element.classList.add('clampline');
+            } else {
+                element.classList.remove('clampline');
+            }
+        }
+    }
+
+    formatDateTime(field) {
+        let date;
+        if (field.indexOf('T') > -1) {
+            const isoString = new Date(field + 'Z').toISOString();
+            date = new Date(isoString);
+        } else {
+            date = new Date(field);
+        }
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        });
+        return formatter.format(date).replace(',', '');
+    }
+
+    async errorHandler(dataResults) {
+        let apiViews = '';
+        let apiViewsArray = [];
+        let errorMsgArray = [];
+        dataResults.forEach((item) => {
+            apiViewsArray.push(item.api_view);
+            errorMsgArray.push(item.error_msg);
+        });
+        const viewsArray = [...new Set(apiViewsArray)];
+        const errorMsg = [...new Set(errorMsgArray)].toString();
+        viewsArray.forEach((itemView) => {
+            apiViews += `• ${itemView}<br>`;
+        });
+        const modalResults = await wcd.buildModal({
+            type: 'action',
+            title: errorMsg,
+            body: errorMsg === 'Error: 400:' ? `You do not have sufficient permissions to perform the requested operation.<br><br>The following views are required:<br>${apiViews}` : (errorMsg === 'Error: 500:' ? `An unrecoverable error has occurred. See the WebEOC error log for an error description<br><br>The following views may have issues:<br>${apiViews}` : errorMsg),
+            footer: [{
+                text: 'Close',
+                color: 'danger',
+                icon: 'warning'
+            }],
+            validate: false
+        });
+        if (modalResults === false || modalResults !== false) {
+            return errorMsg;
+        }
+    }
+
 }
 
 wcd.addMod({
@@ -509,8 +624,11 @@ wcd.addMod({
     version: '0.1'
 });
 
-document.addEventListener("DOMContentLoaded", function () {
+const mobileBreakpoint = window.matchMedia('(max-width: 575.98px)');
+
+document.addEventListener('DOMContentLoaded', function () {
     let defaultElement = document.querySelector('#wcd-history');
+    console.log('defaultElement', defaultElement);
     if (defaultElement && defaultElement.dataset.wcdView) {
         let children = false;
         if (defaultElement.dataset.wcdChildren) children = true;
@@ -520,8 +638,50 @@ document.addEventListener("DOMContentLoaded", function () {
             children: children
         });
     }
-
 });
+
+function viewRecordDetails(element) {
+    let bodyContents = '';
+    const item = JSON.parse(element.getAttribute('data-json-record'));
+    for (const key in item) {
+        if (key.indexOf('fk_table') === -1 && key !== 'dataid' && key !== 'prevdataid' && key !== 'subscribername' && key !== 'entrydate' && key !== 'tablename' && key !== 'username' && key !== 'positionname' && key !== 'history_comment' && key.indexOf('RemoveExp') === -1) {
+            if (item[key] !== '') {
+                let itemKey;
+                let itemVal;
+                const origItemVal = item[key] === '' || item[key] === 'undefined' || item[key] === undefined || item[key] === null ? '' : item[key];
+                if (key.indexOf('date') > -1 || key.indexOf('Date') > -1) {
+                    itemKey = key;
+                    itemVal = origItemVal === '' ? '' : this.formatDateTime(origItemVal);
+                } else if (key.indexOf('þAttachment') > -1) {
+                    itemKey = key.replace(/þAttachment/g, '');
+                    itemVal = parseInt(origItemVal) === 0 || origItemVal === '' || origItemVal === null ? 'No File Attached' : 'File Attached';
+                } else if (key.indexOf('þMoney') > -1) {
+                    itemKey = key.replace(/þMoney/g, '');
+                    itemVal = wcd.formatCurrency(origItemVal);
+                } else {
+                    itemKey = key;
+                    itemVal = origItemVal === '' ? 'No Field Value' : origItemVal;
+                }
+                const fieldLabel = itemKey.replace(/_/g, ' ');
+                const fieldChanges = `${fieldLabel}: ${itemVal}<br>`;
+                bodyContents += fieldChanges;
+            }
+        } else if (key === 'history_comment') {
+            bodyContents += `Added comment: '${item[key]}'<br>`;
+        }
+    }
+    return wcd.buildModal({
+        type: 'action',
+        title: 'Record Details',
+        body: bodyContents.replace(/<br>$/, ''),
+        footer: [{
+            text: 'Close',
+            color: 'success',
+            icon: 'close'
+        }],
+        validate: false
+    });
+}
 
 // Add following code to the view.
 /*
