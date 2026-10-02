@@ -670,16 +670,11 @@ const mobileBreakpoint = window.matchMedia('(max-width: 575.98px)');
 document.addEventListener('DOMContentLoaded', function () {
     let defaultElement = document.querySelector('#wcd-history');
     if (defaultElement && defaultElement.dataset.wcdView) {
-        const children = defaultElement.dataset.wcdChildren && defaultElement.dataset.wcdChildren === 'yes' ? true : false;
-        let loadingEle = false;
-        if (defaultElement.dataset.wcdLoadingElement) {
-            defaultElement.dataset.wcdLoadingElement !== 'default' ? loadingEle = document.getElementById(defaultElement.dataset.wcdLoadingElement) : document.getElementById('hsemaHeader');
-        }
         wcd.history = new WcdHistory({
             element: defaultElement,
             view: defaultElement.dataset.wcdView,
-            children: children,
-            loading_element: loadingEle
+            children: defaultElement.dataset.wcdChildren && defaultElement.dataset.wcdChildren === 'yes' ? true : false,
+            loading_element: defaultElement.dataset.wcdLoadingElement && defaultElement.dataset.wcdLoadingElement !== '' ? document.getElementById(defaultElement.dataset.wcdLoadingElement) : false
         });
     }
 });
