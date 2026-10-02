@@ -6,7 +6,6 @@ class WcdHistory {
         children = false,
         loading_element = false
     }) {
-        console.log('testing')
         this.element = element;
         this.view = view;
         this.parent_dataid = wcd.dataid;
@@ -14,12 +13,11 @@ class WcdHistory {
         this.children = children;
         this.loading_element = loading_element;
         this.mainDataArray = [];
-        if (this.loading_element) {
+        if (this.pdf === false && this.loading_element !== false) {
             wcd.loading.small.show('Loading history...', this.loading_element);
         }
         if (parseInt(this.parent_dataid) > 0) {
             this.createMainHistoryElement();
-            console.log('a', mobileBreakpoint.matches);
             this.getData({
                 action_type: this.children ? 'Get_All_Data' : 'Get_Data',
                 api_view: this.view,
@@ -28,14 +26,13 @@ class WcdHistory {
                     endpoint: `board/${wcd.board}/display/${this.view}/${this.parent_dataid}`
                 }
             }).then(() => {
-
-                console.log('xyz', this.mainDataArray);
-
                 if (this.mainDataArray.some(obj => obj.hasOwnProperty('error_msg')) === true) {
-                    // TODO: REDO THE FOLLOWING LOGIC.  MAKE SURE TO INCLUDE FOR DESKTOP AND MOBILE.
-                    // taco this.errorHandler(this.mainDataArray.filter(obj => obj.hasOwnProperty('error_msg')));
-                    // taco this.configureDataTables();
+                    this.errorHandler(this.mainDataArray.filter(obj => obj.hasOwnProperty('error_msg')));
+                    wcd.loading.hide();
                 } else {
+                    this.mainDataArray.sort((date1, date2) => {
+                        return new Date(date2.entrydate) - new Date(date1.entrydate);
+                    });
                     !!mobileBreakpoint.matches ? this.createHistoryCard() : this.createHistoryTable();
                     mobileBreakpoint.addEventListener('change', (event) => {
                         !!event.matches ? this.createHistoryCard() : this.createHistoryTable();
@@ -73,7 +70,6 @@ class WcdHistory {
         card.appendChild(cardHeader);
         cardBody.classList.add('card-body');
         cardBody.id = 'history-body-card';
-        // TODO: MOVE THIS LINE, cardBody.appendChild(this.createTable()); AT THE END OF GENERATING this.mainDataArray.
         card.appendChild(cardBody);
         this.element.parentNode.insertBefore(card, this.element);
         this.element.remove();
@@ -81,54 +77,113 @@ class WcdHistory {
     }
 
     createHistoryTable() {
-        console.log('test j;lkj;lkj 1223')
         const parentEle = document.getElementById('history-body-card');
         parentEle.innerHTML = '';
         parentEle.appendChild(this.createTable());
-        this.createRecordHistoryTableRows();
+        this.createTableRows();
     }
 
     createHistoryCard() {
         const parentEle = document.getElementById('history-body-card');
         parentEle.innerHTML = '';
         this.mainDataArray.forEach((item) => {
-            const divWrapper = document.createElement('div');
-            const divRow = document.createElement('div');
-            const divCol1 = document.createElement('div');
-            const divCol2 = document.createElement('div');
-            const divCol3 = document.createElement('div');
-            const span1Col1 = document.createElement('span');
-            const span2Col1 = document.createElement('span');
-            const span1Col2 = document.createElement('span');
-            const span2Col2 = document.createElement('span');
-            const span1Col3 = document.createElement('span');
-            const span2Col3 = document.createElement('span');
-            divWrapper.classList.add('mb-3', 'mt-3', 'ms-3', 'me-3');
-            divRow.classList.add('row', 'data-row', 'border');
-            divCol1.classList.add('col-12', 'py-1');
-            divCol2.classList.add('col-12', 'py-1');
-            divCol3.classList.add('col-12', 'py-1');
-            span1Col1.classList.add('fw-bold', 'me-2');
-            span1Col1.innerHTML = 'Creator';
-            span2Col1.innerHTML = `${item.username} / ${item.positionname}</i>`;
-            span1Col2.classList.add('fw-bold', 'me-2');
-            span1Col2.innerHTML = 'Date/Time';
-            span2Col2.innerHTML = item.entrydate;
-            span1Col3.classList.add('fw-bold', 'me-2');
-            span1Col3.innerHTML = 'Source';
-            span2Col3.innerHTML = item.tablename;
-            divCol1.appendChild(span1Col1);
-            divCol1.appendChild(span2Col1);
-            divCol2.appendChild(span1Col2);
-            divCol2.appendChild(span2Col2);
-            divCol3.appendChild(span1Col3);
-            divCol3.appendChild(span2Col3);
-            divRow.appendChild(divCol1);
-            divRow.appendChild(divCol2);
-            divRow.appendChild(divCol3);
-            divWrapper.appendChild(divRow);
-            parentEle.appendChild(divWrapper);
+            if (Object.keys(item).length > 8) {
+                const divWrapper = document.createElement('div');
+                const divRow = document.createElement('div');
+                const divCol1 = document.createElement('div');
+                const divCol2 = document.createElement('div');
+                const divCol3 = document.createElement('div');
+                const divCol4 = document.createElement('div');
+                const divCol5 = document.createElement('div');
+                const span1Col1 = document.createElement('span');
+                const span2Col1 = document.createElement('span');
+                const span1Col2 = document.createElement('span');
+                const span2Col2 = document.createElement('span');
+                const span1Col3 = document.createElement('span');
+                const span2Col3 = document.createElement('span');
+                const span1Col4 = document.createElement('span');
+                const span2Col4 = document.createElement('span');
+                const span1Col5 = document.createElement('span');
+                const divComment = document.createElement('div');
+                const divDetails = document.createElement('div');
+                const detailsLink = document.createElement('a');
+                const detailsIcon = document.createElement('i');
+                divWrapper.classList.add('mb-3', 'mt-3', 'ms-3', 'me-3');
+                divRow.classList.add('row', 'data-row', 'border');
+                divCol1.classList.add('col-12', 'py-1');
+                divCol2.classList.add('col-12', 'py-1');
+                divCol3.classList.add('col-12', 'py-1');
+                divCol4.classList.add('col-12', 'py-1');
+                divCol5.classList.add('col-sm-1', 'py-1', 'text-end');
+                span1Col5.classList.add('ms-1');
+                span1Col5.textContent = 'Record Details';
+                detailsLink.classList.add('btn', 'btn-outline-success', 'd-flex', 'align-items-center', 'justify-content-center', 'bs-tooltip');
+                detailsLink.setAttribute('data-bs-toggle', 'tooltip');
+                detailsLink.setAttribute('data-bs-placement', 'top');
+                detailsLink.setAttribute('title', 'View');
+                detailsLink.setAttribute('data-json-record', JSON.stringify(item.fullrecord));
+                detailsLink.setAttribute('onclick', 'viewRecordDetails(this)');
+                detailsIcon.classList.add('material-symbols-outlined');
+                detailsIcon.textContent = 'visibility';
+                span1Col1.classList.add('fw-bold', 'me-2');
+                span1Col1.innerHTML = 'Creator';
+                span2Col1.innerHTML = `${item.username} / ${item.positionname}</i>`;
+                span1Col2.classList.add('fw-bold', 'me-2');
+                span1Col2.innerHTML = 'Date/Time';
+                span2Col2.innerHTML = item.entrydate;
+                span1Col3.classList.add('fw-bold', 'me-2');
+                span1Col3.innerHTML = 'Source';
+                span2Col3.innerHTML = item.tablename;
+                let fieldChangesContent = '';
+                for (const key in item) {
+                    if (key.indexOf('fk_table') === -1 && key !== 'dataid' && key !== 'prevdataid' && key !== 'subscribername' && key !== 'entrydate' && key !== 'tablename' && key !== 'username' && key !== 'positionname' && key !== 'origrecord' && key !== 'history_comment' && key !== 'fullrecord' && key.indexOf('RemoveExp') === -1) {
+                        if (item[key] !== '') {
+                            const preFieldLabel = key.indexOf('þAttachment') > -1 ? key.replace(/þAttachment/g, '') : (key.indexOf('þMoney') > -1 ? key.replace(/þMoney/g, '') : key);
+                            const fieldLabel = preFieldLabel.replace(/_/g, ' ');
+                            const fieldChanges = `${fieldLabel}: ${item[key]}<br>`;
+                            fieldChangesContent += fieldChanges;
+                        }
+                    } else if (key === 'history_comment') {
+                        fieldChangesContent += `Comment: ${item[key]}<br>`;
+                    }
+                }
+                divComment.innerHTML = fieldChangesContent.replace(/<br>$/, '');
+                span1Col4.classList.add('fw-bold', 'me-2');
+                span1Col4.innerHTML = 'Comment';
+                if (this.pdf === false) {
+                    span2Col4.appendChild(divComment);
+                    if (divComment.innerHTML.length > 250) {
+                        requestAnimationFrame(() => {
+                            this.applyClampline({ element: span2Col4, force: true, show: false });
+                        });
+                    }
+                } else {
+                    span2Col4.innerHTML = fieldChangesContent.replace(/<br>$/, '');
+                }
+                divCol1.appendChild(span1Col1);
+                divCol1.appendChild(span2Col1);
+                divCol2.appendChild(span1Col2);
+                divCol2.appendChild(span2Col2);
+                divCol3.appendChild(span1Col3);
+                divCol3.appendChild(span2Col3);
+                divCol4.appendChild(span1Col4);
+                divCol4.appendChild(span2Col4);
+                divRow.appendChild(divCol1);
+                divRow.appendChild(divCol2);
+                divRow.appendChild(divCol3);
+                divRow.appendChild(divCol4);
+                if (this.pdf === false) {
+                    detailsLink.appendChild(detailsIcon);
+                    detailsLink.appendChild(span1Col5);
+                    divDetails.appendChild(detailsLink);
+                    divCol5.appendChild(divDetails);
+                    divRow.appendChild(divCol5);
+                }
+                divWrapper.appendChild(divRow);
+                parentEle.appendChild(divWrapper);
+            }
         });
+        wcd.loading.hide();
     }
 
     createTable() {
@@ -152,14 +207,8 @@ class WcdHistory {
         infoIcon.classList.add('material-symbols-outlined');
         infoIcon.textContent = 'info';
         span.innerHTML = 'Comment ';
-        // TODO: REDO BELOW LOGIC, this.pdf === false.
-        if (this.pdf === false) {
-            table.classList.add('table', 'table-sm', 'table-striped');
-            // taco table.classList.add('table', 'table-sm', 'table-striped', 'wcdConvertCard');
-        } else {
-            table.classList.add('table', 'table-sm', 'table-striped');
-        }
         table.id = 'history_table';
+        table.classList.add('table', 'table-sm', 'table-striped');
         thead.classList.add('table-dark');
         thd1.innerHTML = 'Creator';
         thd2.innerHTML = 'Date/Time';
@@ -357,7 +406,6 @@ class WcdHistory {
                                 }
                             })
                         );
-
                     }
                 });
                 return Promise.allSettled(getAllDataPromiseArray);
@@ -370,16 +418,9 @@ class WcdHistory {
         });
     }
 
-    createRecordHistoryTableRows() {
-        this.mainDataArray.sort((date1, date2) => {
-            return new Date(date2.entrydate) - new Date(date1.entrydate);
-        });
-        this.createTableRows(this.mainDataArray);
-    }
-
-    createTableRows(dataResults) {
+    createTableRows() {
         const tbody = document.getElementById('history-tbody');
-        dataResults.forEach((item) => {
+        this.mainDataArray.forEach((item) => {
             if (Object.keys(item).length > 8) {
                 let tr = document.createElement('tr');
                 let td1 = document.createElement('td');
@@ -628,14 +669,17 @@ const mobileBreakpoint = window.matchMedia('(max-width: 575.98px)');
 
 document.addEventListener('DOMContentLoaded', function () {
     let defaultElement = document.querySelector('#wcd-history');
-    console.log('defaultElement', defaultElement);
     if (defaultElement && defaultElement.dataset.wcdView) {
-        let children = false;
-        if (defaultElement.dataset.wcdChildren) children = true;
+        const children = defaultElement.dataset.wcdChildren && defaultElement.dataset.wcdChildren === 'yes' ? true : false;
+        let loadingEle = false;
+        if (defaultElement.dataset.wcdLoadingElement) {
+            defaultElement.dataset.wcdLoadingElement !== 'default' ? loadingEle = document.getElementById(defaultElement.dataset.wcdLoadingElement) : document.getElementById('hsemaHeader');
+        }
         wcd.history = new WcdHistory({
             element: defaultElement,
             view: defaultElement.dataset.wcdView,
-            children: children
+            children: children,
+            loading_element: loadingEle
         });
     }
 });
@@ -682,14 +726,3 @@ function viewRecordDetails(element) {
         validate: false
     });
 }
-
-// Add following code to the view.
-/*
-    <div id="wcd-history" data-wcd-view="History_Viewlink" data-wcd-children="yes">
-        <viewlink name="History_Viewlink" />
-    </div>
-    ## To use a custom date/time field instead of using WebEOC's 'entrydate' add the following expression (named 'custom_dt_entry') in the 'History_Viewlink' view: <expression name="custom_dt_entry">sample_custom_date_time_field</expression>
-    ## id - Should always be 'wcd-history'.
-    ## data-view - The name of the viewlink that will be used to fetch data.
-    ## data-wcd-children - Include children.
-*/
