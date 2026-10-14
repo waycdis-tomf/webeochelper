@@ -246,7 +246,7 @@ The following example demonstrates how to configure an HTML table within the <eo
 The following table describes the CSS classes, attributes, and naming conventions used to control the table-to-card layout.
 | Attribute | Required | Description |
 | :--- | :--- | :--- |
-| `.wcdConvertCard` and `.d-none` | Yes | Apply both classes to the <table> element to enable the responsive card layout. Records display in a traditional table format on desktop and a card format on mobile devices. |
+
 | `.wcdConvertCardExclude` | Yes | Apply this class to an actions <th> element to assign a narrower column width. Use it for action columns containing options such as Edit, Details, or Delete. |
 | `data-wcdspread_label` | No | Add this attribute to every <td> element inside <eocrepeatallrecords>. Its value defines the label displayed alongside the corresponding field value in the mobile card layout. |
 
