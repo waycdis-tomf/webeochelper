@@ -166,7 +166,7 @@ wcd is the main object in our library. It holds valuable properties of your curr
 wcd-weoc-history.js
 ```
 
-## Setup & Installation
+### Setup & Installation
 To integrate the history library, add the markup below to your HTML view. This container manages the main record history along with optional parent, child, and grandchild history views.
 
 ```html
@@ -176,6 +176,7 @@ To integrate the history library, add the markup below to your HTML view. This c
 ```
 
 ### Configuration Reference
+The following table describes the supported field naming conventions and elements used in the example.
 | Attribute | Required | Description |
 | :--- | :--- | :--- |
 | `id` | Yes | Must always be set to wcd-history. |
@@ -183,11 +184,31 @@ To integrate the history library, add the markup below to your HTML view. This c
 | `data-wcd-children` | No | Optional attribute to include child and/or grandchild history. |
 | `<viewlink name="History_Viewlink" />` | Yes | Specifies the view that will contain the main record's history. |
 
-### Custom Date/Time Field
-By default, the history library uses WebEOC's standard entrydate field to determine the record's date and time.
+### History View Example
+The following example demonstrates how to configure a record history view, including field expressions, data formatting, sorting, and related child records.
 
-To use a custom date/time field instead, define the custom_dt_entry expression in the History_Viewlink view. Set its value to the name of the custom field you want the library to use.
-
-```xml
-<expression name="custom_dt_entry">sample_custom_date_time_field</expression>
+```html
+<html>
+    <eocrepeatallrecords rowcount="0" sort="entrydate desc">
+        <expression name="Field_Example_Text">field_text</expression>
+        <expression name="Field_Example_Date">field_date</expression>
+        <expression name="Field_Example_AmountþMoney">field_amount</expression>
+        <expression name="Field_Example_FileþAttachment">field_attachment</expression>
+        <expression name="custom_dt_entry">field_custom_date_time</expression>
+        <expression name="RemoveExp">COALESCE(field_remove, '0')</expression>
+        <relatedlist rowcount="0" sort="entrydate desc" table="Child_Table" filter="LOWER(COALESCE(field_remove, '')) != 'yes'">
+            <relatedlistexpression name="api_view" table="Child_Table">'Child_History_View'</relatedlistexpression>
+        </relatedlist>
+    </eocrepeatallrecords>
+</html>
 ```
+
+### Configuration Reference
+The following table describes the supported field naming conventions and elements used in the example.
+| Attribute | Description |
+| :--- | :--- |
+| `þMoney` | Identifies a monetary field and applies the appropriate currency formatting. |
+| `þAttachment` | Identifies a file attachment field. |
+| `Date` or `date` | Identifies a date or date-time field for appropriate formatting. |
+| `<expression name="custom_dt_entry">` | By default, the history library uses `entrydate` for timestamps; to use a custom field, define `custom_dt_entry` in the `History_Viewlink` view with the desired field name. |
+| `<relatedlist>` | Includes related records from a child table in the history view. |
