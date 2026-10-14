@@ -160,3 +160,34 @@ wcd is the main object in our library. It holds valuable properties of your curr
 - **setOriginalData()**
 - **show()**
 - **validateFormData()**
+
+# WAYCDIS' WebEOC History Library
+```
+wcd-weoc-history.js
+```
+
+## Setup & Installation
+To integrate the history library, add the markup below to your HTML view. This container manages the main record history along with optional parent, child, and grandchild history views.
+
+```html
+<div id="wcd-history" data-wcd-view="History_Viewlink" data-wcd-children="yes">
+    <viewlink name="History_Viewlink" />
+</div>
+```
+
+### Configuration Reference
+| Attribute | Required | Description |
+| :--- | :--- | :--- |
+| `id` | Yes | Must always be set to wcd-history. |
+| `data-wcd-view` | Yes | The name of the viewlink used to fetch history data. |
+| `data-wcd-children` | No | Optional attribute to include child and/or grandchild history. |
+| `<viewlink name="History_Viewlink" />` | Yes | Specifies the view that will contain the main record's history. |
+
+### Custom Date/Time Field
+By default, the history library uses WebEOC's standard entrydate field to determine the record's date and time.
+
+To use a custom date/time field instead, define the custom_dt_entry expression in the History_Viewlink view. Set its value to the name of the custom field you want the library to use.
+
+```xml
+<expression name="custom_dt_entry">sample_custom_date_time_field</expression>
+```
