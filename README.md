@@ -205,10 +205,51 @@ The following example demonstrates how to configure a record history view, inclu
 
 ### Configuration Reference
 The following table describes the supported field naming conventions and elements used in the example.
-| Attribute | Description |
-| :--- | :--- |
-| `þMoney` | Identifies a monetary field and applies the appropriate currency formatting. |
-| `þAttachment` | Identifies a file attachment field. |
-| `Date` or `date` | Identifies a date or date-time field for appropriate formatting. |
-| `<expression name="custom_dt_entry">` | By default, the history library uses `entrydate` for timestamps; to use a custom field, define `custom_dt_entry` in the `History_Viewlink` view with the desired field name. |
-| `<relatedlist>` | Includes related records from a child table in the history view. |
+| Attribute | Required | Description |
+| :--- | :--- | :--- |
+| `þMoney` | No | Identifies a monetary field and applies the appropriate currency formatting. |
+| `þAttachment` | No | Identifies a file attachment field. |
+| `Date` or `date` | No | Identifies a date or date-time field for appropriate formatting. |
+| `<expression name="custom_dt_entry">` | No | By default, the history library uses `entrydate` for timestamps; to use a custom field, define `custom_dt_entry` in the `History_Viewlink` view with the desired field name. |
+| `<relatedlist>` | No | Includes related records from a child table in the history view. |
+
+# WAYCDIS' WebEOC Card Library
+```
+wcd-weoc-history.js
+```
+
+### Card Example
+The following example demonstrates how to configure an HTML table within the <eocrepeatallrecords> tag to display records as cards on mobile devices while retaining a traditional table layout on desktop devices.
+
+```html
+<table class="wcdConvertCard d-none">
+    <thead>
+        <tr>
+            <th><sortlink field="sample_text_field">Sample Text Field</sortlink></th>
+            <th><sortlink field="sample_date_field">Sample Date Field</sortlink></th>
+            <th>Money Field</th>
+        </tr>
+    </thead>
+    <tbody>
+        <eocrepeatallrecords rowcount="0" sort="entrydate desc">
+            <tr>
+                <td data-wcdspread_label="Sample Text Field:"><eocfield disableclick="true" name="sample_text_field" /></td>
+                <td data-wcdspread_label="Sample Date Field:"><eocfield disableclick="true" name="sample_date_field" /></td>
+                <td data-wcdspread_label="Sample Money Field:"><eocfield disableclick="true" name="sample_money_field" /></td>
+            </tr>
+        </eocrepeatallrecords>
+    </tbody>
+</table>
+```
+
+### Configuration Reference
+The following table describes the CSS classes, attributes, and naming conventions used to control the table-to-card layout.
+| Attribute | Required | Description |
+| :--- | :--- | :--- |
+| `.wcdConvertCard` and `.d-none'` | Yes | Apply both classes to the <table> element to enable the responsive card layout. Records display in a traditional table format on desktop and a card format on mobile devices. |
+| `.wcdConvertCardExclude` | Yes | Apply this class to an actions <th> element to assign a narrower column width. Use it for action columns containing options such as Edit, Details, or Delete. |
+| `data-wcdspread_label` | Yes | Add this attribute to every <td> element inside <eocrepeatallrecords>. Its value defines the label displayed alongside the corresponding field value in the mobile card layout. |
+
+### Configuration Reference
+Ensure each data-wcdspread_label value clearly identifies the associated field.
+Keep the labels consistent with the corresponding table headers to improve readability across desktop and mobile layouts.

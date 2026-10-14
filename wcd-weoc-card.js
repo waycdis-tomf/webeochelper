@@ -7,12 +7,6 @@ class WcdListCard {
         }
     }
 
-    /**
-     * Create card table process.
-     * Includes the 'createDivWrapper' fucntion.
-     * @constructor
-     * @param { string } table - The <table> element containing the '.wcdConvertCard' class.
-     */
     createCardTable(table) {
         this.createDivWrapper(table);
         this.createCardDivHeaders(table);
@@ -22,12 +16,6 @@ class WcdListCard {
         table.remove();
     }
 
-    /**
-     * Create main div wrapper.
-     * Div will contain the 'header' and 'body' elements.
-     * @constructor
-     * @param { string } table - The <table> element containing the '.wcdConvertCard' class.
-     */
     createDivWrapper(table) {
         const divWrapper = document.createElement('div');
         divWrapper.id = 'div-card-wrapper';
@@ -35,11 +23,6 @@ class WcdListCard {
         return table.parentNode.insertBefore(divWrapper, table);
     }
 
-    /**
-     * Create div headers.
-     * @constructor
-     * @param { string } table - The <table/> element containing the '.wcdConvertCard' class which headers will be created.
-     */
     createCardDivHeaders(table) {
         const divCardWrapper = document.getElementById('div-card-wrapper');
         const thead = table.querySelector('thead');
@@ -62,11 +45,6 @@ class WcdListCard {
         divCardWrapper.appendChild(divHeaderRow);
     }
 
-    /**
-     * Create div data rows.
-     * @constructor
-     * @param { string } table - The <table/> element containing the '.wcdConvertCard' class which data will be created.
-     */
     createCardDivDataRows(table) {
         const divCardHeaderWrapper = document.getElementById('div-card-header-wrapper');
         const tbody = table.querySelector('tbody');
@@ -102,44 +80,5 @@ class WcdListCard {
             divCardHeaderWrapper.parentNode.insertBefore(divDataRow, divCardHeaderWrapper.nextSibling);
         });
     }
-
-    /*
-        Instructions:
-        Add the '.wcdConvertCard' and '.d-none' classes to the <table> element.
-        Add the '.wcdConvertCardExclude' class to your 'actions' <th> element -- element will have a small column size applied to it.
-        Add the 'data-wcdspread_label' attributes to all your <td>'s inside your <eocrepeatallrecords> tag.
-
-        Example:
-        <table class="wcdConvertCard d-none">
-            <thead>
-                <tr>
-                    <th>
-                        <sortlink field="sample_text_field">Sample Text Field</sortlink>
-                    </th>
-                    <th>
-                        <sortlink field="sample_date_field">Sample Date Field</sortlink>
-                    </th>
-                    <th>
-                        Money Field
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <eocrepeatallrecords rowcount="0" sort="entrydate desc">
-                    <tr>
-                        <td data-wcdspread_label="Sample Text Field:">
-                            <eocfield disableclick="true" name="sample_text_field" />
-                        </td>
-                        <td data-wcdspread_label="Sample Date Field:">
-                            <eocfield disableclick="true" name="sample_date_field" />
-                        </td>
-                        <td data-wcdspread_label="Sample Money Field:">
-                            <eocfield disableclick="true" name="sample_money_field" />
-                        </td>
-                    </tr>
-                </eocrepeatallrecords>
-            </tbody>
-        </table>
-    */
-
+    
 }
