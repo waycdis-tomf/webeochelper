@@ -247,9 +247,9 @@ The following table describes the CSS classes, attributes, and naming convention
 
 | Attribute | Description |
 | :--- | :--- |
-| `.wcdConvertCard` and `.d-none` | Apply both classes to the <table> element to enable the responsive card layout. Records display in a traditional table format on desktop and a card format on mobile devices. |
-| `.wcdConvertCardExclude` | Apply this class to an actions <th> element to assign a narrower column width. Use it for action columns containing options such as Edit, Details, or Delete. |
-| `data-wcdspread_label` | Add this attribute to every <td> element inside <eocrepeatallrecords>. Its value defines the label displayed alongside the corresponding field value in the mobile card layout. |
+| `.wcdConvertCard` and `.d-none` | Apply both classes to the `<table>` element to enable the responsive card layout. Records display in a traditional table format on desktop and a card format on mobile devices. |
+| `.wcdConvertCardExclude` | Apply this class to an actions `<th>` element to assign a narrower column width. Use it for action columns containing options such as Edit, Details, or Delete. |
+| `data-wcdspread_label` | Add this attribute to every `<td>` element inside `<eocrepeatallrecords>`. Its value defines the label displayed alongside the corresponding field value in the mobile card layout. |
 
 ### Notes
 - Ensure each data-wcdspread_label value clearly identifies the associated field.
